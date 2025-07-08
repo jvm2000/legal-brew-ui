@@ -1,28 +1,209 @@
-<template>
-  <div class="py-24 w-full flex flex-col items-center">
-    <div class="w-full max-w-5xl space-y-10 flex flex-col items-center">
-      <!-- This is the text intro  -->
-      <div class="flex items-center">
-        <img src="/hand.svg" alt="" class="mr-2">
+<script setup lang="ts">
+import { EyeIcon, EyeSlashIcon, ShoppingCartIcon } from '@heroicons/vue/24/outline'
 
-        <p class="text-2xl">, My Name is Juan and I am a</p>
+type Services = {
+  label: string,
+  price: string,
+  description: string,
+  image: string
+}
+
+const isHiddenInput = ref<boolean>(true)
+const services = ref<Services[]>([
+  {
+    label: 'Latte Legalizations',
+    price: '500',
+    description: 'Drafting of documents such as letters, special power of attorneys, promissory notes, compromise agreements, and others.',
+    image: '/images/services/latte-legalization.svg'
+  }, {
+    label: 'Espresso Advise',
+    price: '500',
+    description: 'Online consultations with the lawyer.',
+    image: '/images/services/espress-advise.svg'
+  }, {
+    label: 'Americano Agreements',
+    price: '1,000',
+    description: 'Drafting of contracts; review of existing contracts and drafting of revised contract.',
+    image: '/images/services/americano-agreements.svg'
+  }, {
+    label: 'Barista Grind',
+    price: '2,000',
+    description: 'Thorough research and analysis of legal issues, study of applicable laws and statutes, and provision of legal documentation and research services.',
+    image: '/images/services/barista-grind.svg'
+  }, {
+    label: 'Capuccino Case Files',
+    price: '20,000',
+    description: 'Assistance with litigation of cases, including court representation and preparation of pleadings in the areas of: Labor law, Marriage and family relations, Property law, Corporate law, Immigration law.',
+    image: '/images/services/cappucino-case-files.svg'
+  }
+])
+
+function handlePassword() {
+  isHiddenInput.value = !isHiddenInput.value
+}
+</script>
+
+<template>
+  <link rel="preconnect" href="https://rsms.me/" />
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
+
+  <div class="app-container">
+    <div class="w-full bg-[#EDE0D4] flex items-center justify-between drop-shadow-sm drop-shadow-[#3A1F094D] px-44">
+      <div class="flex items-center space-x-4 py-6">
+        <img src="/images/logo-landing.svg" />
+
+        <div class="space-y-2">
+          <img src="/images/logo-landing-text1.svg" />
+
+          <div class="w-28 h-[2px] bg-black" />
+
+          <img src="/images/logo-landing-text2.svg" />
+        </div>
       </div>
 
-      <!-- This is the image center  -->
-      <img src="/home-design.svg" alt="">
-      
-      <!-- This is the footer  -->
-      <div class="w-full flex items-center justify-between">
-        <span class="text-2xl">Based in Cebu, PH</span>
+      <div class="flex items-center space-x-10">
+        <p class="text-sm text-[#3A1F09] font-medium">Home</p>
+        <p class="text-sm text-[#3A1F09] font-medium">About Us</p>
+        <p class="text-sm text-[#3A1F09] font-medium">Menu of Services</p>
+        <p class="text-sm text-[#3A1F09] font-medium">Events</p>
+        <p class="text-sm text-[#3A1F09] font-medium">Resource Materials</p>
+        <p class="text-sm text-[#3A1F09] font-medium">Contact Us</p>
+        <p class="text-sm text-[#3A1F09] font-medium">Donate</p>
 
-        <div class="flex items-center space-x-4">
-          <img src="/frameworks/tailwind.svg" alt="" />
+        <button>
+          <img src="/images/shop-icon-landing.svg" />
+        </button>
+      </div>
+    </div>
 
-          <img src="/frameworks/vue.svg" alt="">
-          
-          <img src="/frameworks/laravel.svg" alt="">
+    <div class="pt-36 pb-24 flex items-center relative pl-64 max-w-full">
+      <div class="space-y-6">
+        <div class="border-b pb-6 border-[#A68A64] space-y-1 w-[466px]">
+          <p class="text-[48px] landing-login font-bold text-[#3A1F09]">The Legal Brew</p>
+
+          <p class="text-2xl font-medium text-[#3A1F09]">Justice Brewed Right</p>
+        </div>
+
+        <div class="space-y-4">
+          <div class="flex flex-col space-y-2">
+            <label for="" class="text-sm text-[#A68A64] font-medium">Username/Email</label>
+
+            <input 
+              type="text"
+              class="bg-[#EDE0D4] text-sm p-3 rounded-md placeholder-[#A68A64] text-[#A68A64] w-72"
+              placeholder="Enter username or email"
+            />
+          </div>
+
+          <div class="flex flex-col space-y-2">
+            <label for="" class="text-sm text-[#A68A64] font-medium">Password</label>
+
+            <div class="relative flex items-center w-72">
+              <input 
+                :type="isHiddenInput ? 'password' : 'text'"
+                class="bg-[#EDE0D4] text-sm p-3 rounded-md placeholder-[#A68A64] text-[#A68A64] w-72 z-[0]"
+                placeholder="Enter password"
+              />
+
+              <EyeIcon
+                v-if="isHiddenInput"
+                class="w-4 h-4 stroke-[#A68A64] cursor-pointer absolute right-3 z-[1]"
+                @click="handlePassword"
+              />
+
+              <EyeSlashIcon
+                v-if="!isHiddenInput"
+                class="w-4 h-4 stroke-[#A68A64] cursor-pointer absolute right-3 z-[1]"
+                @click="handlePassword"
+              />
+            </div>
+          </div>
+        </div>
+
+        <button class="bg-[#7F5539] py-2 text-sm text-white text-center w-24 rounded-md">Login</button>
+
+        <p class="text-sm">
+          <span class="text-[#A68A64]">Don't have an account?</span> <span class="text-[#3A1F09]">Sign Up</span>
+        </p>
+      </div>
+
+        <img src="/images/woman.svg" alt="" class="absolute right-64 bottom-0 z-[3]">
+        <img src="/images/shape-elipse-landing.svg" class="absolute z-[2] top-48 right-[340px]">
+        <img src="/images/shape-rectangle-landing.svg" class="absolute z-[0] bottom-0 right-60">
+    </div>
+
+    <div class="flex flex-col items-center py-8 bg-[#3A1F09]">
+      <div class="max-w-5xl w-full flex items-center space-x-20">
+        <img src="/images/about-us.svg" />
+
+        <div class="space-y-6">
+          <p class="text-2xl landing-login text-white font-bold">About Us</p>
+
+          <p class="text-sm text-white">
+            At The Legal Brew, we're driven to shatter barriers and democratize access to justice.
+          </p>
+
+          <p class="text-sm text-white">
+            By harnessing the power of digital technology, we're committed to bridging the gap in legal services, reaching underserved individuals, areas and communities, and empowering individuals with our flexible scheduling and remote consultations for legal assistance.
+          </p>
+
+          <p class="text-sm text-white">
+            All information shared in this site are treated with utmost confidentiality.
+          </p>
+        </div>
+      </div>
+    </div>1
+
+    <div class="flex flex-col items-center py-24">
+      <div class="space-y-6 max-w-5xl w-full">
+        <p class="text-xl landing-login text-[#3A1F09] font-bold">Menu of Services</p>
+
+        <div>
+          <p class="text-sm text-[#3A1F09]">*Services can be bundled or served ala carte.</p>
+          <p class="text-sm text-[#3A1F09]">*All rates depend on the duration, novelty and difficulty of the client’s legal needs.</p>
+        </div>
+
+        <div 
+          v-for="(service, index) in services"
+          :key="index"
+          class="flex items-center justify-between border-b border-[#3A1F09 pb-8"
+        >
+          <div class="flex items-center space-x-8">
+            <div class="w-24 h-24 bg-[#A68A64] rounded-md grid place-items-center">
+              <img :src="service.image" />
+            </div>
+
+            <div class="space-y-4">
+              <p class="text-xl font-bold text-[#3A1F09] landing-login">{{ service.label }}</p>
+
+              <p class="text-sm font-bold text-[#3A1F09]">Starts at P {{ service.price }}</p>
+
+              <p class="text-sm text-[#3A1F09] max-w-2xl w-full">{{ service.description }}</p>
+            </div>
+          </div>
+
+          <button 
+            class="bg-[#7F5539] py-2 text-sm text-white flex flex-col items-center w-40 h-10 rounded-md"
+          >
+            <div class="flex items-center space-x-2">
+              <ShoppingCartIcon class="w-4 h-4 stroke-white" /> 
+              <span class="text-sm mt-0.5">Add to Cart</span>
+            </div>
+          </button>
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.app-container {
+  background-color: #FAF1E9;
+  min-height: 100vh;
+}
+
+.landing-login {
+  font-family: 'Merriweather', serif;
+}
+</style>
