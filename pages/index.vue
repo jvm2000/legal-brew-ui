@@ -79,52 +79,52 @@ function handlePassword() {
 
     <div class="pt-36 pb-24 flex items-center relative pl-64 max-w-full">
       <div class="space-y-6">
-        <div class="border-b pb-6 border-[#A68A64] space-y-1 w-[466px]">
-          <p class="text-[48px] landing-login font-bold text-[#3A1F09]">The Legal Brew</p>
+        <div class="border-b pb-6 border-custom-brown-500 space-y-1 w-[466px]">
+          <p class="text-[48px] landing-login font-bold text-border-custom-brown-500">The Legal Brew</p>
 
-          <p class="text-2xl font-medium text-[#3A1F09]">Justice Brewed Right</p>
+          <p class="text-2xl font-medium text-border-custom-brown-500">Justice Brewed Right</p>
         </div>
 
         <div class="space-y-4">
           <div class="flex flex-col space-y-2">
-            <label for="" class="text-sm text-[#A68A64] font-medium">Username/Email</label>
+            <label for="" class="text-sm text-custom-brown-300 font-medium">Username/Email</label>
 
             <input 
               type="text"
-              class="bg-[#EDE0D4] text-sm p-3 rounded-md placeholder-[#A68A64] text-[#A68A64] w-72"
+              class="bg-custom-brown-200 text-sm p-3 rounded-md placeholder-custom-brown-300 text-custom-brown-300 w-72"
               placeholder="Enter username or email"
             />
           </div>
 
           <div class="flex flex-col space-y-2">
-            <label for="" class="text-sm text-[#A68A64] font-medium">Password</label>
+            <label for="" class="text-sm text-custom-brown-300 font-medium">Password</label>
 
             <div class="relative flex items-center w-72">
               <input 
                 :type="isHiddenInput ? 'password' : 'text'"
-                class="bg-[#EDE0D4] text-sm p-3 rounded-md placeholder-[#A68A64] text-[#A68A64] w-72 z-[0]"
+                class="bg-custom-brown-200 text-sm p-3 rounded-md placeholder-custom-brown-300 text-custom-brown-300 w-72 z-[0]"
                 placeholder="Enter password"
               />
 
               <EyeIcon
                 v-if="isHiddenInput"
-                class="w-4 h-4 stroke-[#A68A64] cursor-pointer absolute right-3 z-[1]"
+                class="w-4 h-4 stroke-custom-brown-300 cursor-pointer absolute right-3 z-[1]"
                 @click="handlePassword"
               />
 
               <EyeSlashIcon
                 v-if="!isHiddenInput"
-                class="w-4 h-4 stroke-[#A68A64] cursor-pointer absolute right-3 z-[1]"
+                class="w-4 h-4 stroke-custom-brown-300 cursor-pointer absolute right-3 z-[1]"
                 @click="handlePassword"
               />
             </div>
           </div>
         </div>
 
-        <button class="bg-[#7F5539] py-2 text-sm text-white text-center w-24 rounded-md">Login</button>
+        <button class="bg-custom-brown-500 py-2 text-sm text-white text-center w-24 rounded-md">Login</button>
 
         <p class="text-sm">
-          <span class="text-[#A68A64]">Don't have an account?</span> <span class="text-[#3A1F09]">Sign Up</span>
+          <span class="text-custom-brown-400">Don't have an account?</span> <span class="text-custom-brown-500">Sign Up</span>
         </p>
       </div>
 
@@ -133,7 +133,7 @@ function handlePassword() {
         <img src="/images/shape-rectangle-landing.svg" class="absolute z-[0] bottom-0 right-60">
     </div>
 
-    <div class="flex flex-col items-center py-8 bg-[#3A1F09]">
+    <div class="flex flex-col items-center py-8 bg-custom-brown-500">
       <div class="max-w-5xl w-full flex items-center space-x-20">
         <img src="/images/about-us.svg" />
 
@@ -157,11 +157,11 @@ function handlePassword() {
 
     <div class="flex flex-col items-center py-24">
       <div class="space-y-6 max-w-5xl w-full">
-        <p class="text-xl landing-login text-[#3A1F09] font-bold">Menu of Services</p>
+        <p class="text-xl landing-login text-custom-brown-500 font-bold">Menu of Services</p>
 
         <div>
-          <p class="text-sm text-[#3A1F09]">*Services can be bundled or served ala carte.</p>
-          <p class="text-sm text-[#3A1F09]">*All rates depend on the duration, novelty and difficulty of the client’s legal needs.</p>
+          <p class="text-sm text-custom-brown-500">*Services can be bundled or served ala carte.</p>
+          <p class="text-sm text-custom-brown-500">*All rates depend on the duration, novelty and difficulty of the client’s legal needs.</p>
         </div>
 
         <div 
@@ -170,16 +170,16 @@ function handlePassword() {
           class="flex items-center justify-between border-b border-[#3A1F09 pb-8"
         >
           <div class="flex items-center space-x-8">
-            <div class="w-24 h-24 bg-[#A68A64] rounded-md grid place-items-center">
+            <div class="w-24 h-24 bg-custom-brown-300 rounded-md grid place-items-center">
               <img :src="service.image" />
             </div>
 
             <div class="space-y-4">
-              <p class="text-xl font-bold text-[#3A1F09] landing-login">{{ service.label }}</p>
+              <p class="text-xl font-bold text-custom-brown-500 landing-login">{{ service.label }}</p>
 
-              <p class="text-sm font-bold text-[#3A1F09]">Starts at P {{ service.price }}</p>
+              <p class="text-sm font-bold text-custom-brown-500">Starts at P {{ service.price }}</p>
 
-              <p class="text-sm text-[#3A1F09] max-w-2xl w-full">{{ service.description }}</p>
+              <p class="text-sm text-custom-brown-500 max-w-2xl w-full">{{ service.description }}</p>
             </div>
           </div>
 
