@@ -8,6 +8,7 @@ type Services = {
   image: string
 }
 
+const { container, startDrag, endDrag, handleDrag, data } = useScroll()
 const isHiddenInput = ref<boolean>(true)
 const services = ref<Services[]>([
   {
@@ -38,9 +39,39 @@ const services = ref<Services[]>([
   }
 ])
 
+const events = ref([
+  { label: 'Webinars', image: '/images/events/webinars.svg' },
+  { label: 'Seminars and Trainings', image: '/images/events/seminars.svg' },
+  { label: 'Online Discussions', image: '/images/events/discussions.svg' }
+])
+
+const materials = ref([
+  { 
+    description: 'Yorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    author: 'Author Name',
+    date: 'July 07, 2025',
+    image: '/images/materials/1.svg'
+  }, { 
+    description: 'Yorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    author: 'Author Name',
+    date: 'July 07, 2025',
+    image: '/images/materials/2.svg'
+  }, { 
+    description: 'Yorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    author: 'Author Name',
+    date: 'July 07, 2025',
+    image: '/images/materials/3.svg'
+  }, { 
+    description: 'Yorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    author: 'Author Name',
+    date: 'July 07, 2025',
+    image: '/images/materials/4.svg'
+  }
+])
+
 function handlePassword() {
   isHiddenInput.value = !isHiddenInput.value
-}
+} 
 </script>
 
 <template>
@@ -48,8 +79,8 @@ function handlePassword() {
   <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
   <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
 
-  <div class="app-container">
-    <div class="w-full bg-[#EDE0D4] flex items-center justify-between drop-shadow-sm drop-shadow-[#3A1F094D] px-44">
+  <div class="app-container overflow-x-hidden">
+    <div class="w-full bg-[#EDE0D4] flex items-center justify-between drop-shadow-sm px-44">
       <div class="flex items-center space-x-4 py-6">
         <img src="/images/logo-landing.svg" />
 
@@ -167,7 +198,7 @@ function handlePassword() {
         <div 
           v-for="(service, index) in services"
           :key="index"
-          class="flex items-center justify-between border-b border-[#3A1F09 pb-8"
+          class="flex items-center justify-between border-b border-custom-brown-500 pb-8"
         >
           <div class="flex items-center space-x-8">
             <div class="w-24 h-24 bg-custom-brown-300 rounded-md grid place-items-center">
@@ -194,6 +225,63 @@ function handlePassword() {
         </div>
       </div>
     </div>
+
+    <div class="flex flex-col items-center pb-24">
+      <div class="space-y-10 max-w-5xl w-full">
+        <p class="text-2xl landing-login text-custom-brown-500 w-full text-center font-bold">Events</p>
+
+        <div class="grid grid-cols-3 gap-x-16">
+          <div v-for="event in events" class="rounded-md overflow-hidden justify-center bg-custom-brown-200 shadow-lg">
+            <img :src="event.image" class="object-fill" />
+
+            <p class="text-base text-custom-brown-500 text-center w-full py-4">{{ event.label }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col items-center pb-24">
+      <div class="w-full flex items-center relative justify-between">
+        <div></div>
+        <div class="w-[615px] h-[529px] bg-custom-brown-400 rounded-l-md"></div>
+
+        <div 
+          ref="container"
+          @mousedown="startDrag" 
+          @mousemove="handleDrag" 
+          @mouseup="endDrag" 
+          @mouseleave="endDrag"
+          class="absolute top-12 left-64 horizontal z-20 cursor-pointer prevent-select" 
+        >
+          <div
+            :style="{ transform: `translateX(${data.scrollX}px)` }"
+            class="flex flex-col space-y-10"
+          >
+            <div class="flex items-center space-x-4">
+              <p class="text-2xl text-custom-brown-500 font-bold landing-login">Resource Materials</p>
+            </div>
+
+            <div class="flex items-center space-x-6">
+              <div 
+                v-for="material in materials" 
+                class="bg-white w-[356px] rounded-xl drop-shadow-xl overflow-hidden" aria-readonly="true"
+              >
+                 <img :src="material.image" class="object-fit">
+
+                 <div class="p-4 space-y-4">
+                  <p class="text-custom-brown-500 text-base">{{ material.description }}</p>
+
+                  <div>
+                    <p class="text-custom-brown-500 font-medium text-xs">By {{ material.author }}</p>
+                    <p class="text-custom-brown-500 text-[12px]">{{ material.date }}</p>
+                  </div>
+                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -205,5 +293,21 @@ function handlePassword() {
 
 .landing-login {
   font-family: 'Merriweather', serif;
+}
+
+.container {
+  width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.content {
+  display: inline-block;
+}
+
+.prevent-select {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
 }
 </style>
