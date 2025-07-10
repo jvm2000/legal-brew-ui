@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { EyeIcon, EyeSlashIcon, ShoppingCartIcon } from '@heroicons/vue/24/outline'
+import { ShoppingCartIcon } from '@heroicons/vue/24/outline'
 
 type Services = {
   label: string,
@@ -9,7 +9,6 @@ type Services = {
 }
 
 const { container, startDrag, endDrag, handleDrag, data } = useScroll()
-const isHiddenInput = ref<boolean>(true)
 const services = ref<Services[]>([
   {
     label: 'Latte Legalizations',
@@ -68,10 +67,40 @@ const materials = ref([
     image: '/images/materials/4.svg'
   }
 ])
+const formLogin = ref({
+  email: '',
+  password: ''
+})
 
-function handlePassword() {
-  isHiddenInput.value = !isHiddenInput.value
-} 
+async function login() {
+  const config = useRuntimeConfig()
+
+  await $fetch('/sanctum/csrf-cookie', {
+    baseURL: config.public.apiBase,
+    credentials: 'include',
+  })
+
+  const { data: response, error } = await useFetch('/api/login', {
+    baseURL: useRuntimeConfig().public.apiBase,
+    method: 'POST',
+    body: {
+      email: formLogin.value.email,
+      password: formLogin.value.password,
+    }
+  })
+
+  if (error.value) {
+    console.error('Login failed:', error.value)
+  } else {
+    console.log('Login success:', data.value)
+
+    return navigateTo('/dashboard')
+  }
+}
+
+definePageMeta({
+  layout: 'landing',
+});
 </script>
 
 <template>
@@ -116,43 +145,22 @@ function handlePassword() {
           <p class="text-2xl font-medium text-border-custom-brown-500">Justice Brewed Right</p>
         </div>
 
-        <div class="space-y-4">
-          <div class="flex flex-col space-y-2">
-            <label for="" class="text-sm text-custom-brown-300 font-medium">Username/Email</label>
+        <div class="space-y-4 w-72">
+          <BaseInput 
+            v-model="formLogin.email" 
+            label="Username or email" 
+            placeholder="Enter username or email" 
+          />
 
-            <input 
-              type="text"
-              class="bg-custom-brown-200 text-sm p-3 rounded-md placeholder-custom-brown-300 text-custom-brown-300 w-72"
-              placeholder="Enter username or email"
-            />
-          </div>
-
-          <div class="flex flex-col space-y-2">
-            <label for="" class="text-sm text-custom-brown-300 font-medium">Password</label>
-
-            <div class="relative flex items-center w-72">
-              <input 
-                :type="isHiddenInput ? 'password' : 'text'"
-                class="bg-custom-brown-200 text-sm p-3 rounded-md placeholder-custom-brown-300 text-custom-brown-300 w-72 z-[0]"
-                placeholder="Enter password"
-              />
-
-              <EyeIcon
-                v-if="isHiddenInput"
-                class="w-4 h-4 stroke-custom-brown-300 cursor-pointer absolute right-3 z-[1]"
-                @click="handlePassword"
-              />
-
-              <EyeSlashIcon
-                v-if="!isHiddenInput"
-                class="w-4 h-4 stroke-custom-brown-300 cursor-pointer absolute right-3 z-[1]"
-                @click="handlePassword"
-              />
-            </div>
-          </div>
+          <BaseInput 
+            v-model="formLogin.password" 
+            type="password"
+            label="Password"
+            placeholder="Enter password"
+          />
         </div>
 
-        <button class="bg-custom-brown-500 py-2 text-sm text-white text-center w-24 rounded-md">Login</button>
+        <button @click="login" class="bg-custom-brown-500 py-2 text-sm text-white text-center w-24 rounded-md">Login</button>
 
         <p class="text-sm">
           <span class="text-custom-brown-400">Don't have an account?</span> <span class="text-custom-brown-500">Sign Up</span>
@@ -240,7 +248,7 @@ function handlePassword() {
       </div>
     </div>
 
-    <div class="flex flex-col items-center pb-24">
+    <div class="flex flex-col items-center py-24">
       <div class="w-full flex items-center relative justify-between">
         <div></div>
         <div class="w-[615px] h-[529px] bg-custom-brown-400 rounded-l-md"></div>

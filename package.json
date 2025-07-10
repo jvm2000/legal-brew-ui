@@ -17,6 +17,9 @@
     "vue-router": "^4.2.5"
   },
   "dependencies": {
-    "@heroicons/vue": "^2.2.0"
+    "@heroicons/vue": "^2.2.0",
+    "@nuxtjs/axios": "^5.13.6",
+    "axios": "^1.10.0",
+    "tailwind-merge": "^3.3.1"
   }
 }

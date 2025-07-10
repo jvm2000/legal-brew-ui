@@ -1,4 +1,4 @@
-export const useAuth = async () => {
+export default defineNuxtRouteMiddleware(async () => {
   const user = useState('user')
   const config = useRuntimeConfig()
 
@@ -9,10 +9,10 @@ export const useAuth = async () => {
         credentials: 'include',
       })
       user.value = fetchedUser
+
+      return navigateTo('/dashboard')
     } catch {
-      user.value = null
+      return navigateTo('')
     }
   }
-
-  return { user }
-}
+})
