@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ShoppingCartIcon } from '@heroicons/vue/24/outline'
+import { useAuth } from '~/composables/useAuth'
 
 type Services = {
   label: string,
@@ -67,40 +68,12 @@ const materials = ref([
     image: '/images/materials/4.svg'
   }
 ])
-const formLogin = ref({
-  email: '',
-  password: ''
-})
-
-async function login() {
-  const config = useRuntimeConfig()
-
-  await $fetch('/sanctum/csrf-cookie', {
-    baseURL: config.public.apiBase,
-    credentials: 'include',
-  })
-
-  const { data: response, error } = await useFetch('/api/login', {
-    baseURL: useRuntimeConfig().public.apiBase,
-    method: 'POST',
-    body: {
-      email: formLogin.value.email,
-      password: formLogin.value.password,
-    }
-  })
-
-  if (error.value) {
-    console.error('Login failed:', error.value)
-  } else {
-    console.log('Login success:', data.value)
-
-    return navigateTo('/dashboard')
-  }
-}
+const { user, formLogin, login } = useAuth()
 
 definePageMeta({
   layout: 'landing',
-});
+  middleware: 'guest'
+})
 </script>
 
 <template>

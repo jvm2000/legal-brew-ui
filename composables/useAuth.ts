@@ -1,18 +1,47 @@
-export const useAuth = async () => {
-  const user = useState('user')
-  const config = useRuntimeConfig()
+import { useSessionStorage } from '@vueuse/core'
 
-  if (!user.value) {
+export const useAuth = () => {
+  const errors = ref([])
+  const user = useSessionStorage<any>('auth.user', null)
+  const config = useRuntimeConfig()
+  const formLogin = ref({
+    email: '',
+    password: ''
+  })
+
+  async function login (email: string, password: string) {
+    await $fetch('/sanctum/csrf-cookie', {
+      baseURL: config.public.apiBase,
+      credentials: 'include',
+    })
+
     try {
-      const fetchedUser = await $fetch('/api/user', {
+      const response = await $fetch('/api/login', {
         baseURL: config.public.apiBase,
+        method: 'POST',
         credentials: 'include',
+          body: { 
+            email: formLogin.value.email,
+            password: formLogin.value.password
+        },
       })
-      user.value = fetchedUser
-    } catch {
-      user.value = null
+      
+      user.value = response
+
+      navigateTo('/dashboard')
+    } catch (err: any) {
+    errors.value = err?.data?.message || err.message || 'Login failed'
     }
   }
 
-  return { user }
+  const loggedIn = computed((): boolean => {
+    return !!user.value
+  });
+
+  return {
+    user,
+    formLogin,
+    loggedIn,
+    login
+  }
 }
