@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ShoppingCartIcon } from '@heroicons/vue/24/outline'
-import { useAuth } from '~/composables/useAuth'
 
 type Services = {
   label: string,
@@ -68,7 +67,7 @@ const materials = ref([
     image: '/images/materials/4.svg'
   }
 ])
-const { user, formLogin, login } = useAuth()
+const { user, errors, formLogin, login } = useAuth()
 
 definePageMeta({
   layout: 'landing',
@@ -130,6 +129,7 @@ definePageMeta({
             type="password"
             label="Password"
             placeholder="Enter password"
+            :error="errors"
           />
         </div>
 
