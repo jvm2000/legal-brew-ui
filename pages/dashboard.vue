@@ -4,6 +4,8 @@ definePageMeta({
 })
 
 useHead({ title: 'Dashboard' })
+
+const { user } = useAuth()
 </script>
 
 <template>

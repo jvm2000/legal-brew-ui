@@ -81,7 +81,7 @@ definePageMeta({
   <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
 
   <div class="app-container overflow-x-hidden">
-    <div class="w-full bg-[#EDE0D4] flex items-center justify-between drop-shadow-sm px-44">
+    <div class="w-full bg-custom-brown-200 flex items-center justify-between drop-shadow-sm px-44">
       <div class="flex items-center space-x-4 py-6">
         <img src="/images/logo-landing.svg" />
 

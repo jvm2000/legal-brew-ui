@@ -1,8 +1,15 @@
-import { useStorage } from '@vueuse/core'
+type User = {
+  name: string,
+  contact_no: string,
+}
 
+type Auth = {
+  message: string,
+  user: User
+}
 export const useAuth = () => {
   const errors = ref([])
-  const user = useCookie<any>('auth.user', {
+  const user = useCookie<Auth | null>('auth.user', {
     maxAge: 60 * 60 * 24 * 7, // 7 days
   })
   const config = useRuntimeConfig()

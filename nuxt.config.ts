@@ -5,6 +5,9 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiBase: 'http://localhost:8000', // Laravel API
-    }
+    },
+    head: {
+      meta: [{ name: 'csrf-token', content: '' }],
+    },
   }
 })
