@@ -45,7 +45,7 @@ await getPosts()
     </div>
 
     <div v-for="post in posts">
-      <PostContainer :post />
+      <PostContainer :post @success="getPosts" />
     </div>
   </div>
 

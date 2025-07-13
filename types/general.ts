@@ -7,10 +7,18 @@ export type User = {
 }
 
 export type Post = {
+  id: string,
   description: string,
   hyperlink: string,
   images: string[],
   user: User,
   comments: string[],
-  reactions: string[]
+  reactions: string[],
+  updated_at: Date
+}
+
+export type Comment = {
+  content: string,
+  created_at: Date,
+  user: User
 }
