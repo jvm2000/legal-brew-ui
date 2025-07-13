@@ -1,8 +1,12 @@
 <script setup lang="ts">
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
 import { EllipsisHorizontalIcon, HeartIcon, ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/vue/24/outline'
 import { PaperAirplaneIcon } from '@heroicons/vue/20/solid'
 import type { Post, Comment } from '~/types/general';
 import CarouselImages from './CarouselImages.vue';
+
+dayjs.extend(relativeTime)
 
 const props = withDefaults(defineProps<{
   post: Post | null,
@@ -20,9 +24,11 @@ const { user: authUser } = useAuth()
 const isCommenting = ref(false)
 const commentForm = ref({
   content: '',
-  post_id: props.post?.id,
-  user_id: authUser.value?.user.id
+  post_id: '',
+  user_id: ''
 })
+const isSubmitting = ref(false)
+const inputText = ref('')
 
 async function openCommentSection() {
   isCommenting.value = !isCommenting.value
@@ -39,17 +45,6 @@ function autoResize() {
   }
 }
 
-async function submit() {
-  const { error } = await useFetch('/api/comments', {
-    baseURL: useRuntimeConfig().public.apiBase,
-    method: 'POST',
-    body: commentForm.value,
-    credentials: 'include',
-  })
-
-  await getComments()
-}
-
 async function getComments() {
   const { data } = await useFetch<Comment[]>(`/api/posts/${props.post?.id}/comments`, {
     baseURL: useRuntimeConfig().public.apiBase,
@@ -60,8 +55,31 @@ async function getComments() {
   if (data.value) {
     comments.value = data.value
   }
+}
 
-  commentForm.value.content = ''
+function getRemainingTime(date: Date | string) {
+  return dayjs(date).fromNow() // returns "in 3 days" or "2 hours ago"
+}
+
+async function submitComment() {
+  isSubmitting.value = true
+
+  commentForm.value.content = inputText.value
+  commentForm.value.post_id = props.post?.id ?? ''
+  commentForm.value.user_id = authUser.value?.user.id ?? ''
+
+  const { error } = await useFetch('/api/comments', {
+    baseURL: useRuntimeConfig().public.apiBase,
+    method: 'POST',
+    body: commentForm,
+    credentials: 'include',
+  })
+
+  isSubmitting.value = false
+
+  emit('success')
+
+  await getComments()
 }
 
 onMounted(() => {
@@ -78,7 +96,7 @@ onMounted(() => {
         <div class="justify-start">
           <p class="text-sm font-bold text-custom-brown-500">{{ props.post?.user.full_name }}</p>
 
-          <p class="text-xs text-gray-500">10 hours ago</p>
+          <p class="text-xs text-gray-500">{{ getRemainingTime(props.post?.updated_at) }}</p>
         </div>
       </div>
 
@@ -129,13 +147,16 @@ onMounted(() => {
         <div class="relative w-full">
           <textarea
             ref="inputRef"
-            v-model="commentForm.content"
+            v-model="inputText"
             class="border-2 border-custom-brown-500 w-full focus:ring-0 outline-none px-4 py-2 rounded-md text-sm h-auto max-h-56 resize-none  overflow-hidden"
+            :disabled="isSubmitting"
             :placeholder="`Comment as ${authUser?.user.full_name}`"
             @input="autoResize"
           ></textarea>
 
-          <PaperAirplaneIcon class="fill-custom-brown-500 absolute right-4 bottom-4 w-4 h-4" @click="submit" />
+          <button @click="submitComment" :disabled="isSubmitting">
+            <PaperAirplaneIcon class="fill-custom-brown-500 absolute right-4 bottom-4 w-4 h-4" />
+          </button>
         </div>
       </div>
     </div>

@@ -14,11 +14,11 @@ export type Post = {
   user: User,
   comments: string[],
   reactions: string[],
-  updated_at: Date
+  updated_at: string | Date
 }
 
 export type Comment = {
   content: string,
-  created_at: Date,
+  created_at: string | Date,
   user: User
 }

@@ -68,6 +68,8 @@ function uploadImage() {
 async function submit() {
   const { isOpenPostModal } = usePost()
 
+  loading.value = true
+
   const formData = new FormData()
 
   formData.append('description', form.value.description || '')
