@@ -67,7 +67,7 @@ const materials = ref([
     image: '/images/materials/4.svg'
   }
 ])
-const { user, errors, formLogin, login } = useAuth()
+const { user, errors, formLogin, login, loading } = useAuth()
 
 definePageMeta({
   layout: 'landing',
@@ -129,11 +129,13 @@ definePageMeta({
             type="password"
             label="Password"
             placeholder="Enter password"
-            :error="errors"
+            :error="errors[0]"
           />
         </div>
 
-        <button @click="login" class="bg-custom-brown-500 py-2 text-sm text-white text-center w-24 rounded-md">Login</button>
+        <div class="w-24">
+          <BaseButton @click="login" :isLoading="loading">Login</BaseButton>
+        </div>
 
         <p class="text-sm">
           <span class="text-custom-brown-400">Don't have an account?</span> <span class="text-custom-brown-500">Sign Up</span>

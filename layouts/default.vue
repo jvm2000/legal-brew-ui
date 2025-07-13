@@ -5,7 +5,7 @@ import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 const { user: authUser } = useAuth()
 
 async function logout() {
-  user.value = null
+  authUser.value = null
 
   navigateTo('')
 }
@@ -13,7 +13,7 @@ async function logout() {
 
 <template>
   <div class="app-container">
-    <div class="w-full bg-custom-brown-200 flex items-center justify-between drop-shadow-sm px-44">
+    <div class="w-full bg-custom-brown-200 flex items-center justify-between drop-shadow-sm px-44 fixed top-0 z-[100]">
       <div class="flex items-center space-x-4 py-6">
         <img src="/images/logo-landing.svg" />
 
@@ -33,7 +33,7 @@ async function logout() {
           <div class="w-8 h-8 rounded-full overflow-hidden bg-custom-brown-500 border border-custom-brown-300"></div>
 
           <div>
-            <p class="text-sm font-medium custom-brown-500">{{ authUser?.user.name }}</p>
+            <p class="text-sm font-medium custom-brown-500">{{ authUser?.user.full_name }}</p>
 
             <p class="text-xs text-custom-brown-500">Admin</p>
           </div>
@@ -62,6 +62,10 @@ async function logout() {
           </Menu>
         </div>
       </div>
+    </div>
+
+    <div class="w-full flex flex-col items-center py-36">
+      <slot />
     </div>
   </div>
 </template>
