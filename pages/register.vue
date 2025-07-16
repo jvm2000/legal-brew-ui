@@ -1,30 +1,98 @@
 <script setup lang="ts">
+import { CameraIcon} from '@heroicons/vue/24/outline'
+
 useHead({ title: 'Sign Up' })
 
 type RegisterForm = {
   username: string,
   full_name: string,
   email: string,
+  birthdate: string,
   password: string,
-  contact_no: string
+  contact_no: string,
+  role: 'client' | 'admin'
+  images: any[]
 }
 
+const images = ref<File[]>([])
+const previews = ref<string[]>([]) 
+const loading = ref(false)
 const form = ref<RegisterForm>({
   username: '',
   full_name: '',
   email: '',
+  birthdate: '',
   password: '',
-  contact_no: ''
+  contact_no: '',
+  role: 'client',
+  images: images.value
 })
 
 async function submit() {
+  loading.value = true
+
+  const formData = new FormData()
+
+  formData.append('full_name', form.value.full_name || '')
+  formData.append('username', form.value.username || '')
+  formData.append('email', form.value.email || '')
+  formData.append('birthdate', form.value.birthdate || '')
+  formData.append('password', form.value.password || '')
+  formData.append('contact_no', form.value.contact_no || '')
+  formData.append('role', form.value.role || '')
+
+  if (form.value.images && form.value.images.length > 0) {
+    for (let i = 0; i < form.value.images.length; i++) {
+      formData.append('images[]', form.value.images[i])
+    }
+  }
+
   const { error } = await useFetch('/api/register', {
     baseURL: useRuntimeConfig().public.apiBase,
     method: 'POST',
-    body: form.value,
+    body: formData,
     credentials: 'include',
   })
+
+  if (!error.value) {
+    loading.value = false
+
+    navigateTo('/')
+    return
+  }
+
+  return
 }
+
+function handleFiles(event: Event) {
+  const target = event.target as HTMLInputElement
+  const files = target.files
+
+  if (!files) return
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i]
+
+    images.value.push(file)
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      previews.value.push(e.target?.result as string)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  target.value = ''
+}
+
+function removeImage(index: number) {
+  images.value.splice(index, 1)
+  previews.value.splice(index, 1)
+}
+
+function uploadImage() {
+  document.getElementById('profile-photo')?.click()
+} 
 
 definePageMeta({
   layout: 'landing',
@@ -33,41 +101,144 @@ definePageMeta({
 </script>
 
 <template>
-  <div class="w-full py-24 flex flex-col items-center">
-    <div class="w-full max-w-lg space-y-4">
-      <BaseInput
-        type="email"
-        v-model="form.email"
-        label="Email"
-        placeholder="Enter email"
-      />
+  <div class="app-container overflow-x-hidden">
+    <div class="w-full bg-custom-brown-200 flex items-center justify-between drop-shadow-sm px-44 fixed-0">
+      <div class="flex items-center space-x-4 py-6">
+        <img src="/images/logo-landing.svg" />
 
-      <BaseInput
-        v-model="form.username"
-        label="Username"
-        placeholder="Enter username"
-      />
+        <div class="space-y-2">
+          <img src="/images/logo-landing-text1.svg" />
 
-      <BaseInput
-        v-model="form.full_name"
-        label="Full name"
-        placeholder="Enter full name"
-      />
+          <div class="w-28 h-[2px] bg-black" />
 
-      <BaseInput
-        type="Password"
-        v-model="form.password"
-        label="Password"
-        placeholder="Enter password"
-      />
+          <img src="/images/logo-landing-text2.svg" />
+        </div>
+      </div>
+    </div>
 
-      <BaseInput
-        v-model="form.contact_no"
-        label="Contact Number"
-        placeholder="Enter contact number"
-      />
+    <div class="w-full flex flex-col items-center py-12">
+      <div class="max-w-xl w-full space-y-6 bg-white p-6 rounded-md">
+        <div class="space-y-1.5">
+          <p class="text-2xl font-medium text-custom-brown-500">Registration Form</p>
 
-      <BaseButton @click="submit">Sign Up</BaseButton>
+          <p class="text-sm text-custom-brown-500">Vorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </div>
+
+        <div class="py-2 flex flex-col items-center space-y-2">
+          <div 
+            v-if="!previews.length" class="w-28 h-28 rounded-full border border-gray-400 grid place-items-center relative cursor-pointer"
+            @click="uploadImage"
+          >
+            <CameraIcon class="w-6 h-6 stroke-gray-400" />
+
+            <input 
+              id="profile-photo"
+              type="file" 
+              accept="image/*" 
+              multiple
+              @change="handleFiles" class="hidden absolute" 
+            />
+          </div>
+
+          <div v-if="previews.length" class="w-28 h-28 rounded-full border border-gray-400 grid place-items-center relative overflow-hidden">
+            <img :src="previews[0]" class="w-full h-full object-fill">
+          </div>
+
+          <p class="text-sm text-custom-brown-500 font-medium">Add Picture</p>
+        </div>
+
+        <div class="flex flex-col space-y-1.5">
+          <label for="" class="text-sm font-medium text-custom-brown-500">Full Name</label>
+
+          <input 
+            v-model="form.full_name"
+            type="text"
+            class="text-sm ring-0 focus:ring-0 outline-none px-4 py-2 border border-gray-300 rounded-md"
+            placeholder="Enter Full Name"
+          >
+        </div>
+
+        <div class="flex flex-col space-y-1.5">
+          <label for="" class="text-sm font-medium text-custom-brown-500">Username</label>
+
+          <input 
+            v-model="form.username"
+            type="text"
+            class="text-sm ring-0 focus:ring-0 outline-none px-4 py-2 border border-gray-300 rounded-md"
+            placeholder="Enter Username"
+          >
+        </div>
+
+        <div class="flex flex-col space-y-1.5">
+          <label for="" class="text-sm font-medium text-custom-brown-500">Birthdate</label>
+
+          <input 
+            v-model="form.birthdate"
+            type="date"
+            class="text-sm ring-0 focus:ring-0 outline-none px-4 py-2 border border-gray-300 rounded-md"
+            placeholder="Month/Day/Year"
+          >
+        </div>
+
+        <div class="flex flex-col space-y-1.5">
+          <label for="" class="text-sm font-medium text-custom-brown-500">Email</label>
+
+          <input 
+            v-model="form.email"
+            type="text"
+            class="text-sm ring-0 focus:ring-0 outline-none px-4 py-2 border border-gray-300 rounded-md"
+            placeholder="Enter email"
+          >
+        </div>
+
+        <div class="flex flex-col space-y-1.5">
+          <label for="" class="text-sm font-medium text-custom-brown-500">Contact No.</label>
+
+          <input 
+            v-model="form.contact_no"
+            type="text"
+            class="text-sm ring-0 focus:ring-0 outline-none px-4 py-2 border border-gray-300 rounded-md"
+            placeholder="Enter contact number"
+          >
+        </div>
+
+        <div class="flex flex-col space-y-1.5">
+          <label for="" class="text-sm font-medium text-custom-brown-500">Password</label>
+
+          <input 
+            v-model="form.password"
+            type="password"
+            class="text-sm ring-0 focus:ring-0 outline-none px-4 py-2 border border-gray-300 rounded-md"
+            placeholder="Enter password"
+          >
+        </div>
+
+        <div class="flex flex-col space-y-1.5">
+          <label for="" class="text-sm font-medium text-custom-brown-500">Confirm Password</label>
+
+          <input 
+            v-model="form.confirm_password"
+            type="password"
+            class="text-sm ring-0 focus:ring-0 outline-none px-4 py-2 border border-gray-300 rounded-md"
+            placeholder="Re-enter password"
+          >
+        </div>
+
+        <div class="w-full flex justify-end">
+          <div class="w-24">
+            <BaseButton @click="submit">
+              Done
+            </BaseButton>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.app-container {
+  background-color: #FAF1E9;
+  min-height: 100vh;
+}
+</style>
