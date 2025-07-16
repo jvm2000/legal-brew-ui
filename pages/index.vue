@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ShoppingCartIcon } from '@heroicons/vue/24/outline'
-
 type Services = {
   label: string,
   price: string,
@@ -134,7 +132,7 @@ definePageMeta({
         </div>
 
         <p class="text-sm">
-          <span class="text-custom-brown-400">Don't have an account?</span> <span class="text-custom-brown-500">Sign Up</span>
+          <span class="text-custom-brown-400">Don't have an account?</span> <span class="text-custom-brown-500 cursor-pointer" @click="navigateTo('/register')">Sign Up</span>
         </p>
       </div>
 

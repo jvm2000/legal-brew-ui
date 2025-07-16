@@ -9,6 +9,10 @@ async function logout() {
 
   navigateTo('')
 }
+
+function getImage(path: any) {
+  return `${ useRuntimeConfig().public.apiBase }/storage/${path}`
+}
 </script>
 
 <template>
@@ -30,7 +34,9 @@ async function logout() {
         <BellIcon class="w-8 h-8 stroke-custom-brown-500" />
 
         <div class="flex items-center space-x-4">
-          <div class="w-8 h-8 rounded-full overflow-hidden bg-custom-brown-500 border border-custom-brown-300"></div>
+          <div class="w-8 h-8 rounded-full overflow-hidden relative">
+            <img :src="getImage(authUser?.user.images)" class="w-full h-full object-cover">
+          </div>
 
           <div>
             <p class="text-sm font-medium custom-brown-500">{{ authUser?.user.full_name }}</p>

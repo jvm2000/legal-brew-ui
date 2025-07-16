@@ -3,6 +3,8 @@ type User = {
   username: string,
   full_name: string,
   contact_no: string,
+  role: string,
+  images: any[]
 }
 
 type Auth = {
