@@ -41,7 +41,7 @@ function getImage(path: any) {
           <div>
             <p class="text-sm font-medium custom-brown-500">{{ authUser?.user.full_name }}</p>
 
-            <p class="text-xs text-custom-brown-500">Admin</p>
+            <p class="text-xs text-custom-brown-500">{{ authUser?.user.role }}</p>
           </div>
         </div>
 

@@ -9,7 +9,6 @@ type RegisterForm = {
   email: string,
   birthdate: string,
   password: string,
-  confirm_password: string,
   contact_no: string,
   role: 'client' | 'admin'
   images: any[]
@@ -24,7 +23,6 @@ const form = ref<RegisterForm>({
   email: '',
   birthdate: '',
   password: '',
-  confirm_password: '',
   contact_no: '',
   role: 'client',
   images: images.value
@@ -40,7 +38,6 @@ async function submit() {
   formData.append('email', form.value.email || '')
   formData.append('birthdate', form.value.birthdate || '')
   formData.append('password', form.value.password || '')
-  formData.append('confirm_password', form.value.confirm_password || '')
   formData.append('contact_no', form.value.contact_no || '')
   formData.append('role', form.value.role || '')
 
