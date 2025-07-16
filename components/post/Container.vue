@@ -29,6 +29,7 @@ const commentForm = ref({
 })
 const isSubmitting = ref(false)
 const inputText = ref('')
+const { isViewPostModal, openCloseViewPostModal } = usePost()
 
 async function openCommentSection() {
   isCommenting.value = !isCommenting.value
@@ -74,6 +75,9 @@ async function submitComment() {
     body: commentForm,
     credentials: 'include',
   })
+
+  commentForm.value.content = ''
+  inputText.value = ''
 
   isSubmitting.value = false
 
@@ -121,10 +125,12 @@ onMounted(() => {
       <div class="flex items-center space-x-2">
         <ChatBubbleOvalLeftEllipsisIcon 
           class="w-6 h-6 stroke-custom-brown-500 cursor-pointer" 
-          @click="openCommentSection"
+          @click="openCloseViewPostModal()"
         />
 
         <p class="text-sm text-custom-brown-500">{{ props.post?.comments.length ?? '0' }}</p>
+
+        <ModalViewPost :post="props.post" />
       </div>
     </div>
 

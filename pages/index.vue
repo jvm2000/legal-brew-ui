@@ -102,25 +102,21 @@ definePageMeta({
         <p class="text-sm text-[#3A1F09] font-medium">Resource Materials</p>
         <p class="text-sm text-[#3A1F09] font-medium">Contact Us</p>
         <p class="text-sm text-[#3A1F09] font-medium">Donate</p>
-
-        <button>
-          <img src="/images/shop-icon-landing.svg" />
-        </button>
       </div>
     </div>
 
     <div class="pt-36 pb-24 flex items-center relative pl-64 max-w-full">
       <div class="space-y-6">
-        <div class="border-b pb-6 border-custom-brown-500 space-y-1 w-[466px]">
-          <p class="text-[48px] landing-login font-bold text-border-custom-brown-500">The Legal Brew</p>
+        <div class="border-b pb-6 border-custom-brown-500 space-y-1">
+          <p class="text-[48px] landing-login font-bold text-border-custom-brown-500">Restauro Legal Services</p>
 
-          <p class="text-2xl font-medium text-border-custom-brown-500">Justice Brewed Right</p>
+          <p class="text-sm text-border-custom-brown-500">THE GOOD OF THE PEOPLE IS THE GREATEST LAW</p>
         </div>
 
         <div class="space-y-4 w-72">
           <BaseInput 
             v-model="formLogin.email" 
-            label="Username or email" 
+            label="Username/Email" 
             placeholder="Enter username or email" 
           />
 
@@ -193,18 +189,9 @@ definePageMeta({
 
               <p class="text-sm font-bold text-custom-brown-500">Starts at P {{ service.price }}</p>
 
-              <p class="text-sm text-custom-brown-500 max-w-2xl w-full">{{ service.description }}</p>
+              <p class="text-sm text-custom-brown-500 max-w-4xl w-full">{{ service.description }}</p>
             </div>
           </div>
-
-          <button 
-            class="bg-[#7F5539] py-2 text-sm text-white flex flex-col items-center w-40 h-10 rounded-md"
-          >
-            <div class="flex items-center space-x-2">
-              <ShoppingCartIcon class="w-4 h-4 stroke-white" /> 
-              <span class="text-sm mt-0.5">Add to Cart</span>
-            </div>
-          </button>
         </div>
       </div>
     </div>

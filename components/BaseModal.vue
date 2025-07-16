@@ -7,7 +7,7 @@ import { twMerge } from 'tailwind-merge'
 defineOptions({ inheritAttrs: false })
 
 type ModalProps = {
-  size: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl',
+  size: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl',
   shape: 'straight' | 'rounded' | 'curved' | 'roundedTop',
   footerAlign: 'start' | 'end' | 'center' | 'between' | 'center-single',
 }
@@ -22,6 +22,8 @@ const sizeClasses: Record<ModalProps['size'], string> = {
   '2xl': 'max-w-2xl',
   '3xl': 'max-w-3xl',
   '4xl' : 'max-w-4xl',
+  '5xl' : 'max-w-5xl',
+  '6xl' : 'max-w-6xl',
 }
 
 const shapeClasses: Record<ModalProps['shape'], string> = {
@@ -37,6 +39,11 @@ const props = withDefaults(
      * Whether the modal is open.
      */
     open?: boolean;
+
+    /**
+     * Whether the modal is open.
+     */
+    noPadding?: boolean;
 
     isDarkBackground?: boolean;
 
@@ -81,6 +88,7 @@ const props = withDefaults(
       wrapper: "",
       dialog: "",
     }),
+    noPadding: false
   }
 );
 
@@ -163,7 +171,7 @@ const shape = computed(() => xse.value ? 'rounded-none' : '')
                 </div>
                 <slot name="header"></slot>
 
-                <div class="py-4 px-8">
+                <div :class="[props.noPadding ? '' : 'py-4 px-8']">
                   <slot></slot>
                 </div>
 
