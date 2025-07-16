@@ -3,8 +3,20 @@ import { BellIcon, ChevronUpDownIcon } from '@heroicons/vue/24/outline'
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 
 const { user: authUser } = useAuth()
+const config = useRuntimeConfig()
 
 async function logout() {
+  await $fetch('/sanctum/csrf-cookie', {
+      baseURL: config.public.apiBase,
+      credentials: 'include',
+    })
+
+  await useFetch('/api/logout', {
+    baseURL: config.public.apiBase,
+    method: 'POST',
+    credentials: 'include',
+  })
+
   authUser.value = null
 
   navigateTo('')

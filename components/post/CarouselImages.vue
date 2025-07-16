@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline'
+import { twMerge } from 'tailwind-merge'
 
 const props = withDefaults(defineProps<{
   images?: string[],
+  maxHeight?: 'h-lg' | 'h-xl',
 }>(), {
   images: () => [],
+  maxHeight: 'h-lg'
 })
 
 const current = ref(0)
@@ -24,7 +27,13 @@ function getImage(path: string) {
 
 <template>
   <div class="space-y-4 w-full flex flex-col items-center">
-    <div class="relative w-full h-80 overflow-hidden">
+    <div 
+      :class="[twMerge(
+        'relative w-full h-80 overflow-hidden',
+        props.maxHeight === 'h-lg' && 'h-80',
+        props.maxHeight === 'h-xl' && 'h-[500px]'
+      )]"
+    >
       <img
         :src="getImage(images[current])"
         class="w-full h-full object-cover transition-all duration-300"
