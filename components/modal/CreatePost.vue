@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { PhotoIcon, LinkIcon, XMarkIcon } from '@heroicons/vue/24/outline'
-import auth from '~/middleware/auth';
 
 type PostForm = {
   description: string,

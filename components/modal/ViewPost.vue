@@ -32,7 +32,7 @@ async function getComments() {
 }
 
 async function submitComment() {
-  if (loading.value) return 
+  if (loading.value || !inputText.value) return 
 
   loading.value = true
 
@@ -138,7 +138,9 @@ const hasImages = computed<boolean>(() => {
                 placeholder="Leave a comment"
               />
 
-              <PaperAirplaneIcon class="stroke-custom-brown-500 absolute right-4 w-5 h-5" @click="submitComment" />
+              <button class="absolute right-4" @click="submitComment" :disabled="loading">
+                <PaperAirplaneIcon class="stroke-custom-brown-500 w-5 h-5" />
+              </button>
             </div>
           </div>
 

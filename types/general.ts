@@ -12,8 +12,8 @@ export type Post = {
   hyperlink: string,
   images: string[],
   user: User,
-  comments: string[],
-  reactions: string[],
+  comments: Comment[],
+  reactions: Reaction[],
   updated_at: any
 }
 
@@ -22,3 +22,10 @@ export type Comment = {
   created_at: any,
   user: User
 }
+
+export type Reaction = {
+  content: string,
+  created_at: any,  
+  user_id: string
+}
+

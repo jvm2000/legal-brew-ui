@@ -27,7 +27,9 @@ import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
           <ClientMenuServices />
         </TabPanel>
 
-        <TabPanel>Content 2</TabPanel>
+        <TabPanel>
+          <ClientResourceMaterials />
+        </TabPanel>
       </TabPanels>
     </TabGroup>
   </div>

@@ -2,14 +2,19 @@
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { EllipsisHorizontalIcon, HeartIcon, ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/vue/24/outline'
-import { PaperAirplaneIcon } from '@heroicons/vue/20/solid'
-import type { Post, Comment } from '~/types/general'
+import type { Post, Reaction } from '~/types/general'
 import CarouselImages from './CarouselImages.vue'
+import auth from '~/middleware/auth'
 
+type ReactionForm = {
+  post_id: string,
+  user_id: string,
+  type: string
+}
 dayjs.extend(relativeTime)
 
 const props = withDefaults(defineProps<{
-  post: Post,
+  post: Post | null,
 }>(), {
   post: null,
 })
@@ -19,17 +24,13 @@ const emit = defineEmits<{
 }>()
 
 const inputRef = ref<HTMLTextAreaElement | null>(null)
-const comments = ref<Comment[]>([])
+const { openCloseViewPostModal } = usePost()
 const { user: authUser } = useAuth()
-const isCommenting = ref(false)
-const commentForm = ref({
-  content: '',
-  post_id: '',
-  user_id: ''
+const reactionForm = ref<ReactionForm>({
+    post_id: '',
+    user_id: '',
+    type: ''
 })
-const isSubmitting = ref(false)
-const inputText = ref('')
-const { isViewPostModal, openCloseViewPostModal } = usePost()
 
 function autoResize() {
   const el = inputRef.value
@@ -42,6 +43,25 @@ function autoResize() {
 
 function getRemainingTime(date: Date | string) {
   return dayjs(date).fromNow() // returns "in 3 days" or "2 hours ago"
+}
+
+async function submitReaction() {
+  reactionForm.value.post_id = props.post?.id ?? ''
+  reactionForm.value.user_id =  authUser.value?.user.id ?? ''
+  reactionForm.value.type = 'heart'
+
+  const { error } = await useFetch('/api/reactions', {
+    baseURL: useRuntimeConfig().public.apiBase,
+    method: 'POST',
+    body: reactionForm.value,
+    credentials: 'include',
+  })
+
+  emit('success')
+}
+
+function checkIfAlreadyReacted(reaction: Reaction[]) {
+  return reaction?.some((reaction: any) => reaction.user_id === authUser.value?.user.id)
 }
 
 onMounted(() => {
@@ -75,7 +95,11 @@ onMounted(() => {
 
     <div class="flex items-center space-x-8">
       <div class="flex items-center space-x-2">
-        <HeartIcon class="w-6 h-6 stroke-custom-brown-500 cursor-pointer" />
+        <HeartIcon 
+          class="w-6 h-6 cursor-pointer"
+          :class="[checkIfAlreadyReacted(props.post?.reactions ?? []) ? 'fill-custom-brown-500' : 'stroke-custom-brown-500']"
+          @click="submitReaction"
+        />
 
         <p class="text-sm text-custom-brown-500">{{ props.post?.reactions.length ?? '0' }}</p>
       </div>

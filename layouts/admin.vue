@@ -19,7 +19,7 @@ async function logout() {
 
   authUser.value = null
 
-  navigateTo('')
+  navigateTo('/')
 }
 
 function getImage(path: any) {
