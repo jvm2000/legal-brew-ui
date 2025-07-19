@@ -13,4 +13,6 @@ const { user: authUser } = useAuth()
 
 <template>
   <Admin v-if="authUser?.user.role === 'admin'" />
+
+  <Client v-if="authUser?.user.role === 'client'" />
 </template>

@@ -9,8 +9,10 @@ type User = {
 
 type Auth = {
   message: string,
+  token: string,
   user: User
 }
+
 export const useAuth = () => {
   const errors = ref([])
   const loading = ref(false)

@@ -44,4 +44,6 @@ await getPosts()
   </div>
 
   <ModalCreatePost @success="getPosts" />
+
+  <ModalViewPost />
 </template>

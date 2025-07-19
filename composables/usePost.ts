@@ -1,6 +1,9 @@
+import type { Post } from "~/types/general"
+
 const state = reactive({
   isOpenPostModal: false,
-  isViewPostModal: false
+  isViewPostModal: false,
+  selectedPost: {} as Post
 })
 
 export default function () { 
@@ -8,7 +11,9 @@ export default function () {
     state.isOpenPostModal = !state.isOpenPostModal
   }
 
-  function openCloseViewPostModal() {
+  function openCloseViewPostModal(post: Post) {
+    state.selectedPost = post
+    
     state.isViewPostModal = !state.isViewPostModal
   }
 
