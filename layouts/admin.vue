@@ -7,14 +7,17 @@ const config = useRuntimeConfig()
 
 async function logout() {
   await $fetch('/sanctum/csrf-cookie', {
-      baseURL: config.public.apiBase,
-      credentials: 'include',
-    })
+    baseURL: config.public.apiBase,
+    credentials: 'include',
+  })
 
   await useFetch('/api/logout', {
-    baseURL: config.public.apiBase,
     method: 'POST',
+    baseURL: config.public.apiBase,
     credentials: 'include',
+    headers: {
+      Authorization: `Bearer ${authUser.value?.token}`,
+    },
   })
 
   authUser.value = null

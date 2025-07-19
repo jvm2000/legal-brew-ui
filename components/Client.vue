@@ -24,11 +24,11 @@ import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
 
       <TabPanels>
         <TabPanel>
-          <ClientMenuServices />
-        </TabPanel>
-
-        <TabPanel>
           <ClientResourceMaterials />
+        </TabPanel>
+        
+        <TabPanel>
+          <ClientMenuServices />
         </TabPanel>
       </TabPanels>
     </TabGroup>
