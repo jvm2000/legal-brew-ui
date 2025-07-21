@@ -10,15 +10,15 @@ import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
         <Tab v-slot="{ selected }">
           <button 
             class="text-base text-custom-brown-500 w-full py-2 border-b-custom-brown-500 outline-none ring-0 focus:ring-0"
-            :class="[selected ? 'border-b-2 font-medium' : 'border-b']"
-          >Menu of Services</button>
+            :class="[selected ? 'border-b-2' : 'border-b']"
+          >Resource Materials</button>
         </Tab>
-
+        
         <Tab v-slot="{ selected }">
           <button 
             class="text-base text-custom-brown-500 w-full py-2 border-b-custom-brown-500 outline-none ring-0 focus:ring-0"
-            :class="[selected ? 'border-b-2' : 'border-b']"
-          >Resource Materials</button>
+            :class="[selected ? 'border-b-2 font-medium' : 'border-b']"
+          >Menu of Services</button>
         </Tab>
       </TabList>
 
@@ -26,7 +26,7 @@ import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
         <TabPanel>
           <ClientResourceMaterials />
         </TabPanel>
-        
+
         <TabPanel>
           <ClientMenuServices />
         </TabPanel>
