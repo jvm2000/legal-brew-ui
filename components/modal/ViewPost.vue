@@ -47,7 +47,7 @@ async function submitComment() {
     credentials: 'include',
   })
 
-  inputText.value = ''
+  commentForm.value = {}
 
   await getComments()
 

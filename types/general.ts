@@ -29,3 +29,8 @@ export type Reaction = {
   user_id: string
 }
 
+export type Cart = {
+  id: string,
+  user_id: string,
+  user: User
+}
