@@ -47,7 +47,7 @@ function getRemainingTime(date: Date | string) {
 
 async function submitReaction() {
   reactionForm.value.post_id = props.post?.id ?? ''
-  reactionForm.value.user_id =  authUser.value?.user.id ?? ''
+  reactionForm.value.user_id =  authUser.value?.id ?? ''
   reactionForm.value.type = 'heart'
 
   const { error } = await useFetch('/api/reactions', {
@@ -61,7 +61,7 @@ async function submitReaction() {
 }
 
 function checkIfAlreadyReacted(reaction: Reaction[]) {
-  return reaction?.some((reaction: any) => reaction.user_id === authUser.value?.user.id)
+  return reaction?.some((reaction: any) => reaction.user_id === authUser?.value?.id)
 }
 
 onMounted(() => {

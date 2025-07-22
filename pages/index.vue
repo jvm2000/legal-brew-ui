@@ -65,7 +65,7 @@ const materials = ref([
     image: '/images/materials/4.svg'
   }
 ])
-const { user, errors, formLogin, login, loading } = useAuth()
+const { user, errors, formLogin, login, loading, token } = useAuth()
 
 definePageMeta({
   layout: 'landing',

@@ -8,7 +8,6 @@ const { user: authUser } = useAuth()
 const comments = ref<Comment[]>([])
 const loading = ref(false)
 const { isViewPostModal, openCloseViewPostModal, selectedPost } = usePost()
-const inputText = ref('')
 const commentForm = ref({
   content: '',
   post_id: '',
@@ -32,13 +31,12 @@ async function getComments() {
 }
 
 async function submitComment() {
-  if (loading.value || !inputText.value) return 
+  if (loading.value) return 
 
   loading.value = true
 
-  commentForm.value.content = inputText.value
   commentForm.value.post_id = selectedPost.value?.id ?? ''
-  commentForm.value.user_id = authUser.value?.user.id ?? ''
+  commentForm.value.user_id = authUser.value?.id ?? ''
 
   const { error } = await useFetch('/api/comments', {
     baseURL: useRuntimeConfig().public.apiBase,
@@ -132,7 +130,7 @@ const hasImages = computed<boolean>(() => {
             
             <div class="col-span-9 relative flex items-center">
               <input 
-                v-model="inputText"
+                v-model="commentForm.content"
                 type="text" 
                 class="w-full ring-0 focus:ring-0 outline-none px-4 py-2 rounded-md border border-gray-300"
                 placeholder="Leave a comment"

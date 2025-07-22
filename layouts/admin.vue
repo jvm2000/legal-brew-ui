@@ -1,28 +1,24 @@
 <script setup lang="ts">
-import { BellIcon, ChevronUpDownIcon } from '@heroicons/vue/24/outline'
+import { ShoppingCartIcon, ChevronUpDownIcon } from '@heroicons/vue/24/outline'
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 
-const { user: authUser } = useAuth()
+const { user: authUser, token } = useAuth()
 const config = useRuntimeConfig()
 
 async function logout() {
-  await $fetch('/sanctum/csrf-cookie', {
-    baseURL: config.public.apiBase,
-    credentials: 'include',
-  })
-
   await useFetch('/api/logout', {
     method: 'POST',
     baseURL: config.public.apiBase,
     credentials: 'include',
     headers: {
-      Authorization: `Bearer ${authUser.value?.token}`,
+      Authorization: `Bearer ${token.value.token}`,
     },
   })
 
+  token.value = null
   authUser.value = null
 
-  navigateTo('/')
+  await navigateTo('/')
 }
 
 function getImage(path: any) {
@@ -46,17 +42,20 @@ function getImage(path: any) {
       </div>
 
       <div class="flex items-center space-x-8">
-        <BellIcon class="w-8 h-8 stroke-custom-brown-500" />
+        <ShoppingCartIcon 
+          class="w-8 h-8 stroke-custom-brown-500 cursor-pointer"
+          @click="navigateTo('/cart')"
+        />
 
         <div class="flex items-center space-x-4">
           <div class="w-8 h-8 rounded-full overflow-hidden relative">
-            <img :src="getImage(authUser?.user.images)" class="w-full h-full object-cover">
+            <img :src="getImage(authUser?.images)" class="w-full h-full object-cover">
           </div>
 
           <div>
-            <p class="text-sm font-medium custom-brown-500">{{ authUser?.user.full_name }}</p>
+            <p class="text-sm font-medium custom-brown-500">{{ authUser?.full_name }}</p>
 
-            <p class="text-xs text-custom-brown-500">{{ authUser?.user.role }}</p>
+            <p class="text-xs text-custom-brown-500">{{ authUser?.role }}</p>
           </div>
         </div>
 

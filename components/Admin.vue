@@ -24,7 +24,7 @@ await getPosts()
   <div class="max-w-xl w-full space-y-6">
     <div class="text-4xl text-custom-brown-500">
       <p>Good Morning,</p>
-      <p class="capitalize">{{ authUser?.user.full_name }}</p>
+      <p class="capitalize">{{ authUser?.full_name }}</p>
     </div>
 
     <div class="w-full flex items-center p-6 space-x-4 bg-white rounded-md">

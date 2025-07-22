@@ -1,7 +1,24 @@
 export default defineNuxtRouteMiddleware(async () => {
-  const { loggedIn } = useAuth()
+  const { user: authUser, token } = useAuth()
 
-  if (!loggedIn.value && import.meta.client) {
-    return navigateTo('')
+  if (import.meta.client) {
+    try {
+      if (!authUser.value) {
+        const user = await $fetch<any>('/api/user', {
+          baseURL: 'http://localhost:8000',
+          headers: {
+            Authorization: `Bearer ${token.value.token}`,
+          },
+          credentials: 'include',
+        })
+
+        authUser.value = user
+      }
+    } catch (error) {
+      authUser.value = null
+      token.value = null
+      
+      return navigateTo('/')
+    }
   }
 })

@@ -34,3 +34,10 @@ export type Cart = {
   user_id: string,
   user: User
 }
+
+export type Services = {
+  name: string,
+  price: number,
+  description: string,
+  image: string
+}
