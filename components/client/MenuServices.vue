@@ -59,7 +59,7 @@ async function fetchCart() {
 async function addToCart(service: Services) {
   await fetchCart()
 
-  serviceForm.value.name = service.label ?? ''
+  serviceForm.value.name = service.name ?? ''
   serviceForm.value.description = service.description ?? ''
   serviceForm.value.price = service.price ?? ''
 
@@ -68,7 +68,7 @@ async function addToCart(service: Services) {
       baseURL: useRuntimeConfig().public.apiBase,
       method: 'POST',
       body: {
-        user_id: authUser.value?.user.id
+        user_id: authUser.value?.id
       },
       credentials: 'include',
     })
@@ -96,6 +96,14 @@ function submitToAddToCartService() {
   serviceForm.value = {}
 }
 
+function formatPrice(price: number) {
+  return new Intl.NumberFormat('en-PH', {
+    style: 'currency',
+    currency: 'PHP',
+    minimumFractionDigits: 2,
+  }).format(price)
+}
+
 await fetchCart()
 </script>
 
@@ -116,7 +124,7 @@ await fetchCart()
         <div>
           <p class="text-base font-bold text-custom-brown-500 landing-login">{{ service.name }}</p>
 
-          <p class="text-sm font-medium text-custom-brown-500">Starts at P{{ service.price }}</p>
+          <p class="text-sm font-medium text-custom-brown-500">Starts at {{ formatPrice(service.price) }}</p>
         </div>
       </div>
 

@@ -123,7 +123,7 @@ definePageMeta({
             type="password"
             label="Password"
             placeholder="Enter password"
-            :error="errors[0]"
+            :error="errors"
           />
         </div>
 

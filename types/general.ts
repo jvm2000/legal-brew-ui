@@ -36,6 +36,7 @@ export type Cart = {
 }
 
 export type Services = {
+  id: string,
   name: string,
   price: number,
   description: string,
