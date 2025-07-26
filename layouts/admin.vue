@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ShoppingCartIcon, ChevronUpDownIcon } from '@heroicons/vue/24/outline'
+import { ShoppingCartIcon, ChevronUpDownIcon, LockOpenIcon } from '@heroicons/vue/24/outline'
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
+import auth from '~/middleware/auth'
 
 const { user: authUser, token } = useAuth()
 const config = useRuntimeConfig()
@@ -22,6 +23,8 @@ async function logout() {
 }
 
 function getImage(path: any) {
+  if (!path) return '/images/admin-icon.svg'
+
   return `${ useRuntimeConfig().public.apiBase }/storage/${path}`
 }
 </script>
@@ -43,6 +46,7 @@ function getImage(path: any) {
 
       <div class="flex items-center space-x-8">
         <ShoppingCartIcon 
+          v-if="authUser?.role === 'client'"
           class="w-8 h-8 stroke-custom-brown-500 cursor-pointer"
           @click="navigateTo('/cart')"
         />
@@ -74,9 +78,13 @@ function getImage(path: any) {
               leave-to-class="transform scale-95 opacity-0"
             >
               <MenuItems
-                class="absolute right-44 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
+                class="absolute right-44 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none px-4"
               >
-                <p @click="logout">Logout</p>
+                <div @click="logout" class="py-2 flex items-center space-x-4 cursor-pointer">
+                  <LockOpenIcon class="w-4 h-4 stroke-custom-brown-500" />
+
+                  <p class="text-sm text-custom-brown-500">Logout</p>
+                </div>
               </MenuItems>
             </transition>
           </Menu>

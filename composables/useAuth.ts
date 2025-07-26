@@ -26,6 +26,8 @@ export const useAuth = () => {
   })
 
   async function login() {
+    errors.value = []
+
     loading.value = true
 
     await $fetch('/sanctum/csrf-cookie', {
@@ -45,8 +47,6 @@ export const useAuth = () => {
       })
       
       token.value = response
-
-      console.log('token', token)
 
       navigateTo('/dashboard')
     } catch (err: any) {

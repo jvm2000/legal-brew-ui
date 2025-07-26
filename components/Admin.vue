@@ -28,10 +28,12 @@ await getPosts()
     </div>
 
     <div class="w-full flex items-center p-6 space-x-4 bg-white rounded-md">
-      <div class="w-8 h-8 rounded-full overflow-hidden bg-custom-brown-500 border border-custom-brown-300"></div>
+      <div class="w-8 h-8 rounded-full overflow-hidden whitespace-nowrap">
+        <img src="/images/admin-icon.svg" class="w-full h-full object-cover">
+      </div>
       
       <div 
-        class="px-4 py-2 border border-gray-500 w-full rounded-md cursor-pointer"
+        class="px-4 py-2 border border-gray-500 w-full rounded-md cursor-pointer whitespace-normal"
         @click="openClosePostModal"
       >
         <p class="text-base text-gray-500">Create Post</p>

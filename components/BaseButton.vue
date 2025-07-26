@@ -27,7 +27,7 @@ const props = withDefaults(
 
 <template>  
   <button 
-    class="bg-custom-brown-500 py-2 text-sm text-white text-center w-full rounded-md"
+    class="bg-custom-brown-500 py-2 text-sm text-white text-center w-full rounded-md disabled:opacity-30"
     :disabled="props.isLoading || props.disabled"
   >
     <div class="flex flex-col items-center w-full">

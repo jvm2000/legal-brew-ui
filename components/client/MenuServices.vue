@@ -9,6 +9,8 @@ type ServiceForm = {
   price: number
 }
 
+const showToast = ref(false)
+const toastMessage = ref('')
 const { user: authUser } = useAuth()
 const cartData = ref<Cart[]>([])
 const serviceForm = ref<ServiceForm>({
@@ -57,6 +59,9 @@ async function fetchCart() {
 }
 
 async function addToCart(service: Services) {
+  showToast.value = true
+  toastMessage.value = 'Added to cart successfully!'
+
   await fetchCart()
 
   serviceForm.value.name = service.name ?? ''
@@ -77,10 +82,14 @@ async function addToCart(service: Services) {
 
     await submitToAddToCartService()
 
+    showToast.value = false
+
     return
   }
 
   serviceForm.value.cart_id = cartData.value[0].id ?? ''
+
+  showToast.value = false
 
   await submitToAddToCartService()
 }
@@ -141,6 +150,8 @@ await fetchCart()
       </button>
     </div>
   </div>
+
+  <BaseToast :show="showToast" :message="toastMessage" />
 </template>
 
 <style scoped>

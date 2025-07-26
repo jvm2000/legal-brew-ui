@@ -6,6 +6,8 @@ import { loadStripe } from '@stripe/stripe-js'
 const { user: authUser } = useAuth()
 const cartData = ref<Cart[]>([])
 const servicesData = ref<Services[]>([])
+const showToast = ref(false)
+const toastMessage = ref('')
 
 const stripePromise = loadStripe('pk_test_51RnrvXIz34glyNofqQSAhcHQlTZGg9fDRHyQKcQ0KspR5k6Awot9YT7PCzuLr4R5MtN0Oe2wUzuTGddXcFWPqoij00rLsvPKYt')
 const cardElement = ref(null)
@@ -41,7 +43,7 @@ async function fetchCart() {
 
   cartData.value = data.value ?? []
 
-  await fetchServices()
+  if (data.value) await fetchServices()
 }
 
 async function fetchServices() {
@@ -100,11 +102,16 @@ const totalPrice = computed<number>(() => {
 })
 
 async function deleteService(service: Services) {
+  showToast.value = true
+  toastMessage.value = 'Removed Service Successfully!'
+
   const { error } = await useFetch(`/api/services/${service.id}`, {
     baseURL: useRuntimeConfig().public.apiBase,
     method: 'DELETE',
     credentials: 'include',
   })
+
+  showToast.value = false
 
   await fetchServices()
 }
@@ -205,4 +212,6 @@ await fetchCart()
       </div>
     </div>
   </div>
+
+  <BaseToast :show="showToast" :message="toastMessage" />
 </template>

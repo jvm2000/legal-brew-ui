@@ -128,7 +128,7 @@ definePageMeta({
         </div>
 
         <div class="w-24">
-          <BaseButton @click="login" :isLoading="loading">Login</BaseButton>
+          <BaseButton @click="login" @keydown.enter="login" :isLoading="loading">Login</BaseButton>
         </div>
 
         <p class="text-sm">

@@ -14,6 +14,8 @@ type RegisterForm = {
   images: any[]
 }
 
+const showToast = ref(false)
+const toastMessage = ref('')
 const images = ref<File[]>([])
 const previews = ref<string[]>([]) 
 const loading = ref(false)
@@ -29,6 +31,9 @@ const form = ref<RegisterForm>({
 })
 
 async function submit() {
+  showToast.value = true
+  toastMessage.value = 'Registered Successfully!'
+
   loading.value = true
 
   const formData = new FormData()
@@ -53,6 +58,8 @@ async function submit() {
     body: formData,
     credentials: 'include',
   })
+
+  showToast.value = false
 
   if (!error.value) {
     loading.value = false
@@ -92,7 +99,13 @@ function removeImage(index: number) {
 
 function uploadImage() {
   document.getElementById('profile-photo')?.click()
-} 
+}
+
+const isDisabled = computed(() => {
+  if (!form.value.birthdate || !form.value.contact_no || !form.value.email || !form.value.full_name || !form.value.images || !form.value.password || !form.value.username) return true
+
+  return false
+})
 
 definePageMeta({
   layout: 'landing',
@@ -213,20 +226,9 @@ definePageMeta({
           >
         </div>
 
-        <div class="flex flex-col space-y-1.5">
-          <label for="" class="text-sm font-medium text-custom-brown-500">Confirm Password</label>
-
-          <input 
-            v-model="form.confirm_password"
-            type="password"
-            class="text-sm ring-0 focus:ring-0 outline-none px-4 py-2 border border-gray-300 rounded-md"
-            placeholder="Re-enter password"
-          >
-        </div>
-
         <div class="w-full flex justify-end">
           <div class="w-24">
-            <BaseButton @click="submit">
+            <BaseButton :disabled="isDisabled" @click="submit">
               Done
             </BaseButton>
           </div>
@@ -234,6 +236,8 @@ definePageMeta({
       </div>
     </div>
   </div>
+
+  <BaseToast :show="showToast" :message="toastMessage" />
 </template>
 
 <style scoped>

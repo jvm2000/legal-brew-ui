@@ -73,7 +73,7 @@ async function submit() {
 
   formData.append('description', form.value.description || '')
   formData.append('hyperlink', form.value.hyperlink || '')
-  formData.append('user_id', authUser.value?.user.id || '')
+  formData.append('user_id', authUser.value?.id || '')
 
   if (form.value.images && form.value.images.length > 0) {
     for (let i = 0; i < form.value.images.length; i++) {
@@ -118,7 +118,7 @@ onMounted(() => {
       <div class="flex items-center space-x-4">
         <div class="w-8 h-8 rounded-full overflow-hidden bg-custom-brown-500 border border-custom-brown-300"></div>
 
-        <p class="text-base font-medium text-custom-brown-500">{{ authUser?.user.full_name }}</p>
+        <p class="text-base font-medium text-custom-brown-500">{{ authUser?.full_name }}</p>
       </div>
 
       <textarea

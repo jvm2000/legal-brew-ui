@@ -3,7 +3,8 @@ export type User = {
   username: string,
   full_name: string,
   email: string,
-  contact_no: string
+  contact_no: string,
+  images: any[]
 }
 
 export type Post = {
@@ -36,7 +37,7 @@ export type Cart = {
 }
 
 export type Services = {
-  id: string,
+  id?: string,
   name: string,
   price: number,
   description: string,
