@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { ArrowLongLeftIcon, XMarkIcon } from '@heroicons/vue/24/outline'
-import type { Cart, Post, Services } from '~/types/general'
-import { loadStripe } from '@stripe/stripe-js'
+import type { Cart, Services } from '~/types/general'
 import { usePayment } from '~/composables/usePayment'
 
 const { user: authUser } = useAuth()
 const cartData = ref<Cart[]>([])
 const servicesData = ref<Services[]>([])
+const loading = ref(false)
 const showToast = ref(false)
 const toastMessage = ref('')
 const { appointmentForm } = usePayment()
+const selectedTime = ref<string>('')
 const consultationType = ref<string>('office')
 const officeTimeSlots = [
   { label: '10:00 AM', value: '10:00' },
@@ -27,30 +28,6 @@ const onlineTimeSlots = [
   { label: '4:00 PM', value: '16:00' },
   { label: '5:00 PM', value: '17:00' }
 ]
-const stripePromise = loadStripe('pk_test_51RnrvXIz34glyNofqQSAhcHQlTZGg9fDRHyQKcQ0KspR5k6Awot9YT7PCzuLr4R5MtN0Oe2wUzuTGddXcFWPqoij00rLsvPKYt')
-const cardElement = ref(null)
-let stripe: any = null
-let elements: any = null
-let card: any = null
-const cardNumberElement = ref<HTMLElement | null>(null)
-const cardExpiryElement = ref<HTMLElement | null>(null)
-const cardCvcElement = ref<HTMLElement | null>(null)
-const cardholderName = ref('')
-let cardNumber: any = null
-let cardExpiry: any = null
-let cardCvc: any = null
-const style = {
-  base: {
-    fontSize: '14px',
-    color: '#1a202c',
-    '::placeholder': {
-      color: '#a0aec0',
-    },
-  },
-  invalid: {
-    color: '#e53e3e',
-  },
-}
 
 async function fetchCart() {
   const { data } = await useFetch<Cart[]>(`/api/cart/${authUser.value?.id}`, {
@@ -96,38 +73,20 @@ const timeSlots = computed(() => {
   if (consultationType.value === 'online') return onlineTimeSlots
 })
 
-async function pay() {
-  const { data } = await $fetch<any>('/api/create-payment-intent', {
-    method: 'POST',
-    body: { amount: 100 }, // e.g. $1.00
-  })
-
-  const result = await stripe.confirmCardPayment(data.clientSecret, {
-    payment_method: {
-      card: card,
-    },
-  })
-
-  if (result.error) {
-    console.error(result.error.message)
-  } else if (result.paymentIntent.status === 'succeeded') {
-    alert('Payment succeeded!')
-  }
+function selectTime(value: string) {
+  selectedTime.value = value
 }
 
-function formatPrice(price: number) {
-  return new Intl.NumberFormat('en-PH', {
-    style: 'currency',
-    currency: 'PHP',
-    minimumFractionDigits: 2,
-  }).format(price)
-}
+async function proceedToPayment() {
+  loading.value = true
 
-const totalPrice = computed<number>(() => {
-  return servicesData.value.reduce((total, service) => {
-    return total + (service.price || 0)
-  }, 0)
-})
+  appointmentForm.value.scheduledTime = selectedTime.value
+  appointmentForm.value.setup = consultationType.value
+
+  loading.value = false
+
+  await navigateTo('/cart/payment')
+}
 
 async function deleteService(service: Services) {
   showToast.value = true
@@ -144,24 +103,13 @@ async function deleteService(service: Services) {
   await fetchServices()
 }
 
-onMounted(async () => {
-  stripe = await stripePromise
-  elements = stripe.elements()
-
-  cardNumber = elements.create('cardNumber', { style })
-  cardExpiry = elements.create('cardExpiry', { style })
-  cardCvc = elements.create('cardCvc', { style })
-
-  cardNumber.mount(cardNumberElement.value!)
-  cardExpiry.mount(cardExpiryElement.value!)
-  cardCvc.mount(cardCvcElement.value!)
-
-  if (cardElement.value) {
-    card.mount(cardElement.value)
-  } else {
-    console.error('cardElement is not mounted yet.')
-  }
-})
+function formatPrice(price: number) {
+  return new Intl.NumberFormat('en-PH', {
+    style: 'currency',
+    currency: 'PHP',
+    minimumFractionDigits: 2,
+  }).format(price)
+}
 
 await fetchCart()
 </script>
@@ -224,14 +172,21 @@ await fetchCart()
           <button
             v-for="(slot, index) in timeSlots"
             :key="index"
-            class="border rounded-lg px-8 py-1.5 text-sm text-custom-brown-500 border-custom-brown-500"
+            class="border rounded-lg px-8 py-1.5 text-sm border-custom-brown-300"
+            :class="[
+              'border rounded-lg px-8 py-1.5 text-sm border-custom-brown-300',
+              selectedTime === slot.value
+                ? 'bg-custom-brown-300 text-white'
+                : 'text-custom-brown-300  '
+            ]"
+            @click="selectTime(slot.value)"
           >
             {{ slot.label }}
           </button>
         </div>
 
         <div class="w-full">
-          <BaseButton>Proceed to payment</BaseButton>
+          <BaseButton @click="proceedToPayment">Proceed to payment</BaseButton>
         </div>
       </div>
     </div>

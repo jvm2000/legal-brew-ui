@@ -68,7 +68,7 @@ function selectDate(day: any) {
   selectedDate.value = new Date(day.date)
   currentDate.value = new Date(day.date)
 
-  modelValue.value = selectedDate.value.toDateString() ?? ''
+  modelValue.value = selectedDate.value ?? ''
 }
 
 function nextMonth() {

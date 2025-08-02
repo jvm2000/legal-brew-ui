@@ -7,14 +7,14 @@ type AppointmentForm = {
   scheduledTime: string
 }
 
-export const usePayment = () => {
-  const appointmentForm = ref<AppointmentForm>({
-    services: [],
-    setup: '',
-    scheduledDay: '',
-    scheduledTime: '',
-  })
+const appointmentForm = ref<AppointmentForm>({
+  services: [],
+  setup: '',
+  scheduledDay: '',
+  scheduledTime: '',
+})
 
+export const usePayment = () => {
   return {
     appointmentForm
   }
