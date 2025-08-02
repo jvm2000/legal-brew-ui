@@ -14,7 +14,7 @@ const emit = defineEmits<{
 
 const loading = ref(false)
 const { user: authUser } = useAuth()
-const { isOpenPostModal, openClosePostModal } = usePost()
+const { isOpenPostModal, isPostEditing, selectedPost } = usePost()
 const textareaRef = ref<HTMLTextAreaElement  | null>(null)
 const images = ref<File[]>([])
 const previews = ref<string[]>([]) 
@@ -24,6 +24,14 @@ const form = ref<PostForm>({
   images: images.value,
   user_id: ''
 })
+
+function handleOpen() {
+  if (!isPostEditing.value) return
+
+  form.value.description = selectedPost.value.description
+  images.value = selectedPost.value.images ?? []
+  previews.value = selectedPost.value.images ?? []
+}
 
 function autoResize() {
   const el = textareaRef.value
@@ -73,7 +81,7 @@ async function submit() {
 
   formData.append('description', form.value.description || '')
   formData.append('hyperlink', form.value.hyperlink || '')
-  formData.append('user_id', authUser.value?.user.id || '')
+  formData.append('user_id', authUser.value?.id || '')
 
   if (form.value.images && form.value.images.length > 0) {
     for (let i = 0; i < form.value.images.length; i++) {
@@ -95,10 +103,52 @@ async function submit() {
   isOpenPostModal.value = false
 }
 
+async function submitUpdate() {
+  const { isOpenPostModal } = usePost()
+
+  console.log('updated')
+
+  loading.value = true
+
+  const formData = new FormData()
+
+  formData.append('description', form.value.description || '')
+  formData.append('hyperlink', form.value.hyperlink || '')
+  formData.append('user_id', authUser.value?.id || '')
+
+  if (form.value.images && form.value.images.length > 0) {
+    for (let i = 0; i < form.value.images.length; i++) {
+      formData.append('images[]', form.value.images[i])
+    }
+  }
+
+  const { error } = await useFetch(`/api/posts/${selectedPost.value.id}`, {
+    baseURL: useRuntimeConfig().public.apiBase,
+    method: 'PUT',
+    body: formData,
+    credentials: 'include',
+  })
+
+  emit('success')
+
+  loading.value = false
+
+  isOpenPostModal.value = false
+}
+
+function submitUpdateOrCreate() {
+  if (!isPostEditing.value) return submit()
+
+  if (isPostEditing.value) return submitUpdate()
+}
+
 function resetForm() {
-  form.value.description = ''
-  form.value.images = []
+  form.value = {}
   previews.value = []
+}
+
+function getImage(path: string) {
+  return `${ useRuntimeConfig().public.apiBase }/storage/${path}`
 }
 
 onMounted(() => {
@@ -109,16 +159,17 @@ onMounted(() => {
 <template>
   <BaseModal
     :open="isOpenPostModal"
-    title="Create Post"
+    :title="isPostEditing ? 'Edit Post' : 'Create Post'"
     size="lg"
-    @close="openClosePostModal"
+    @before-enter="handleOpen"
+    @close="isOpenPostModal = false"
     @after-leave="resetForm"
   >
     <div class="space-y-2">
       <div class="flex items-center space-x-4">
         <div class="w-8 h-8 rounded-full overflow-hidden bg-custom-brown-500 border border-custom-brown-300"></div>
 
-        <p class="text-base font-medium text-custom-brown-500">{{ authUser?.user.full_name }}</p>
+        <p class="text-base font-medium text-custom-brown-500">{{ authUser?.full_name }}</p>
       </div>
 
       <textarea
@@ -135,7 +186,7 @@ onMounted(() => {
           :key="index"
           class="w-24 h-24 relative overflow-hidden"
         >
-          <img  :src="src" class="w-full h-full object-cover">
+          <img :src="isPostEditing ? getImage(src) : src" class="w-full h-full object-cover">
 
           <XMarkIcon class="w-4 h-4 absolute top-1 right-1 cursor-pointer" @click="removeImage(index)" />
         </div>
@@ -166,7 +217,7 @@ onMounted(() => {
         <div class="w-24">
           <BaseButton
             :isLoading="loading"
-            @click="submit"
+            @click="submitUpdateOrCreate"
           >Post</BaseButton>
         </div>
       </div>

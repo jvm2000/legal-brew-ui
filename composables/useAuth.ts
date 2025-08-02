@@ -16,9 +16,9 @@ type Auth = {
 export const useAuth = () => {
   const errors = ref([])
   const loading = ref(false)
-  const user = useCookie<Auth | null | undefined>('auth.user', {
-    maxAge: 60 * 60 * 24 * 7, // 7 days
-  })
+  const user = useState<User | null>('fetchedUser', () => null)
+  const token = useCookie('token')
+
   const config = useRuntimeConfig()
   const formLogin = ref({
     email: '',
@@ -26,6 +26,8 @@ export const useAuth = () => {
   })
 
   async function login() {
+    errors.value = []
+
     loading.value = true
 
     await $fetch('/sanctum/csrf-cookie', {
@@ -34,7 +36,7 @@ export const useAuth = () => {
     })
 
     try {
-      const response = await $fetch('/api/login', {
+      const response = await $fetch<any>('/api/login', {
         baseURL: config.public.apiBase,
         method: 'POST',
         credentials: 'include',
@@ -44,7 +46,7 @@ export const useAuth = () => {
         },
       })
       
-      user.value = response ?? null
+      token.value = response
 
       navigateTo('/dashboard')
     } catch (err: any) {
@@ -60,6 +62,7 @@ export const useAuth = () => {
 
   return {
     user,
+    token,
     errors,
     formLogin,
     loggedIn,

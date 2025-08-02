@@ -1,13 +1,6 @@
 <script setup lang="ts">
 import { ShoppingCartIcon } from '@heroicons/vue/24/outline'
-import type { Cart } from '~/types/general'
-
-type Services = {
-  label: string,
-  price: number,
-  description: string,
-  image: string
-}
+import type { Cart, Services } from '~/types/general'
 
 type ServiceForm = {
   cart_id: string,
@@ -16,6 +9,8 @@ type ServiceForm = {
   price: number
 }
 
+const showToast = ref(false)
+const toastMessage = ref('')
 const { user: authUser } = useAuth()
 const cartData = ref<Cart[]>([])
 const serviceForm = ref<ServiceForm>({
@@ -26,27 +21,27 @@ const serviceForm = ref<ServiceForm>({
 })
 const services = ref<Services[]>([
   {
-    label: 'Latte Legalizations',
+    name: 'Latte Legalizations',
     price: 500,
     description: 'Drafting of documents such as letters, special power of attorneys, promissory notes, compromise agreements, and others.',
     image: '/images/services/latte-legalization.svg'
   }, {
-    label: 'Espresso Advise',
+    name: 'Espresso Advise',
     price: 500,
     description: 'Online consultations with the lawyer.',
     image: '/images/services/espress-advise.svg'
   }, {
-    label: 'Americano Agreements',
+    name: 'Americano Agreements',
     price: 1000,
     description: 'Drafting of contracts; review of existing contracts and drafting of revised contract.',
     image: '/images/services/americano-agreements.svg'
   }, {
-    label: 'Barista Grind',
+    name: 'Barista Grind',
     price: 2000,
     description: 'Thorough research and analysis of legal issues, study of applicable laws and statutes, and provision of legal documentation and research services.',
     image: '/images/services/barista-grind.svg'
   }, {
-    label: 'Capuccino Case Files',
+    name: 'Capuccino Case Files',
     price: 20000,
     description: 'Assistance with litigation of cases, including court representation and preparation of pleadings in the areas of: Labor law, Marriage and family relations, Property law, Corporate law, Immigration law.',
     image: '/images/services/cappucino-case-files.svg'
@@ -54,7 +49,7 @@ const services = ref<Services[]>([
 ])
 
 async function fetchCart() {
-  const { data } = await useFetch<Cart[]>(`/api/cart/${authUser.value?.user.id}`, {
+  const { data } = await useFetch<Cart[]>(`/api/cart/${authUser.value?.id}`, {
     baseURL: useRuntimeConfig().public.apiBase,
     method: 'GET',
     credentials: 'include',
@@ -64,9 +59,12 @@ async function fetchCart() {
 }
 
 async function addToCart(service: Services) {
+  showToast.value = true
+  toastMessage.value = 'Added to cart successfully!'
+
   await fetchCart()
 
-  serviceForm.value.name = service.label ?? ''
+  serviceForm.value.name = service.name ?? ''
   serviceForm.value.description = service.description ?? ''
   serviceForm.value.price = service.price ?? ''
 
@@ -75,7 +73,7 @@ async function addToCart(service: Services) {
       baseURL: useRuntimeConfig().public.apiBase,
       method: 'POST',
       body: {
-        user_id: authUser.value?.user.id
+        user_id: authUser.value?.id
       },
       credentials: 'include',
     })
@@ -84,10 +82,14 @@ async function addToCart(service: Services) {
 
     await submitToAddToCartService()
 
+    showToast.value = false
+
     return
   }
 
   serviceForm.value.cart_id = cartData.value[0].id ?? ''
+
+  showToast.value = false
 
   await submitToAddToCartService()
 }
@@ -101,6 +103,14 @@ function submitToAddToCartService() {
   })
 
   serviceForm.value = {}
+}
+
+function formatPrice(price: number) {
+  return new Intl.NumberFormat('en-PH', {
+    style: 'currency',
+    currency: 'PHP',
+    minimumFractionDigits: 2,
+  }).format(price)
 }
 
 await fetchCart()
@@ -121,9 +131,9 @@ await fetchCart()
         </div>
 
         <div>
-          <p class="text-base font-bold text-custom-brown-500 landing-login">{{ service.label }}</p>
+          <p class="text-base font-bold text-custom-brown-500 landing-login">{{ service.name }}</p>
 
-          <p class="text-sm font-medium text-custom-brown-500">Starts at P{{ service.price }}</p>
+          <p class="text-sm font-medium text-custom-brown-500">Starts at {{ formatPrice(service.price) }}</p>
         </div>
       </div>
 
@@ -140,6 +150,8 @@ await fetchCart()
       </button>
     </div>
   </div>
+
+  <BaseToast :show="showToast" :message="toastMessage" />
 </template>
 
 <style scoped>

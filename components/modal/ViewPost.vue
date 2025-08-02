@@ -3,12 +3,12 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import type { Post, Comment } from '~/types/general'
 import { XMarkIcon, EllipsisHorizontalIcon, PaperAirplaneIcon, HeartIcon, ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/vue/24/outline'
+import auth from '~/middleware/auth'
 
 const { user: authUser } = useAuth()
 const comments = ref<Comment[]>([])
 const loading = ref(false)
 const { isViewPostModal, openCloseViewPostModal, selectedPost } = usePost()
-const inputText = ref('')
 const commentForm = ref({
   content: '',
   post_id: '',
@@ -32,13 +32,12 @@ async function getComments() {
 }
 
 async function submitComment() {
-  if (loading.value || !inputText.value) return 
+  if (loading.value) return 
 
   loading.value = true
 
-  commentForm.value.content = inputText.value
   commentForm.value.post_id = selectedPost.value?.id ?? ''
-  commentForm.value.user_id = authUser.value?.user.id ?? ''
+  commentForm.value.user_id = authUser.value?.id ?? ''
 
   const { error } = await useFetch('/api/comments', {
     baseURL: useRuntimeConfig().public.apiBase,
@@ -52,6 +51,10 @@ async function submitComment() {
   await getComments()
 
   loading.value = false
+}
+
+function getImage(path: any) {
+  return `${ useRuntimeConfig().public.apiBase }/storage/${path}`
 }
 
 const hasImages = computed<boolean>(() => {
@@ -91,7 +94,8 @@ const hasImages = computed<boolean>(() => {
         <div class="space-y-4 px-6 pb-6 border-b border-gray-300">
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-4">
-              <div class="w-10 h-10 rounded-full bg-custom-brown-500 overflow-hidden">
+              <div class="w-10 h-10 rounded-full overflow-hidden">
+                <img src="/images/admin-icon.svg" class="w-full h-full object-cover">
               </div>
 
               <div class="flex flex-col items-start">
@@ -127,12 +131,16 @@ const hasImages = computed<boolean>(() => {
           <p class="text-base text-custom-brown-500">Comments({{ comments?.length ?? '0' }})</p>
 
           <div class="grid grid-cols-10 w-full items-center">
-            <div class="w-8 h-8 rounded-full bg-custom-brown-500 overflow-hidden col-span-1">
+            <div class="w-8 h-8 rounded-full overflow-hidden col-span-1">
+              <img
+                :src="authUser?.images?.[0] ? getImage(authUser.images[0]) : '/images/admin-icon.svg'"
+                class="w-full h-full object-cover"
+              />
             </div>
             
             <div class="col-span-9 relative flex items-center">
               <input 
-                v-model="inputText"
+                v-model="commentForm.content"
                 type="text" 
                 class="w-full ring-0 focus:ring-0 outline-none px-4 py-2 rounded-md border border-gray-300"
                 placeholder="Leave a comment"
@@ -145,14 +153,15 @@ const hasImages = computed<boolean>(() => {
           </div>
 
           <div v-for="comment in comments" class="grid grid-cols-10 w-full items-center">
-            <div class="w-8 h-8 rounded-full bg-custom-brown-500 overflow-hidden col-span-1">
+            <div class="w-8 h-8 rounded-full overflow-hidden col-span-1">
+              <img :src="getImage(comment.user?.images[0])" class="w-full h-full object-cover">
             </div>
 
             <div class="space-y-1 flex flex-col items-start col-span-9">
               <div class="flex items-center space-x-3">
                 <p class="text-base font-medium capitalize">{{ comment.user?.full_name }}</p>
 
-                <div class="w-1 h-1 bg-custom-brown-500 rounded-full" />
+                <div class="w-1 h-1 bg-custom-brown-500 rounded-full"/>
 
                 <p class="text-sm text-custom-brown-500">{{ getRemainingTime(comment.created_at) }}</p>
               </div>

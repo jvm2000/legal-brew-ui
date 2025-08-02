@@ -1,31 +1,30 @@
 <script setup lang="ts">
-import { BellIcon, ChevronUpDownIcon } from '@heroicons/vue/24/outline'
+import { ShoppingCartIcon, ChevronUpDownIcon, LockOpenIcon } from '@heroicons/vue/24/outline'
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
+import auth from '~/middleware/auth'
 
-const { user: authUser } = useAuth()
+const { user: authUser, token } = useAuth()
 const config = useRuntimeConfig()
 
 async function logout() {
-  await $fetch('/sanctum/csrf-cookie', {
-    baseURL: config.public.apiBase,
-    credentials: 'include',
-  })
-
   await useFetch('/api/logout', {
     method: 'POST',
     baseURL: config.public.apiBase,
     credentials: 'include',
     headers: {
-      Authorization: `Bearer ${authUser.value?.token}`,
+      Authorization: `Bearer ${token.value.token}`,
     },
   })
 
+  token.value = null
   authUser.value = null
 
-  navigateTo('/')
+  await navigateTo('/')
 }
 
 function getImage(path: any) {
+  if (!path) return '/images/admin-icon.svg'
+
   return `${ useRuntimeConfig().public.apiBase }/storage/${path}`
 }
 </script>
@@ -46,17 +45,21 @@ function getImage(path: any) {
       </div>
 
       <div class="flex items-center space-x-8">
-        <BellIcon class="w-8 h-8 stroke-custom-brown-500" />
+        <ShoppingCartIcon 
+          v-if="authUser?.role === 'client'"
+          class="w-8 h-8 stroke-custom-brown-500 cursor-pointer"
+          @click="navigateTo('/cart')"
+        />
 
         <div class="flex items-center space-x-4">
           <div class="w-8 h-8 rounded-full overflow-hidden relative">
-            <img :src="getImage(authUser?.user.images)" class="w-full h-full object-cover">
+            <img :src="getImage(authUser?.images)" class="w-full h-full object-cover">
           </div>
 
           <div>
-            <p class="text-sm font-medium custom-brown-500">{{ authUser?.user.full_name }}</p>
+            <p class="text-sm font-medium custom-brown-500">{{ authUser?.full_name }}</p>
 
-            <p class="text-xs text-custom-brown-500">{{ authUser?.user.role }}</p>
+            <p class="text-xs text-custom-brown-500">{{ authUser?.role }}</p>
           </div>
         </div>
 
@@ -75,9 +78,13 @@ function getImage(path: any) {
               leave-to-class="transform scale-95 opacity-0"
             >
               <MenuItems
-                class="absolute right-44 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
+                class="absolute right-44 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none px-4"
               >
-                <p @click="logout">Logout</p>
+                <div @click="logout" class="py-2 flex items-center space-x-4 cursor-pointer">
+                  <LockOpenIcon class="w-4 h-4 stroke-custom-brown-500" />
+
+                  <p class="text-sm text-custom-brown-500">Logout</p>
+                </div>
               </MenuItems>
             </transition>
           </Menu>

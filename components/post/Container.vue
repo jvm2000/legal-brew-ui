@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { EllipsisHorizontalIcon, HeartIcon, ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/vue/24/outline'
+import { EllipsisHorizontalIcon, HeartIcon, ChatBubbleOvalLeftEllipsisIcon, TrashIcon, PencilIcon } from '@heroicons/vue/24/outline'
 import type { Post, Reaction } from '~/types/general'
 import CarouselImages from './CarouselImages.vue'
-import auth from '~/middleware/auth'
+import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 
 type ReactionForm = {
   post_id: string,
   user_id: string,
   type: string
 }
+
 dayjs.extend(relativeTime)
 
 const props = withDefaults(defineProps<{
@@ -23,8 +24,10 @@ const emit = defineEmits<{
   success: [void]
 }>()
 
+const showToast = ref(false)
+const toastMessage = ref('')
 const inputRef = ref<HTMLTextAreaElement | null>(null)
-const { openCloseViewPostModal } = usePost()
+const { openCloseViewPostModal, openCloseEditPostModal } = usePost()
 const { user: authUser } = useAuth()
 const reactionForm = ref<ReactionForm>({
     post_id: '',
@@ -46,8 +49,11 @@ function getRemainingTime(date: Date | string) {
 }
 
 async function submitReaction() {
+  showToast.value = true
+  toastMessage.value = 'Like Submitted!'
+
   reactionForm.value.post_id = props.post?.id ?? ''
-  reactionForm.value.user_id =  authUser.value?.user.id ?? ''
+  reactionForm.value.user_id =  authUser.value?.id ?? ''
   reactionForm.value.type = 'heart'
 
   const { error } = await useFetch('/api/reactions', {
@@ -57,11 +63,47 @@ async function submitReaction() {
     credentials: 'include',
   })
 
+  showToast.value = false
+
+  emit('success')
+}
+
+async function unsubmitReaction(reaction: Reaction[]) {
+  showToast.value = true
+  toastMessage.value = 'Unlike Submitted!'
+
+  const reactionObject = reaction?.find(
+    (reaction: any) => reaction.user_id === authUser?.value?.id
+  )
+
+  const { error } = await useFetch(`/api/reactions/${reactionObject.id}`, {
+    baseURL: useRuntimeConfig().public.apiBase,
+    method: 'DELETE',
+    credentials: 'include',
+  })
+
+  showToast.value = false
+
+  emit('success')
+}
+
+async function deletePost() {
+  showToast.value = true
+  toastMessage.value = 'Delete Post Successfully!'
+
+  const { error } = await useFetch(`/api/posts/${props.post?.id}`, {
+    baseURL: useRuntimeConfig().public.apiBase,
+    method: 'DELETE',
+    credentials: 'include',
+  })
+
+  showToast.value = false
+
   emit('success')
 }
 
 function checkIfAlreadyReacted(reaction: Reaction[]) {
-  return reaction?.some((reaction: any) => reaction.user_id === authUser.value?.user.id)
+  return reaction?.some((reaction: any) => reaction.user_id === authUser?.value?.id)
 }
 
 onMounted(() => {
@@ -73,7 +115,9 @@ onMounted(() => {
   <div class="w-full p-6 space-y-4 bg-white rounded-md overflow-hidden">
     <div class="w-full flex items-center justify-between">
       <div class="flex items-center space-x-4">
-        <div class="w-8 h-8 rounded-full overflow-hidden bg-custom-brown-500 border border-custom-brown-300"></div>
+        <div class="w-8 h-8 rounded-full overflow-hidden">
+          <img src="/images/admin-icon.svg" class="w-full h-full object-cover">
+        </div>
 
         <div class="justify-start">
           <p class="text-sm font-bold text-custom-brown-500">{{ props.post?.user.full_name }}</p>
@@ -82,7 +126,41 @@ onMounted(() => {
         </div>
       </div>
 
-      <EllipsisHorizontalIcon class="w-6 h-6 stroke-gray-500 cursor-pointer" />
+      <div v-if="authUser?.role === 'admin'" class="relative">
+        <Menu>
+          <MenuButton>
+            <EllipsisHorizontalIcon class="w-6 h-6 stroke-gray-500 cursor-pointer" />
+          </MenuButton>
+
+          <transition
+            enter-active-class="transition duration-100 ease-out"
+            enter-from-class="transform scale-95 opacity-0"
+            enter-to-class="transform scale-100 opacity-100"
+            leave-active-class="transition duration-75 ease-in"
+            leave-from-class="transform scale-100 opacity-100"
+            leave-to-class="transform scale-95 opacity-0"
+          >
+            <MenuItems
+              class="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none p-4 z-[999]"
+            >
+              <div 
+                class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-slate-100"
+                @click="openCloseEditPostModal(props.post)"
+              >
+                <PencilIcon class="w-4 h-4 stroke-custom-brown-500" />
+
+                <p class="text-sm text-custom-brown-500">Edit</p>
+              </div>
+
+              <div @click="deletePost" class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-slate-100">
+                <TrashIcon class="w-4 h-4 stroke-custom-brown-500" />
+
+                <p class="text-sm text-custom-brown-500">Delete</p>
+              </div>
+            </MenuItems>
+          </transition>
+        </Menu>
+      </div>
     </div>
 
     <p class="text-custom-brown-500 text-sm">
@@ -98,7 +176,7 @@ onMounted(() => {
         <HeartIcon 
           class="w-6 h-6 cursor-pointer"
           :class="[checkIfAlreadyReacted(props.post?.reactions ?? []) ? 'fill-custom-brown-500' : 'stroke-custom-brown-500']"
-          @click="submitReaction"
+          @click="checkIfAlreadyReacted(props.post?.reactions ?? []) ? unsubmitReaction(props.post?.reactions ?? []) : submitReaction()"
         />
 
         <p class="text-sm text-custom-brown-500">{{ props.post?.reactions.length ?? '0' }}</p>
@@ -114,4 +192,6 @@ onMounted(() => {
       </div>
     </div>
   </div>
+
+  <BaseToast :show="showToast" :message="toastMessage" />
 </template>
