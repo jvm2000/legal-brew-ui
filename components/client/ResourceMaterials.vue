@@ -14,7 +14,9 @@ async function getPosts() {
   }
 }
 
-await getPosts()
+onMounted(async() => {
+  await getPosts()
+})
 </script>
 
 <template>
