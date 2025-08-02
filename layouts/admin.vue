@@ -4,17 +4,10 @@ import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 import auth from '~/middleware/auth'
 
 const { user: authUser, token } = useAuth()
-const config = useRuntimeConfig()
+const { $useCustomFetch } = useNuxtApp()
 
 async function logout() {
-  await useFetch('/api/logout', {
-    method: 'POST',
-    baseURL: config.public.apiBase,
-    credentials: 'include',
-    headers: {
-      Authorization: `Bearer ${token.value.token}`,
-    },
-  })
+  await $useCustomFetch('/api/logout', { method: 'POST' })
 
   token.value = null
   authUser.value = null

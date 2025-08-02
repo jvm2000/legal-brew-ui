@@ -29,6 +29,7 @@ const form = ref<RegisterForm>({
   role: 'client',
   images: images.value
 })
+const { $useCustomFetch } = useNuxtApp()
 
 async function submit() {
   showToast.value = true
@@ -52,11 +53,9 @@ async function submit() {
     }
   }
 
-  const { error } = await useFetch('/api/register', {
-    baseURL: useRuntimeConfig().public.apiBase,
+  const { error } = await $useCustomFetch('/api/register', { 
     method: 'POST',
     body: formData,
-    credentials: 'include',
   })
 
   showToast.value = false

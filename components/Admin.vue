@@ -4,12 +4,11 @@ import type { Post } from '~/types/general';
 const { user: authUser } = useAuth()
 const { openClosePostModal } = usePost()
 const posts = ref<Post[]>([])
+const { $useCustomFetch } = useNuxtApp()
 
 async function getPosts() {
-  const { data } = await useFetch<Post[]>('/api/posts', {
-    baseURL: useRuntimeConfig().public.apiBase,
+  const { data } = await $useCustomFetch<Post[]>('/api/posts', {
     method: 'GET',
-    credentials: 'include',
   })
 
   if (data.value) {
@@ -49,5 +48,5 @@ onMounted(async() => {
 
   <ModalCreateEditPost @success="getPosts" />
 
-  <ModalViewPost />
+  <ModalViewPost @success="getPosts" />
 </template>

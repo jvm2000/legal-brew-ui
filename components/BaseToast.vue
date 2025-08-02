@@ -35,7 +35,7 @@ watch(
   >
     <div
       v-if="visible"
-      class="fixed bottom-5 right-5 z-50 bg-green-500 text-white px-4 py-2 rounded shadow"
+      class="fixed bottom-5 right-5 z-[9999] bg-green-500 text-white px-4 py-2 rounded shadow"
     >
       {{ message }}
     </div>

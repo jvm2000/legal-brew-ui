@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { PhotoIcon, LinkIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+import type { Post } from '~/types/general';
 
 type PostForm = {
   description: string,
@@ -12,6 +13,7 @@ const emit = defineEmits<{
   success: [void]
 }>()
 
+const { $useCustomFetch } = useNuxtApp()
 const loading = ref(false)
 const { user: authUser } = useAuth()
 const { isOpenPostModal, isPostEditing, selectedPost } = usePost()
@@ -89,11 +91,9 @@ async function submit() {
     }
   }
 
-  const { error } = await useFetch('/api/posts', {
-    baseURL: useRuntimeConfig().public.apiBase,
+  const { error } = await $useCustomFetch<Post>('/api/posts', {
     method: 'POST',
-    body: formData,
-    credentials: 'include',
+    body: formData
   })
 
   emit('success')
@@ -105,8 +105,6 @@ async function submit() {
 
 async function submitUpdate() {
   const { isOpenPostModal } = usePost()
-
-  console.log('updated')
 
   loading.value = true
 
@@ -122,11 +120,9 @@ async function submitUpdate() {
     }
   }
 
-  const { error } = await useFetch(`/api/posts/${selectedPost.value.id}`, {
-    baseURL: useRuntimeConfig().public.apiBase,
+  const { error } = await $useCustomFetch(`/api/posts/${selectedPost.value.id}`, { 
     method: 'PUT',
     body: formData,
-    credentials: 'include',
   })
 
   emit('success')
@@ -143,7 +139,11 @@ function submitUpdateOrCreate() {
 }
 
 function resetForm() {
-  form.value = {}
+  form.value.description = ''
+  form.value.hyperlink = ''
+  form.value.images = []
+
+  images.value = []
   previews.value = []
 }
 
