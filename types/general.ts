@@ -11,7 +11,7 @@ export type Post = {
   id: string,
   description: string,
   hyperlink: string,
-  images: string[],
+  images: any[],
   user: User,
   comments: Comment[],
   reactions: Reaction[],

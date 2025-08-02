@@ -27,7 +27,7 @@ const emit = defineEmits<{
 const showToast = ref(false)
 const toastMessage = ref('')
 const inputRef = ref<HTMLTextAreaElement | null>(null)
-const { openCloseViewPostModal } = usePost()
+const { openCloseViewPostModal, openCloseEditPostModal } = usePost()
 const { user: authUser } = useAuth()
 const reactionForm = ref<ReactionForm>({
     post_id: '',
@@ -106,10 +106,6 @@ function checkIfAlreadyReacted(reaction: Reaction[]) {
   return reaction?.some((reaction: any) => reaction.user_id === authUser?.value?.id)
 }
 
-function getImage(path: any) {
-  return `${ useRuntimeConfig().public.apiBase }/storage/${path}`
-}
-
 onMounted(() => {
   autoResize()
 })
@@ -147,7 +143,10 @@ onMounted(() => {
             <MenuItems
               class="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none p-4 z-[999]"
             >
-              <div class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-slate-100">
+              <div 
+                class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-slate-100"
+                @click="openCloseEditPostModal(props.post)"
+              >
                 <PencilIcon class="w-4 h-4 stroke-custom-brown-500" />
 
                 <p class="text-sm text-custom-brown-500">Edit</p>

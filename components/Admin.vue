@@ -17,7 +17,9 @@ async function getPosts() {
   }
 }
 
-await getPosts()
+onMounted(async() => {
+  await getPosts()
+})
 </script>
 
 <template>
@@ -45,7 +47,7 @@ await getPosts()
     </div>
   </div>
 
-  <ModalCreatePost @success="getPosts" />
+  <ModalCreateEditPost @success="getPosts" />
 
   <ModalViewPost />
 </template>

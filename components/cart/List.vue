@@ -2,13 +2,31 @@
 import { ArrowLongLeftIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import type { Cart, Post, Services } from '~/types/general'
 import { loadStripe } from '@stripe/stripe-js'
+import { usePayment } from '~/composables/usePayment'
 
 const { user: authUser } = useAuth()
 const cartData = ref<Cart[]>([])
 const servicesData = ref<Services[]>([])
 const showToast = ref(false)
 const toastMessage = ref('')
-
+const { appointmentForm } = usePayment()
+const consultationType = ref<string>('office')
+const officeTimeSlots = [
+  { label: '10:00 AM', value: '10:00' },
+  { label: '11:00 AM', value: '11:00' },
+  { label: '1:00 PM', value: '13:00' },
+  { label: '2:00 PM', value: '14:00' },
+  { label: '3:00 PM', value: '15:00' }
+]
+const onlineTimeSlots = [
+  { label: '10:00 AM', value: '10:00' },
+  { label: '11:00 AM', value: '11:00' },
+  { label: '1:00 PM', value: '13:00' },
+  { label: '2:00 PM', value: '14:00' },
+  { label: '3:00 PM', value: '15:00' },
+  { label: '4:00 PM', value: '16:00' },
+  { label: '5:00 PM', value: '17:00' }
+]
 const stripePromise = loadStripe('pk_test_51RnrvXIz34glyNofqQSAhcHQlTZGg9fDRHyQKcQ0KspR5k6Awot9YT7PCzuLr4R5MtN0Oe2wUzuTGddXcFWPqoij00rLsvPKYt')
 const cardElement = ref(null)
 let stripe: any = null
@@ -67,6 +85,16 @@ function getImage(name: string) {
 
   if (name === 'Capuccino Case Files') return '/images/services/cappucino-case-files.svg'
 }
+
+function selectConsultationType(type: string) {
+  consultationType.value = type
+}
+
+const timeSlots = computed(() => {
+  if (consultationType.value === 'office') return officeTimeSlots
+
+  if (consultationType.value === 'online') return onlineTimeSlots
+})
 
 async function pay() {
   const { data } = await $fetch<any>('/api/create-payment-intent', {
@@ -169,45 +197,41 @@ await fetchCart()
         </div>
       </div>
 
-      <div class="py-2 px-8 flex flex-col items-start space-y-6">
-        <p class="text-lg text-custom-brown-500 font-medium">Payment Method</p>
+      <div class="py-2 px-8 flex flex-col items-start space-y-4">
+        <p class="text-lg text-custom-brown-500 font-medium">Setup</p>
 
-        <div class="space-y-6 w-full">
-          <div>
-            <label class="block text-sm font-medium text-custom-brown-500 mb-1">Name on Card</label>
-            <input
-              type="text"
-              placeholder="Enter Name"
-              class="w-full border rounded-md p-2 text-sm"
-            />
-          </div>
+        <div class="grid grid-cols-2 gap-x-2 w-full">
+          <button 
+            class="text-center w-full rounded-md py-1.5 text-sm"
+            :class="[consultationType === 'office' ? 'bg-custom-brown-300 text-white' : 'bg-transparent text-custom-brown-500 border border-custom-brown-500']"
+            @click="selectConsultationType('office')"
+          >Office</button>
 
-          <div>
-            <label class="block text-sm font-medium text-custom-brown-500 mb-1">Card Number</label>
-            <div ref="cardNumberElement" class="w-full border rounded-md p-2 text-sm"></div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium text-custom-brown-500 mb-1">Expiration Date</label>
-              <div ref="cardExpiryElement" class="w-full border rounded-md p-2 text-sm"></div>
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-custom-brown-500 mb-1">CVC</label>
-              <div ref="cardCvcElement" class="w-full border rounded-md p-2 text-sm"></div>
-            </div>
-          </div>
+          <button 
+            class="text-center w-full rounded-md py-1.5 text-sm"
+            :class="[consultationType === 'online' ? 'bg-custom-brown-300 text-white' : 'bg-transparent text-custom-brown-500 border border-custom-brown-500']"
+            @click="selectConsultationType('online')"
+          >Online</button>
         </div>
 
-        <div class="p-4 flex items-center justify-between bg-custom-brown-200 w-full rounded-md">
-          <p class="text-sm font-medium text-custom-brown-500">Total: {{ formatPrice(totalPrice) }}</p>
+        <p class="text-sm text-custom-brown-500 font-medium">Available Day</p>
 
-          <div class="w-24">
-            <BaseButton>
-              Proceed
-            </BaseButton>
-          </div>
+        <BaseCalendar v-model="appointmentForm.scheduledDay" :type="consultationType" />
+
+        <p class="text-sm text-custom-brown-500 font-medium">Available Time</p>
+
+        <div class="flex flex-wrap gap-2">
+          <button
+            v-for="(slot, index) in timeSlots"
+            :key="index"
+            class="border rounded-lg px-8 py-1.5 text-sm text-custom-brown-500 border-custom-brown-500"
+          >
+            {{ slot.label }}
+          </button>
+        </div>
+
+        <div class="w-full">
+          <BaseButton>Proceed to payment</BaseButton>
         </div>
       </div>
     </div>
