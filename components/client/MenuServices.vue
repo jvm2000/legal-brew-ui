@@ -47,12 +47,11 @@ const services = ref<Services[]>([
     image: '/images/services/cappucino-case-files.svg'
   }
 ])
+const { $useCustomFetch } = useNuxtApp()
 
 async function fetchCart() {
-  const { data } = await useFetch<Cart[]>(`/api/cart/${authUser.value?.id}`, {
-    baseURL: useRuntimeConfig().public.apiBase,
+  const { data } = await $useCustomFetch<Cart[]>(`/api/cart/${authUser.value?.id}`, { 
     method: 'GET',
-    credentials: 'include',
   })
 
   cartData.value = data.value ?? []
@@ -69,13 +68,11 @@ async function addToCart(service: Services) {
   serviceForm.value.price = service.price ?? ''
 
   if (!cartData.value.length) {
-    const { data } = await useFetch('/api/carts', {
-      baseURL: useRuntimeConfig().public.apiBase,
+    const { data } = await $useCustomFetch('/api/carts', { 
       method: 'POST',
       body: {
         user_id: authUser.value?.id
       },
-      credentials: 'include',
     })
 
     serviceForm.value.cart_id = data.value?.id ?? ''
@@ -94,12 +91,10 @@ async function addToCart(service: Services) {
   await submitToAddToCartService()
 }
 
-function submitToAddToCartService() {
-  const { error } = useFetch('/api/services', {
-    baseURL: useRuntimeConfig().public.apiBase,
+async function submitToAddToCartService() {
+  const { error } = await $useCustomFetch('/api/services', { 
     method: 'POST',
     body: serviceForm.value,
-    credentials: 'include',
   })
 
   serviceForm.value = {}

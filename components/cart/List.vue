@@ -28,13 +28,12 @@ const onlineTimeSlots = [
   { label: '4:00 PM', value: '16:00' },
   { label: '5:00 PM', value: '17:00' }
 ]
+const { $useCustomFetch } = useNuxtApp()
 
 async function fetchCart() {
-  const { data } = await useFetch<Cart[]>(`/api/cart/${authUser.value?.id}`, {
-    baseURL: useRuntimeConfig().public.apiBase,
+  const { data } = await $useCustomFetch<Cart[]>(`/api/cart/${authUser.value?.id}`, { 
     method: 'GET',
-    credentials: 'include',
-  })  
+  })
 
   cartData.value = data.value ?? []
 
@@ -42,10 +41,8 @@ async function fetchCart() {
 }
 
 async function fetchServices() {
-  const { data } = await useFetch<Services[]>(`/api/cart/${cartData.value[0].id}/services`, {
-    baseURL: useRuntimeConfig().public.apiBase,
+  const { data } = await $useCustomFetch<Services[]>(`/api/cart/${cartData.value[0].id}/services`, { 
     method: 'GET',
-    credentials: 'include',
   })
 
   servicesData.value = data.value ?? []
@@ -92,10 +89,8 @@ async function deleteService(service: Services) {
   showToast.value = true
   toastMessage.value = 'Removed Service Successfully!'
 
-  const { error } = await useFetch(`/api/services/${service.id}`, {
-    baseURL: useRuntimeConfig().public.apiBase,
+  const { error } = await $useCustomFetch(`/api/services/${service.id}`, { 
     method: 'DELETE',
-    credentials: 'include',
   })
 
   showToast.value = false

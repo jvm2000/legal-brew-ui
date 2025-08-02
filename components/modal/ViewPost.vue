@@ -1,29 +1,50 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
-import type { Post, Comment } from '~/types/general'
-import { XMarkIcon, EllipsisHorizontalIcon, PaperAirplaneIcon, HeartIcon, ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/vue/24/outline'
-import auth from '~/middleware/auth'
+import type { Comment, Post, Reaction } from '~/types/general'
+import { XMarkIcon, PaperAirplaneIcon, HeartIcon, ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/vue/24/outline'
+
+type CommentForm = {
+  content: string,
+  post_id: string,
+  user_id: string
+}
+
+type ReactionForm = {
+  post_id: string,
+  user_id: string,
+  type: string
+}
+
+const emit = defineEmits<{
+  success: [void]
+}>()
 
 const { user: authUser } = useAuth()
 const comments = ref<Comment[]>([])
 const loading = ref(false)
 const { isViewPostModal, openCloseViewPostModal, selectedPost } = usePost()
-const commentForm = ref({
+const commentForm = ref<CommentForm>({
   content: '',
   post_id: '',
   user_id: ''
 })
+const reactionForm = ref<ReactionForm>({
+  post_id: '',
+  user_id: '',
+  type: ''
+})
+const { $useCustomFetch } = useNuxtApp()
+const inputRef = ref<HTMLTextAreaElement | null>(null)
+const showToast = ref(false)
+const toastMessage = ref('')
 
 function getRemainingTime(date: any) {
   return dayjs(date).fromNow() // returns "in 3 days" or "2 hours ago"
 }
 
 async function getComments() {
-  const { data } = await useFetch<Comment[]>(`/api/posts/${selectedPost.value.id}/comments`, {
-    baseURL: useRuntimeConfig().public.apiBase,
-    method: 'GET',
-    credentials: 'include',
+  const { data } = await $useCustomFetch(`/api/posts/${selectedPost.value.id}/comments`, { 
+    method: 'GET' 
   })
 
   if (data.value) {
@@ -39,11 +60,9 @@ async function submitComment() {
   commentForm.value.post_id = selectedPost.value?.id ?? ''
   commentForm.value.user_id = authUser.value?.id ?? ''
 
-  const { error } = await useFetch('/api/comments', {
-    baseURL: useRuntimeConfig().public.apiBase,
+  const { error } = await $useCustomFetch('/api/comments', { 
     method: 'POST',
-    body: commentForm,
-    credentials: 'include',
+    body: commentForm.value,
   })
 
   commentForm.value = {}
@@ -54,13 +73,73 @@ async function submitComment() {
 }
 
 function getImage(path: any) {
+  if (!path) return '/images/admin-icon.svg'
+
   return `${ useRuntimeConfig().public.apiBase }/storage/${path}`
+}
+
+function autoResize() {
+  const el = inputRef.value
+
+  if (el) {
+    el.style.height = 'auto'
+    el.style.height = el.scrollHeight + 'px'
+  }
+}
+
+function handleClose() {
+  commentForm.value.content = ''
+  commentForm.value.post_id = ''
+  commentForm.value.user_id = ''
+}
+
+async function submitReaction() {
+  showToast.value = true
+  toastMessage.value = 'Like Submitted!'
+
+  reactionForm.value.post_id = selectedPost.value?.id ?? ''
+  reactionForm.value.user_id =  authUser.value?.id ?? ''
+  reactionForm.value.type = 'heart'
+
+  const { error } = await $useCustomFetch<Post[]>('/api/reactions', {
+    method: 'POST',
+    body: reactionForm.value,
+  })
+
+  emit('success')
+
+  showToast.value = false
+}
+
+async function unsubmitReaction(reaction: Reaction[]) {
+  showToast.value = true
+  toastMessage.value = 'Unlike Submitted!'
+
+  const reactionObject = reaction?.find(
+    (reaction: any) => reaction.user_id === authUser?.value?.id
+  )
+
+  const { error } = await $useCustomFetch<Post[]>(`/api/reactions/${reactionObject?.id}`, {
+    method: 'DELETE',
+  })
+
+  emit('success')
+
+  showToast.value = false
+}
+
+function checkIfAlreadyReacted(reaction: Reaction[]) {
+  return reaction?.some((reaction: any) => reaction.user_id === authUser?.value?.id)
 }
 
 const hasImages = computed<boolean>(() => {
   if (selectedPost.value?.images && selectedPost.value?.images.length) return true
 
   return false
+})
+
+onMounted(() => {
+  autoResize()
 })
 </script>
 
@@ -72,6 +151,7 @@ const hasImages = computed<boolean>(() => {
     shape="straight"
     noPadding
     @before-enter="getComments"
+    @after-leave="handleClose"
     @close="openCloseViewPostModal"
   >
     <template #header></template>
@@ -112,7 +192,11 @@ const hasImages = computed<boolean>(() => {
 
           <div class="flex items-center space-x-8">
             <div class="flex items-center space-x-2">
-              <HeartIcon class="w-6 h-6 stroke-custom-brown-500 cursor-pointer" />
+              <HeartIcon 
+                class="w-6 h-6 stroke-custom-brown-500 cursor-pointer" 
+                :class="[checkIfAlreadyReacted(selectedPost?.reactions ?? []) ? 'fill-custom-brown-500' : 'stroke-custom-brown-500']"
+                @click="checkIfAlreadyReacted(selectedPost?.reactions ?? []) ? unsubmitReaction(selectedPost?.reactions ?? []) : submitReaction()"
+              />
 
               <p class="text-sm text-custom-brown-500">{{ selectedPost?.reactions.length ?? '0' }}</p>
             </div>
@@ -133,20 +217,21 @@ const hasImages = computed<boolean>(() => {
           <div class="grid grid-cols-10 w-full items-center">
             <div class="w-8 h-8 rounded-full overflow-hidden col-span-1">
               <img
-                :src="authUser?.images?.[0] ? getImage(authUser.images[0]) : '/images/admin-icon.svg'"
+                :src="getImage(authUser?.images?.length ? authUser.images[0] : null)"
                 class="w-full h-full object-cover"
               />
             </div>
             
             <div class="col-span-9 relative flex items-center">
-              <input 
+              <textarea
+                ref="inputRef"
+                class="w-full text-sm text-custom-brown-500 ring-0 focus:ring-0 bg-inherit outline-none h-auto max-h-56  overflow-hidden resize-none px-4 py-2 border border-gray-300"
+                placeholder="Write your post here"
                 v-model="commentForm.content"
-                type="text" 
-                class="w-full ring-0 focus:ring-0 outline-none px-4 py-2 rounded-md border border-gray-300"
-                placeholder="Leave a comment"
-              />
+                @input="autoResize"
+              ></textarea>
 
-              <button class="absolute right-4" @click="submitComment" :disabled="loading">
+              <button class="absolute bottom-4 right-4" @click="submitComment" :disabled="loading">
                 <PaperAirplaneIcon class="stroke-custom-brown-500 w-5 h-5" />
               </button>
             </div>
@@ -154,7 +239,7 @@ const hasImages = computed<boolean>(() => {
 
           <div v-for="comment in comments" class="grid grid-cols-10 w-full items-center">
             <div class="w-8 h-8 rounded-full overflow-hidden col-span-1">
-              <img :src="getImage(comment.user?.images[0])" class="w-full h-full object-cover">
+              <img :src="getImage(comment.user?.images?.length ? comment.user.images[0] : null)" class="w-full h-full object-cover" />
             </div>
 
             <div class="space-y-1 flex flex-col items-start col-span-9">
@@ -175,4 +260,6 @@ const hasImages = computed<boolean>(() => {
       </div>
     </div>
   </BaseModal>
+
+  <BaseToast :show="showToast" :message="toastMessage" />
 </template>

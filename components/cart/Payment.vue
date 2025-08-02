@@ -33,13 +33,12 @@ const style = {
   },
 }
 const { formatDate, formatTime } = useFormat()
+const { $useCustomFetch } = useNuxtApp()
 
 async function fetchCart() {
-  const { data } = await useFetch<Cart[]>(`/api/cart/${authUser.value?.id}`, {
-    baseURL: useRuntimeConfig().public.apiBase,
+  const { data } = await $useCustomFetch<Cart[]>(`/api/cart/${authUser.value?.id}`, { 
     method: 'GET',
-    credentials: 'include',
-  })  
+  })
 
   cartData.value = data.value ?? []
 
@@ -47,10 +46,8 @@ async function fetchCart() {
 }
 
 async function fetchServices() {
-  const { data } = await useFetch<Services[]>(`/api/cart/${cartData.value[0].id}/services`, {
-    baseURL: useRuntimeConfig().public.apiBase,
+  const { data } = await $useCustomFetch<Services[]>(`/api/cart/${cartData.value[0].id}/services`, { 
     method: 'GET',
-    credentials: 'include',
   })
 
   servicesData.value = data.value ?? []

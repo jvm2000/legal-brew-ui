@@ -26,26 +26,17 @@ const emit = defineEmits<{
 
 const showToast = ref(false)
 const toastMessage = ref('')
-const inputRef = ref<HTMLTextAreaElement | null>(null)
 const { openCloseViewPostModal, openCloseEditPostModal } = usePost()
 const { user: authUser } = useAuth()
 const reactionForm = ref<ReactionForm>({
-    post_id: '',
-    user_id: '',
-    type: ''
+  post_id: '',
+  user_id: '',
+  type: ''
 })
-
-function autoResize() {
-  const el = inputRef.value
-
-  if (el) {
-    el.style.height = 'auto'
-    el.style.height = el.scrollHeight + 'px'
-  }
-}
+const { $useCustomFetch } = useNuxtApp() 
 
 function getRemainingTime(date: Date | string) {
-  return dayjs(date).fromNow() // returns "in 3 days" or "2 hours ago"
+  return dayjs(date).fromNow()
 }
 
 async function submitReaction() {
@@ -56,11 +47,9 @@ async function submitReaction() {
   reactionForm.value.user_id =  authUser.value?.id ?? ''
   reactionForm.value.type = 'heart'
 
-  const { error } = await useFetch('/api/reactions', {
-    baseURL: useRuntimeConfig().public.apiBase,
+  const { error } = await $useCustomFetch<Post[]>('/api/reactions', {
     method: 'POST',
     body: reactionForm.value,
-    credentials: 'include',
   })
 
   showToast.value = false
@@ -76,10 +65,8 @@ async function unsubmitReaction(reaction: Reaction[]) {
     (reaction: any) => reaction.user_id === authUser?.value?.id
   )
 
-  const { error } = await useFetch(`/api/reactions/${reactionObject.id}`, {
-    baseURL: useRuntimeConfig().public.apiBase,
+  const { error } = await $useCustomFetch<Post[]>(`/api/reactions/${reactionObject?.id}`, {
     method: 'DELETE',
-    credentials: 'include',
   })
 
   showToast.value = false
@@ -91,10 +78,8 @@ async function deletePost() {
   showToast.value = true
   toastMessage.value = 'Delete Post Successfully!'
 
-  const { error } = await useFetch(`/api/posts/${props.post?.id}`, {
-    baseURL: useRuntimeConfig().public.apiBase,
+  const { error } = await $useCustomFetch<Post[]>(`/api/posts/${props.post?.id}`, {
     method: 'DELETE',
-    credentials: 'include',
   })
 
   showToast.value = false
@@ -105,10 +90,6 @@ async function deletePost() {
 function checkIfAlreadyReacted(reaction: Reaction[]) {
   return reaction?.some((reaction: any) => reaction.user_id === authUser?.value?.id)
 }
-
-onMounted(() => {
-  autoResize()
-})
 </script>
 
 <template>

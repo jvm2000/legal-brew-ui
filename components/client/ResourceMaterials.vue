@@ -2,12 +2,11 @@
 import type { Post } from '~/types/general';
 
 const posts = ref<Post[]>([])
+const { $useCustomFetch } = useNuxtApp()
 
 async function getPosts() {
-  const { data } = await useFetch<Post[]>('/api/posts', {
-    baseURL: useRuntimeConfig().public.apiBase,
+  const { data } = await $useCustomFetch('/api/posts', { 
     method: 'GET',
-    credentials: 'include',
   })
 
   if (data.value) {
@@ -24,6 +23,6 @@ await getPosts()
       <PostContainer :post @success="getPosts" />
     </div>
 
-    <ModalViewPost />
+    <ModalViewPost @success="getPosts" />
   </div>
 </template>
