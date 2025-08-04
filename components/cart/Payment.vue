@@ -80,6 +80,34 @@ function formatPrice(price: number) {
   }).format(price)
 }
 
+async function submitPayment() {
+  servicesData.value.forEach((service: Services) => {
+    appointmentForm.value.services.push(service?.id)
+  })
+
+  const { data } = await $useCustomFetch('/api/appointments', { 
+    method: 'POST',
+    body: appointmentForm
+  })
+}
+
+async function payWithGCash() {
+  try {
+    const { data } = await $useCustomFetch('/api/pay/gcash', { 
+      method: 'POST',
+      body: {
+        amount: totalPrice
+      }
+    })
+
+    const redirectUrl = data?.data.attributes.redirect.checkout_url
+    window.location.href = redirectUrl
+  } catch (error) {
+    console.error('GCash Payment Failed:', error)
+  }
+}
+
+
 const totalPrice = computed<number>(() => {
   return servicesData.value.reduce((total, service) => {
     return total + (service.price || 0)
@@ -149,7 +177,7 @@ await fetchCart()
         </div>
       </div>
 
-      <div class="py-2 px-8 flex flex-col items-start space-y-4 w-full">
+      <div class="py-2 px-8 flex flex-col items-start space-y-6 w-full">
         <p class="text-custom-brown-500 text-lg font-medium">Enter payment details</p>
 
         <div class="w-full">
@@ -182,10 +210,35 @@ await fetchCart()
           <p class="text-sm font-medium text-custom-brown-500">Total: {{ formatPrice(totalPrice) }}</p>
 
           <div class="w-24">
-            <BaseButton>
+            <BaseButton @click="submitPayment">
               Proceed
             </BaseButton>
           </div>
+        </div>
+
+        <div class="w-full justify-between space-x-2 flex items-center">
+          <div class="h-[1px] w-full bg-custom-brown-200"></div>
+
+          <p class="text-sm text-custom-brown-300 whitespace-nowrap">Or pay with</p>
+
+          <div class="h-[1px] w-full bg-custom-brown-200"></div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 w-full">
+          <button 
+            class="border border-blue-300 p-4 w-full flex items-center space-x-4 rounded-lg"
+            @click="payWithGCash"
+          >
+            <img src="/images/payments/gcash.svg" />
+
+            <p class="text-custom-brown-500 font-bold">Gcash</p>
+          </button>
+
+          <button class="border border-blue-300 p-4 w-full flex items-center space-x-4 rounded-lg">
+            <img src="/images/payments/paymaya.svg" />
+
+            <p class="text-custom-brown-500 font-bold">Maya</p>
+          </button>
         </div>
       </div>
     </div>
