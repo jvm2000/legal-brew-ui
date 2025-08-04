@@ -13,41 +13,25 @@ const showToast = ref(false)
 const toastMessage = ref('')
 const { user: authUser } = useAuth()
 const cartData = ref<Cart[]>([])
+const servicesData = ref<Services[]>([])
 const serviceForm = ref<ServiceForm>({
   cart_id: '',
   name: '',
   description: '',
   price: 0
 })
-const services = ref<Services[]>([
-  {
-    name: 'Latte Legalizations',
-    price: 500,
-    description: 'Drafting of documents such as letters, special power of attorneys, promissory notes, compromise agreements, and others.',
-    image: '/images/services/latte-legalization.svg'
-  }, {
-    name: 'Espresso Advise',
-    price: 500,
-    description: 'Online consultations with the lawyer.',
-    image: '/images/services/espress-advise.svg'
-  }, {
-    name: 'Americano Agreements',
-    price: 1000,
-    description: 'Drafting of contracts; review of existing contracts and drafting of revised contract.',
-    image: '/images/services/americano-agreements.svg'
-  }, {
-    name: 'Barista Grind',
-    price: 2000,
-    description: 'Thorough research and analysis of legal issues, study of applicable laws and statutes, and provision of legal documentation and research services.',
-    image: '/images/services/barista-grind.svg'
-  }, {
-    name: 'Capuccino Case Files',
-    price: 20000,
-    description: 'Assistance with litigation of cases, including court representation and preparation of pleadings in the areas of: Labor law, Marriage and family relations, Property law, Corporate law, Immigration law.',
-    image: '/images/services/cappucino-case-files.svg'
-  }
-])
+const services = ref<Services[]>([])
 const { $useCustomFetch } = useNuxtApp()
+
+async function fetchMenuServices() {
+  await fetchServices()
+
+  const { data } = await $useCustomFetch<Services[]>('/api/menuservices', { 
+    method: 'GET',
+  })
+
+  services.value = data.value ?? []
+}
 
 async function fetchCart() {
   const { data } = await $useCustomFetch<Cart[]>(`/api/cart/${authUser.value?.id}`, { 
@@ -55,6 +39,20 @@ async function fetchCart() {
   })
 
   cartData.value = data.value ?? []
+}
+
+async function fetchServices() {
+  if (!cartData.value) return
+
+  const { data } = await $useCustomFetch<Services[]>(`/api/cart/${cartData.value[0]?.id}/services`, { 
+    method: 'GET',
+  })
+
+  servicesData.value = data.value ?? []
+}
+
+function isServiceInList(service: Services): boolean {
+  return servicesData.value.some(s => s.name === service.name)
 }
 
 async function addToCart(service: Services) {
@@ -81,6 +79,8 @@ async function addToCart(service: Services) {
 
     showToast.value = false
 
+    await fetchMenuServices()
+
     return
   }
 
@@ -89,6 +89,8 @@ async function addToCart(service: Services) {
   showToast.value = false
 
   await submitToAddToCartService()
+
+  await fetchMenuServices()
 }
 
 async function submitToAddToCartService() {
@@ -108,7 +110,20 @@ function formatPrice(price: number) {
   }).format(price)
 }
 
+function getImage(name: string) {
+  if (name === 'Latte Legalizations') return '/images/services/latte-legalization.svg'
+
+  if (name === 'Espresso Advise') return '/images/services/espress-advise.svg'
+
+  if (name === 'Americano Agreements') return '/images/services/americano-agreements.svg'
+
+  if (name === 'Barista Grind') return '/images/services/barista-grind.svg'
+
+  if (name === 'Capuccino Case Files') return '/images/services/cappucino-case-files.svg'
+}
+
 await fetchCart()
+fetchMenuServices()
 </script>
 
 <template>
@@ -117,12 +132,12 @@ await fetchCart()
   <div class="space-y-4 items-start py-4">
     <div 
       v-for="(service, index) in services"
-      :key="index"
+      :key="service.name"
       class="flex flex-col items-start space-y-6 border-b border-custom-brown-500 pb-6"
     >
       <div class="flex items-center space-x-2">
         <div class="w-12 h-12 bg-custom-brown-300 rounded-md grid place-items-center">
-          <img :src="service.image" class="w-full h-9" />
+          <img :src="getImage(service.name)" class="w-full h-9" />
         </div>
 
         <div>
@@ -135,12 +150,17 @@ await fetchCart()
       <p class="text-sm text-custom-brown-500 max-w-4xl w-full">{{ service.description }}</p>
 
       <button 
-        class="bg-custom-brown-300 py-2 text-sm text-white text-center w-full rounded-md flex flex-col items-center"
+        class="py-2 text-sm text-center w-full rounded-md flex flex-col items-center"
+        :class="[isServiceInList(service) ? 'bg-transparent border border-custom-brown-300 text-custom-brown-500' : 'bg-custom-brown-300 text-white']"
+        @click="addToCart(service)"
       >
-        <div class="flex items-center space-x-2" @click="addToCart(service)">
-          <ShoppingCartIcon class="w-4 h-4 stroke-white"/>
+        <div class="flex items-center space-x-2">
+          <ShoppingCartIcon 
+            class="w-4 h-4"
+            :class="[isServiceInList(service) ? 'hidden' : 'stroke-white block']"
+          />
 
-          <span>Add to Cart</span>
+          <span>{{ isServiceInList(service) ? 'Added' : 'Add to Cart'}}</span>
         </div>
       </button>
     </div>

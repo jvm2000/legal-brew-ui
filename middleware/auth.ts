@@ -7,7 +7,7 @@ export default defineNuxtRouteMiddleware(async () => {
   if (import.meta.client) {
     try {
       if (!authUser.value) {
-        const user = await $useCustomFetch<User>('/api/user')
+        const user = $useCustomFetch<User>('/api/user')
 
         authUser.value = user?.data
       }
