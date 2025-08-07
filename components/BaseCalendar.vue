@@ -5,8 +5,8 @@ const props = defineProps<{
   type?: string
 }>()
 
-const selectedDate = ref(new Date())
-const currentDate = ref(new Date(selectedDate.value))
+const selectedDate = ref<Date | null>(null)
+const currentDate = ref(new Date(selectedDate.value ?? new Date()))
 
 const modelValue = defineModel<string>({ required: false })
 
@@ -60,6 +60,7 @@ const calendarDays = computed(() => getDaysForCalendar())
 
 function isSelected(day: any) {
   return (
+    selectedDate.value !== null &&
     day.date.toDateString() === selectedDate.value.toDateString()
   )
 }
@@ -68,7 +69,7 @@ function selectDate(day: any) {
   selectedDate.value = new Date(day.date)
   currentDate.value = new Date(day.date)
 
-  modelValue.value = selectedDate.value ?? ''
+  modelValue.value = selectedDate.value.toISOString()
 }
 
 function nextMonth() {
@@ -112,9 +113,9 @@ function prevMonth() {
         :key="index"
         @click="selectDate(day)"
         class="aspect-square flex items-center justify-center cursor-pointer transition-all"
-        :class="[
+        :class="[ 
           isSelected(day) ? 'bg-custom-brown-300 text-white rounded-full' : '',
-          !isSelected(day) && (day.date.getDay() === 0 || day.date.getDay() === 6  || (day.date.getDay() === 5 &&  props.type === 'office'))
+          !isSelected(day) && (day.date.getDay() === 0 || day.date.getDay() === 6 || (day.date.getDay() === 5 && props.type === 'office'))
             ? 'bg-custom-brown-100/50 text-gray-700 hover:rounded-none pointer-events-none cursor-not-allowed'
             : '',
           !day.isCurrentMonth ? 'text-gray-400' : '',

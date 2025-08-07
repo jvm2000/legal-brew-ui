@@ -106,6 +106,12 @@ function formatPrice(price: number) {
   }).format(price)
 }
 
+const isButtonDisabled = computed<boolean>(() => {
+  if (!appointmentForm.value.scheduledDay || !selectedTime.value) return true
+
+  return false
+})
+
 await fetchCart()
 </script>
 
@@ -181,7 +187,10 @@ await fetchCart()
         </div>
 
         <div class="w-full">
-          <BaseButton @click="proceedToPayment">Proceed to payment</BaseButton>
+          <BaseButton 
+            @click="proceedToPayment"
+            :disabled="isButtonDisabled"
+          >Proceed to payment</BaseButton>
         </div>
       </div>
     </div>

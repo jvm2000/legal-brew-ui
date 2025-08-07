@@ -2,12 +2,14 @@
 import { ArrowLongLeftIcon } from '@heroicons/vue/24/outline'
 import type { Cart, Services } from '~/types/general'
 import { loadStripe } from '@stripe/stripe-js'
-import { useDateFormat } from '@vueuse/core'
 
+const showToast = ref(false)
+const toastMessage = ref('')
 const { user: authUser } = useAuth()
 const { appointmentForm } = usePayment()
 const cartData = ref<Cart[]>([])
 const servicesData = ref<Services[]>([])
+
 const stripePromise = loadStripe('pk_test_51RnrvXIz34glyNofqQSAhcHQlTZGg9fDRHyQKcQ0KspR5k6Awot9YT7PCzuLr4R5MtN0Oe2wUzuTGddXcFWPqoij00rLsvPKYt')
 const cardElement = ref(null)
 let stripe: any = null
@@ -56,7 +58,7 @@ async function fetchServices() {
 async function pay() {
   const { data } = await $fetch<any>('/api/create-payment-intent', {
     method: 'POST',
-    body: { amount: 100 }, // e.g. $1.00
+    body: { amount: 100 },
   })
 
   const result = await stripe.confirmCardPayment(data.clientSecret, {
@@ -92,21 +94,26 @@ async function submitPayment() {
 }
 
 async function payWithGCash() {
+  showToast.value = true
+  toastMessage.value = 'Transaction on progress'
+
   try {
     const { data } = await $useCustomFetch('/api/pay/gcash', { 
       method: 'POST',
       body: {
-        amount: totalPrice
+        amount: totalPrice,
+        description: 'gcash-pay',
+        remarks: 'gcash-pay',
       }
     })
 
-    const redirectUrl = data?.data.attributes.redirect.checkout_url
-    window.location.href = redirectUrl
+    window.open(data.value.checkout_url, '_blank')
   } catch (error) {
     console.error('GCash Payment Failed:', error)
   }
-}
 
+  showToast.value = false
+}
 
 const totalPrice = computed<number>(() => {
   return servicesData.value.reduce((total, service) => {
@@ -234,7 +241,10 @@ await fetchCart()
             <p class="text-custom-brown-500 font-bold">Gcash</p>
           </button>
 
-          <button class="border border-blue-300 p-4 w-full flex items-center space-x-4 rounded-lg">
+          <button 
+            class="border border-blue-300 p-4 w-full flex items-center space-x-4 rounded-lg"
+            @click="payWithGCash"
+          >
             <img src="/images/payments/paymaya.svg" />
 
             <p class="text-custom-brown-500 font-bold">Maya</p>
@@ -242,5 +252,7 @@ await fetchCart()
         </div>
       </div>
     </div>
-  </div>  
+  </div>
+
+  <BaseToast :show="showToast" :message="toastMessage" />
 </template>
