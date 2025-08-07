@@ -4,7 +4,9 @@ export type User = {
   full_name: string,
   email: string,
   contact_no: string,
-  images: any[]
+  birthdate: string,
+  images: any[],
+  password: string
 }
 
 export type Post = {

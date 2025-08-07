@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { ShoppingCartIcon, ChevronUpDownIcon, LockOpenIcon } from '@heroicons/vue/24/outline'
+import { ShoppingCartIcon, ArrowLeftEndOnRectangleIcon, Cog6ToothIcon, CalendarDaysIcon } from '@heroicons/vue/24/outline'
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
-import auth from '~/middleware/auth'
 
 const { user: authUser, token } = useAuth()
 const { $useCustomFetch } = useNuxtApp()
@@ -44,22 +43,20 @@ function getImage(path: any) {
           @click="navigateTo('/cart')"
         />
 
-        <div class="flex items-center space-x-4">
-          <div class="w-8 h-8 rounded-full overflow-hidden relative">
-            <img :src="getImage(authUser?.images)" class="w-full h-full object-cover">
-          </div>
-
-          <div>
-            <p class="text-sm font-medium custom-brown-500">{{ authUser?.full_name }}</p>
-
-            <p class="text-xs text-custom-brown-500">{{ authUser?.role }}</p>
-          </div>
-        </div>
-
         <div>
           <Menu>
             <MenuButton>
-              <ChevronUpDownIcon class="w-6 h-6 stroke-custom-brown-500" />
+              <button class="flex justify-start items-center space-x-4 rounded-lg hover:bg-custom-brown-100 p-2">
+                <div class="w-8 h-8 rounded-full overflow-hidden relative">
+                  <img :src="getImage(authUser?.images)" class="w-full h-full object-cover">
+                </div>
+
+                <div class="flex flex-col items-start">
+                  <p class="text-sm font-medium custom-brown-500">{{ authUser?.full_name }}</p>
+
+                  <p class="text-xs text-custom-brown-500">{{ authUser?.role }}</p>
+                </div>
+              </button>
             </MenuButton>
 
             <transition
@@ -71,13 +68,25 @@ function getImage(path: any) {
               leave-to-class="transform scale-95 opacity-0"
             >
               <MenuItems
-                class="absolute right-44 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none px-4"
+                class="absolute right-44 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none px-4 py-2"
               >
-                <div @click="logout" class="py-2 flex items-center space-x-4 cursor-pointer">
-                  <LockOpenIcon class="w-4 h-4 stroke-custom-brown-500" />
+                <button v-if="authUser?.role === 'admin'" @click="logout" class="py-2 flex items-center space-x-4 hover:bg-custom-brown-100 w-full rounded-lg px-4">
+                  <CalendarDaysIcon class="w-6 h-6 stroke-custom-brown-500" />
 
-                  <p class="text-sm text-custom-brown-500">Logout</p>
-                </div>
+                  <p class="text-sm text-custom-brown-500 font-medium">Appointments</p>
+                </button>
+
+                <button @click="navigateTo('/account/settings')" class="py-2 flex items-center space-x-4 hover:bg-custom-brown-100 w-full rounded-lg px-4">
+                  <Cog6ToothIcon class="w-6 h-6 stroke-custom-brown-500" />
+
+                  <p class="text-sm text-custom-brown-500 font-medium">Account Settings</p>
+                </button>
+
+                <button @click="logout" class="py-2 flex items-center space-x-4 hover:bg-custom-brown-100 w-full rounded-lg px-4">
+                  <ArrowLeftEndOnRectangleIcon class="w-6 h-6 stroke-custom-brown-500" />
+
+                  <p class="text-sm text-custom-brown-500 font-medium">Logout</p>
+                </button>
               </MenuItems>
             </transition>
           </Menu>
