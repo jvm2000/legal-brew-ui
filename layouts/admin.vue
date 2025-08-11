@@ -37,6 +37,12 @@ function getImage(path: any) {
       </div>
 
       <div class="flex items-center space-x-8">
+        <CalendarDaysIcon 
+          v-if="authUser?.role === 'admin'"
+          class="w-8 h-8 stroke-custom-brown-500 cursor-pointer"
+          @click="navigateTo('/appointment')"
+        />
+
         <ShoppingCartIcon 
           v-if="authUser?.role === 'client'"
           class="w-8 h-8 stroke-custom-brown-500 cursor-pointer"
@@ -70,7 +76,7 @@ function getImage(path: any) {
               <MenuItems
                 class="absolute right-44 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none px-4 py-2"
               >
-                <button v-if="authUser?.role === 'admin'" @click="logout" class="py-2 flex items-center space-x-4 hover:bg-custom-brown-100 w-full rounded-lg px-4">
+                <button v-if="authUser?.role === 'admin'" @click="navigateTo('/appointment')" class="py-2 flex items-center space-x-4 hover:bg-custom-brown-100 w-full rounded-lg px-4">
                   <CalendarDaysIcon class="w-6 h-6 stroke-custom-brown-500" />
 
                   <p class="text-sm text-custom-brown-500 font-medium">Appointments</p>

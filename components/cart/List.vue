@@ -41,6 +41,8 @@ async function fetchCart() {
 }
 
 async function fetchServices() {
+  if (!cartData.value.length) return
+
   const { data } = await $useCustomFetch<Services[]>(`/api/cart/${cartData.value[0].id}/services`, { 
     method: 'GET',
   })
@@ -105,6 +107,12 @@ function formatPrice(price: number) {
     minimumFractionDigits: 2,
   }).format(price)
 }
+
+const isButtonDisabled = computed<boolean>(() => {
+  if (!appointmentForm.value.scheduledDay || !selectedTime.value) return true
+
+  return false
+})
 
 await fetchCart()
 </script>
@@ -181,7 +189,10 @@ await fetchCart()
         </div>
 
         <div class="w-full">
-          <BaseButton @click="proceedToPayment">Proceed to payment</BaseButton>
+          <BaseButton 
+            @click="proceedToPayment"
+            :disabled="isButtonDisabled"
+          >Proceed to payment</BaseButton>
         </div>
       </div>
     </div>

@@ -13,9 +13,11 @@ const appointmentForm = ref<AppointmentForm>({
   scheduledDay: '',
   scheduledTime: '',
 })
+const isOpenSuccessModal = ref(false)
 
 export const usePayment = () => {
   return {
-    appointmentForm
+    appointmentForm,
+    isOpenSuccessModal
   }
 }
