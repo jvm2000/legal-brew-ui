@@ -7,6 +7,7 @@ const showToast = ref(false)
 const toastMessage = ref('')
 const { user: authUser } = useAuth()
 const { appointmentForm } = usePayment()
+const { isOpenSuccessModal } = usePayment()
 const cartData = ref<Cart[]>([])
 const servicesData = ref<Services[]>([])
 
@@ -82,17 +83,6 @@ function formatPrice(price: number) {
   }).format(price)
 }
 
-async function submitPayment() {
-  servicesData.value.forEach((service: Services) => {
-    appointmentForm.value.services.push(service?.id)
-  })
-
-  const { data } = await $useCustomFetch('/api/appointments', { 
-    method: 'POST',
-    body: appointmentForm
-  })
-}
-
 async function payWithGCash() {
   showToast.value = true
   toastMessage.value = 'Transaction on progress'
@@ -107,7 +97,16 @@ async function payWithGCash() {
       }
     })
 
-    window.open(data.value.checkout_url, '_blank')
+    const popup = window.open(data.value.checkout_url, '_blank')
+
+    if (popup) {
+      const popupChecker = setInterval(() => {
+        if (popup.closed) {
+          clearInterval(popupChecker)
+          isOpenSuccessModal.value = true
+        }
+      }, 500)
+    }
   } catch (error) {
     console.error('GCash Payment Failed:', error)
   }
@@ -255,4 +254,6 @@ await fetchCart()
   </div>
 
   <BaseToast :show="showToast" :message="toastMessage" />
+
+  <ModalSuccessPayment />
 </template>

@@ -41,6 +41,8 @@ async function fetchCart() {
 }
 
 async function fetchServices() {
+  if (!cartData.value.length) return
+
   const { data } = await $useCustomFetch<Services[]>(`/api/cart/${cartData.value[0].id}/services`, { 
     method: 'GET',
   })

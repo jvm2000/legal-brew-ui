@@ -5,8 +5,8 @@ const props = defineProps<{
   type?: string
 }>()
 
-const selectedDate = ref<Date | null>(null)
-const currentDate = ref(new Date(selectedDate.value ?? new Date()))
+const selectedDate = ref<Date | null>(new Date() ?? null)
+const currentDate = ref(new Date(selectedDate.value))
 
 const modelValue = defineModel<string>({ required: false })
 
@@ -69,7 +69,7 @@ function selectDate(day: any) {
   selectedDate.value = new Date(day.date)
   currentDate.value = new Date(day.date)
 
-  modelValue.value = selectedDate.value
+  modelValue.value = selectedDate.value.toISOString()
 }
 
 function nextMonth() {
@@ -86,7 +86,7 @@ function prevMonth() {
 </script>
 
 <template>
-  <div class="w-full p-4 select-none">
+  <div class="w-full p-4 select-none bg-white rounded-lg">
     <div class="flex justify-between items-center mb-8">
       <h2 class="text-sm font-semibold text-custom-brown-500 uppercase tracking-wide">
         {{ monthNames[currentMonth] }} {{ currentYear }}
