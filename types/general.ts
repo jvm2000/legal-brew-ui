@@ -45,3 +45,12 @@ export type Services = {
   description: string,
   image: string
 }
+
+export type Appointment = {
+  id?: string,
+  scheduledDay: string,
+  scheduledTime: string,
+  services: Services[],
+  setup: 'office' | 'online'
+  user: User
+}

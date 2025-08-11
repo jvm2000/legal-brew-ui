@@ -5,7 +5,7 @@ const props = defineProps<{
   type?: string
 }>()
 
-const selectedDate = ref<Date | null>(new Date() ?? null)
+const selectedDate = ref<Date | null>(new Date())
 const currentDate = ref(new Date(selectedDate.value))
 
 const modelValue = defineModel<string>({ required: false })
@@ -66,10 +66,12 @@ function isSelected(day: any) {
 }
 
 function selectDate(day: any) {
+  const { formatDateString } = useFormat()
+  
   selectedDate.value = new Date(day.date)
   currentDate.value = new Date(day.date)
 
-  modelValue.value = selectedDate.value.toISOString()
+  modelValue.value = formatDateString(selectedDate.value.toISOString())
 }
 
 function nextMonth() {
