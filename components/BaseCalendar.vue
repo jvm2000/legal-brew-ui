@@ -6,9 +6,9 @@ const props = defineProps<{
 }>()
 
 const selectedDate = ref<Date | null>(null)
-const currentDate = ref(new Date(selectedDate.value ?? new Date()))
+const currentDate = ref(new Date())
 
-const modelValue = defineModel<string>({ required: false })
+const modelValue = defineModel<string | Date>({ required: false })
 
 const daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
 const monthNames = [
@@ -68,7 +68,6 @@ function isSelected(day: any) {
 function selectDate(day: any) {
   selectedDate.value = new Date(day.date)
   currentDate.value = new Date(day.date)
-
   modelValue.value = selectedDate.value
 }
 
@@ -83,6 +82,25 @@ function prevMonth() {
   prev.setMonth(currentDate.value.getMonth() - 1)
   currentDate.value = prev
 }
+
+async function handleOpen() {
+  if (modelValue.value) {
+    const parsedDate = new Date(modelValue.value)
+    if (!isNaN(parsedDate.getTime())) {
+      selectedDate.value = parsedDate
+      currentDate.value = parsedDate
+    }
+  }
+}
+
+function delay(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+onMounted(async () => {
+  await delay(500)
+  await handleOpen()
+})
 </script>
 
 <template>

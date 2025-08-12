@@ -55,20 +55,27 @@ export const useFormat = () => {
   }
 
   function formatAppointmentDate(dateInput: string | Date): string {
-  const date = new Date(dateInput)
-  if (isNaN(date.getTime())) return '' // handle invalid date
+      const date = new Date(dateInput)
+      if (isNaN(date.getTime())) return '' // handle invalid date
 
-  return date.toLocaleDateString('en-PH', {
-    month: 'long',
-    day: 'numeric',
-  })
-}
+      return date.toLocaleDateString('en-PH', {
+        month: 'long',
+        day: 'numeric',
+    })
+  }
+
+  function formatToLocalDate(dateStr: string | null): Date | null {
+    if (!dateStr) return null
+
+    return new Date(dateStr)
+  }
 
   return {
     formatDate,
     formatTime,
     formatDateString,
     formatNextDateString,
-    formatAppointmentDate
+    formatAppointmentDate,
+    formatToLocalDate
   }
 }

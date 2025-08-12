@@ -1,9 +1,20 @@
-import type { Services } from "~/types/general"
+import type { Appointment } from "~/types/general"
 
-const scheduledForToday = ref(new Date() ?? '')
+const scheduledForToday = ref(new Date().toLocaleDateString('en-CA'))
+const isOpenRescheduleModal = ref(false)
+const selectedAppointment = ref<Appointment | null>(null)
 
 export const useAppointment = () => {
+  function openAppointmentModal(appointment: Appointment) {
+    selectedAppointment.value = appointment
+
+    isOpenRescheduleModal.value = true
+  }
+
   return {
-    scheduledForToday
+    scheduledForToday,
+    isOpenRescheduleModal,
+    selectedAppointment,
+    openAppointmentModal
   }
 }

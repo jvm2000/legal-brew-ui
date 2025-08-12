@@ -10,7 +10,7 @@ definePageMeta({
 
 useHead({ title: 'Appointment' })
 
-const { scheduledForToday } = useAppointment()
+const { scheduledForToday, openAppointmentModal } = useAppointment()
 const appointmentsData = ref<Appointment[]>([])
 const appointmentsUpcomingData = ref<Appointment[]>([])
 const { $useCustomFetch } = useNuxtApp()
@@ -103,11 +103,16 @@ await fetchAppointments()
               <MenuItems
                 class="absolute right-44 mt-24 w-44 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none px-4 py-2"
               >
-                <button class="py-2 hover:bg-custom-brown-100 w-full rounded-lg px-2 flex items-start">
+                <button 
+                  class="py-2 hover:bg-custom-brown-100 w-full rounded-lg px-2 flex items-start" 
+                  @click="openAppointmentModal(appointment)"
+                >
                   <p class="text-sm text-custom-brown-500 font-medium">Reschedule</p>
                 </button>
 
-                <button class="py-2 hover:bg-custom-brown-100 w-full rounded-lg px-2 flex items-start">
+                <button 
+                  class="py-2 hover:bg-custom-brown-100 w-full rounded-lg px-2 flex items-start"
+                >
                   <p class="text-sm text-custom-brown-500 font-medium">Cancel</p>
                 </button>
               </MenuItems>
@@ -162,7 +167,10 @@ await fetchAppointments()
               <MenuItems
                 class="absolute right-44 mt-24 w-44 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none px-4 py-2"
               >
-                <button class="py-2 hover:bg-custom-brown-100 w-full rounded-lg px-2 flex items-start">
+                <button 
+                  class="py-2 hover:bg-custom-brown-100 w-full rounded-lg px-2 flex items-start"
+                  @click="openAppointmentModal(appointment)"
+                >
                   <p class="text-sm text-custom-brown-500 font-medium">Reschedule</p>
                 </button>
 
@@ -176,4 +184,6 @@ await fetchAppointments()
       </div>
     </div>
   </div>
+
+  <AppointmentModalReschedule @success="fetchAppointments" />
 </template>
