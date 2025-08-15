@@ -4,7 +4,8 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import { EllipsisHorizontalIcon, HeartIcon, ChatBubbleOvalLeftEllipsisIcon, TrashIcon, PencilIcon } from '@heroicons/vue/24/outline'
 import type { Post, Reaction } from '~/types/general'
 import CarouselImages from './CarouselImages.vue'
-import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
+import { Menu, MenuButton, MenuItems } from '@headlessui/vue'
+import { getImage } from '~/utils/image'
 
 type ReactionForm = {
   post_id: string,
@@ -93,11 +94,14 @@ function checkIfAlreadyReacted(reaction: Reaction[]) {
 </script>
 
 <template>
-  <div class="w-full p-6 space-y-4 bg-white rounded-md overflow-hidden">
-    <div class="w-full flex items-center justify-between">
+  <div class="w-full py-6 sm:px-6 space-y-4 bg-white rounded-md overflow-hidden">
+    <div class="w-full px-6 sm:px-0 flex items-center justify-between">
       <div class="flex items-center space-x-4">
         <div class="w-8 h-8 rounded-full overflow-hidden">
-          <img src="/images/admin-icon.svg" class="w-full h-full object-cover">
+          <img
+            :src="getImage(props.post?.user.images)"
+            class="w-full h-full object-cover"
+          />
         </div>
 
         <div class="justify-start">
@@ -144,7 +148,7 @@ function checkIfAlreadyReacted(reaction: Reaction[]) {
       </div>
     </div>
 
-    <p class="text-custom-brown-500 text-sm">
+    <p class="text-custom-brown-500 text-sm px-6 sm:px-0">
       {{ props.post?.description }}
     </p>
 
@@ -152,7 +156,7 @@ function checkIfAlreadyReacted(reaction: Reaction[]) {
       <CarouselImages :images="props.post?.images" />
     </div>
 
-    <div class="flex items-center space-x-8">
+    <div class="flex items-center space-x-8 px-6 sm:px-0">
       <div class="flex items-center space-x-2">
         <HeartIcon 
           class="w-6 h-6 cursor-pointer"

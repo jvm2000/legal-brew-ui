@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'
+import type { Appointment, Services } from '~/types/general'
 
 const props = defineProps<{
-  type?: string
+  type?: string,
+  appointments?: Appointment[]
 }>()
 
-const selectedDate = ref<Date | null>(new Date() ?? null)
+const selectedDate = ref<Date | null>(new Date())
 const currentDate = ref(new Date(selectedDate.value))
 
 const modelValue = defineModel<string>({ required: false })
@@ -66,10 +68,12 @@ function isSelected(day: any) {
 }
 
 function selectDate(day: any) {
+  const { formatDateString } = useFormat()
+  
   selectedDate.value = new Date(day.date)
   currentDate.value = new Date(day.date)
 
-  modelValue.value = selectedDate.value.toISOString()
+  modelValue.value = formatDateString(selectedDate.value.toISOString())
 }
 
 function nextMonth() {
@@ -82,6 +86,53 @@ function prevMonth() {
   const prev = new Date(currentDate.value)
   prev.setMonth(currentDate.value.getMonth() - 1)
   currentDate.value = prev
+}
+
+function toLocalDateKey(d: Date) {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+
+  return `${y}-${m}-${day}`
+}
+
+function normalizeDateKey(val: string | Date) {
+  if (!val) return ''
+
+  const d = typeof val === 'string' ? new Date(val) : val
+
+  const y = d.getFullYear() // local year
+  const m = String(d.getMonth() + 1).padStart(2, '0') // local month
+  const day = String(d.getDate()).padStart(2, '0') // local day
+
+  return `${y}-${m}-${day}`
+}
+
+
+
+function getDotsForDay(date: Date) {
+  const list = props.appointments ?? []
+  if (!list.length) return []
+
+  const dateKey = normalizeDateKey(date)
+
+  const todays = list.filter(a => normalizeDateKey((a as any).scheduledDay) === dateKey)
+
+  let hasOffice = false
+  let hasOnline = false
+
+  for (const app of todays) {
+    if (app.setup === 'office') hasOffice = true
+    if (app.setup === 'online') hasOnline = true
+    
+    if (hasOffice && hasOnline) break
+  }
+
+  const dots: string[] = []
+  if (hasOffice) dots.push('brown')
+  if (hasOnline) dots.push('green')
+
+  return dots
 }
 </script>
 
@@ -122,7 +173,20 @@ function prevMonth() {
           !isSelected(day) ? 'hover:bg-custom-brown-100 hover:rounded-full' : ''
         ]"
       >
-        {{ day.date.getDate() }}
+        <div class="flex flex-col items-center">
+          <div class="flex gap-1 mt-0.5">
+            <span
+              v-for="(dot, idx) in getDotsForDay(day.date)"
+              :key="idx"
+              :class="[
+                'w-2 h-2 rounded-full',
+                dot === 'brown' ? 'bg-custom-brown-500' : 'bg-green-500'
+              ]"
+            ></span>
+          </div>
+
+          <span>{{ day.date.getDate() }}</span>
+        </div>
       </div>
     </div>
   </div>

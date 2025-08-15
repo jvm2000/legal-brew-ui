@@ -9,7 +9,7 @@ const servicesData = ref<Services[]>([])
 const loading = ref(false)
 const showToast = ref(false)
 const toastMessage = ref('')
-const { appointmentForm } = usePayment()
+const { appointmentForm, isAlreadyExistedModal } = usePayment()
 const selectedTime = ref<string>('')
 const consultationType = ref<string>('office')
 const officeTimeSlots = [
@@ -28,6 +28,7 @@ const onlineTimeSlots = [
   { label: '4:00 PM', value: '16:00' },
   { label: '5:00 PM', value: '17:00' }
 ]
+const checkList = ref<any>(null)
 const { $useCustomFetch } = useNuxtApp()
 
 async function fetchCart() {
@@ -77,12 +78,29 @@ function selectTime(value: string) {
 }
 
 async function proceedToPayment() {
+  const { formatDateString } = useFormat()
   loading.value = true
 
   appointmentForm.value.scheduledTime = selectedTime.value
   appointmentForm.value.setup = consultationType.value
 
+  const { data } = await $useCustomFetch('/api/appointments/check-availability', { 
+    method: 'POST',
+    body: {
+      scheduledDay: formatDateString(appointmentForm.value.scheduledDay),
+      scheduledTime: selectedTime.value
+    },
+  })
+
+  checkList.value = data.value
+
   loading.value = false
+
+  if (checkList.value.exists) {
+    isAlreadyExistedModal.value = true
+
+    return
+  }
 
   await navigateTo('/cart/payment')
 }
@@ -119,8 +137,8 @@ await fetchCart()
 
 <template>
   <div class="max-w-6xl w-full bg-white rounded-md p-6">
-    <div class="grid grid-cols-2 divide-x-2 divide-custom-brown-200">
-      <div class="flex flex-col items-start space-y-6 pl-4 pr-14">
+    <div class="grid grid-cols-1 sm:grid-cols-2 sm:divide-x-2 divide-custom-brown-200">
+      <div class="flex flex-col items-start space-y-6 px-2 sm:px-0 sm:pl-4 sm:pr-14">
         <div class="flex items-center space-x-2 cursor-pointer" @click="navigateTo('dashboard')">
           <ArrowLongLeftIcon class="w-6 h-6 stroke-custom-brown-500" />
 
@@ -148,7 +166,7 @@ await fetchCart()
         </div>
       </div>
 
-      <div class="py-2 px-8 flex flex-col items-start space-y-4">
+      <div class="py-6 sm:py-2 px-2 sm:px-8 flex flex-col items-start space-y-4">
         <p class="text-lg text-custom-brown-500 font-medium">Setup</p>
 
         <div class="grid grid-cols-2 gap-x-2 w-full">
@@ -189,7 +207,8 @@ await fetchCart()
         </div>
 
         <div class="w-full">
-          <BaseButton 
+          <BaseButton
+            :isLoading="loading"
             @click="proceedToPayment"
             :disabled="isButtonDisabled"
           >Proceed to payment</BaseButton>
@@ -198,5 +217,7 @@ await fetchCart()
     </div>
   </div>
 
+  <CartAlreadyExistedModal />
+  
   <BaseToast :show="showToast" :message="toastMessage" />
 </template>

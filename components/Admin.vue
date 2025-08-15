@@ -1,20 +1,8 @@
 <script setup lang="ts">
-import type { Post } from '~/types/general';
+import { getImage } from '~/utils/image'
 
 const { user: authUser } = useAuth()
-const { openClosePostModal } = usePost()
-const posts = ref<Post[]>([])
-const { $useCustomFetch } = useNuxtApp()
-
-async function getPosts() {
-  const { data } = await $useCustomFetch<Post[]>('/api/posts', {
-    method: 'GET',
-  })
-
-  if (data.value) {
-    posts.value = data.value
-  }
-}
+const { openClosePostModal, getPosts, post } = usePost()
 
 onMounted(async() => {
   await getPosts()
@@ -23,25 +11,28 @@ onMounted(async() => {
 
 <template>
   <div class="max-w-xl w-full space-y-6">
-    <div class="text-4xl text-custom-brown-500">
+    <div class="text-4xl text-custom-brown-500 px-6 sm:px-0">
       <p>Good Morning,</p>
       <p class="capitalize">{{ authUser?.full_name }}</p>
     </div>
 
     <div class="w-full flex items-center p-6 space-x-4 bg-white rounded-md">
       <div class="w-8 h-8 rounded-full overflow-hidden whitespace-nowrap">
-        <img src="/images/admin-icon.svg" class="w-full h-full object-cover">
+        <img
+          :src="getImage(authUser?.images)"
+          class="w-full h-full object-cover"
+        />
       </div>
       
       <div 
-        class="px-4 py-2 border border-gray-500 w-full rounded-md cursor-pointer whitespace-normal"
+        class="px-4 py-2 border border-gray-500 w-full sm:rounded-md cursor-pointer whitespace-normal"
         @click="openClosePostModal"
       >
         <p class="text-base text-gray-500">Create Post</p>
       </div>
     </div>
 
-    <div v-for="post in posts">
+    <div v-for="post in post">
       <PostContainer :post @success="getPosts" />
     </div>
   </div>

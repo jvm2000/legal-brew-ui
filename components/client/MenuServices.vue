@@ -129,7 +129,7 @@ fetchMenuServices()
 <template>
   <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
 
-  <div class="space-y-4 items-start py-4">
+  <div class="space-y-4 items-start py-4 px-6 sm:px-0">
     <div 
       v-for="(service, index) in services"
       :key="service.name"
@@ -153,6 +153,7 @@ fetchMenuServices()
         class="py-2 text-sm text-center w-full rounded-md flex flex-col items-center"
         :class="[isServiceInList(service) ? 'bg-transparent border border-custom-brown-300 text-custom-brown-500' : 'bg-custom-brown-300 text-white']"
         @click="addToCart(service)"
+        :disabled="isServiceInList(service)"
       >
         <div class="flex items-center space-x-2">
           <ShoppingCartIcon 

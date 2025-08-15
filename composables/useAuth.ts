@@ -1,17 +1,4 @@
-type User = {
-  id: string,
-  username: string,
-  full_name: string,
-  contact_no: string,
-  role: string,
-  images: any[]
-}
-
-type Auth = {
-  message: string,
-  token: string,
-  user: User
-}
+import type { User } from "~/types/general"
 
 export const useAuth = () => {
   const errors = ref([])

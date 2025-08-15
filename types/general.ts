@@ -6,7 +6,9 @@ export type User = {
   contact_no: string,
   birthdate: string,
   images: any[],
-  password: string
+  password: string,
+  verified: boolean,
+  role: string
 }
 
 export type Post = {
@@ -44,4 +46,13 @@ export type Services = {
   price: number,
   description: string,
   image: string
+}
+
+export type Appointment = {
+  id?: string,
+  scheduledDay: string,
+  scheduledTime: string,
+  services: Services[],
+  setup: 'office' | 'online'
+  user: User
 }

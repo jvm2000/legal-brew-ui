@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ArrowLongLeftIcon } from '@heroicons/vue/24/outline'
+import { getImage } from '~/utils/image'
 
 definePageMeta({
   layout: 'admin',
@@ -37,9 +38,8 @@ async function handleOpen() {
   userForm.value.email = authUser.value?.email ?? ''
   userForm.value.contact_no = authUser.value?.contact_no ?? ''
   userForm.value.birthdate = authUser.value?.birthdate ?? ''
-  userForm.value.images = images.value ?? []
 
-  preImage.value = authUser.value?.images ?? []
+  if (authUser.value?.images) return preImage.value = authUser.value?.images ?? []
 }
 
 function handleFiles(event: Event) {
@@ -63,6 +63,8 @@ function handleFiles(event: Event) {
   }
 
   target.value = ''
+
+  userForm.value.images = [...images.value]
 }
 
 function uploadImage() {
@@ -75,19 +77,34 @@ function clearImage() {
 }
 
 async function submit() {
-  const { data } = await $useCustomFetch('/api/userUpdate', { 
-    method: 'PUT',
-    body: userForm.value
+  const formData = new FormData()
+
+  formData.append('username', userForm.value.username || '')
+  formData.append('full_name', userForm.value.full_name || '')
+  formData.append('email', userForm.value.email || '')
+  formData.append('contact_no', userForm.value.contact_no || '')
+  formData.append('birthdate', userForm.value.birthdate || '')
+
+  if (userForm.value.images && userForm.value.images.length > 0) {
+    for (let i = 0; i < userForm.value.images.length; i++) {
+      formData.append('images[]', userForm.value.images[i])
+    }
+  }
+
+  formData.append('_method', 'PUT')
+
+  const { data, error } = await $useCustomFetch('/api/userUpdate', {
+    method: 'POST',
+    body: formData
   })
 
-  userForm.value = {}
-  navigateTo('/dashboard')
-}
+  if (!error.value) {
+    navigateTo('/dashboard')
 
-function getImage(path: any) {
-  if (!path) return ''
-
-  return `${ useRuntimeConfig().public.apiBase }/storage/${path}`
+    await window.location.reload()
+  } else {
+    console.error(error.value)
+  }
 }
 
 await handleOpen()
@@ -105,7 +122,7 @@ await handleOpen()
 
     <div class="w-full flex flex-col items-center space-y-4">
       <div class="w-28 h-28 rounded-full relative overflow-hidden">
-        <img :src="previews[0] ?? getImage(preImage[0])" class="w-full h-full object-cover">
+        <img :src="getImage(preImage)" class="w-full h-full object-cover">
       </div>
 
       <div class="flex items-center space-x-4 relative">
@@ -135,7 +152,7 @@ await handleOpen()
         />
       </div>
 
-      <div class="w-full grid grid-cols-2 gap-x-6">
+      <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div class="w-full">
           <label class="block text-sm font-medium text-custom-brown-500 mb-1">Email</label>
           <input

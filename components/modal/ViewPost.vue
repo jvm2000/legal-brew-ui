@@ -2,6 +2,7 @@
 import dayjs from 'dayjs'
 import type { Comment, Post, Reaction } from '~/types/general'
 import { XMarkIcon, PaperAirplaneIcon, HeartIcon, ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/vue/24/outline'
+import { getImage } from '~/utils/image'
 
 type CommentForm = {
   content: string,
@@ -72,12 +73,6 @@ async function submitComment() {
   loading.value = false
 }
 
-function getImage(path: any) {
-  if (!path) return '/images/admin-icon.svg'
-
-  return `${ useRuntimeConfig().public.apiBase }/storage/${path}`
-}
-
 function autoResize() {
   const el = inputRef.value
 
@@ -91,45 +86,6 @@ function handleClose() {
   commentForm.value.content = ''
   commentForm.value.post_id = ''
   commentForm.value.user_id = ''
-}
-
-async function submitReaction() {
-  showToast.value = true
-  toastMessage.value = 'Like Submitted!'
-
-  reactionForm.value.post_id = selectedPost.value?.id ?? ''
-  reactionForm.value.user_id =  authUser.value?.id ?? ''
-  reactionForm.value.type = 'heart'
-
-  const { error } = await $useCustomFetch<Post[]>('/api/reactions', {
-    method: 'POST',
-    body: reactionForm.value,
-  })
-
-  emit('success')
-
-  showToast.value = false
-}
-
-async function unsubmitReaction(reaction: Reaction[]) {
-  showToast.value = true
-  toastMessage.value = 'Unlike Submitted!'
-
-  const reactionObject = reaction?.find(
-    (reaction: any) => reaction.user_id === authUser?.value?.id
-  )
-
-  const { error } = await $useCustomFetch<Post[]>(`/api/reactions/${reactionObject?.id}`, {
-    method: 'DELETE',
-  })
-
-  emit('success')
-
-  showToast.value = false
-}
-
-function checkIfAlreadyReacted(reaction: Reaction[]) {
-  return reaction?.some((reaction: any) => reaction.user_id === authUser?.value?.id)
 }
 
 const hasImages = computed<boolean>(() => {
@@ -156,7 +112,7 @@ onMounted(() => {
   >
     <template #header></template>
 
-    <div :class="[hasImages ? 'w-full grid grid-cols-11' : 'w-full']">
+    <div :class="[hasImages ? 'w-full grid grid-cols-1 sm:grid-cols-11' : 'w-full']">
       <div v-if="hasImages" class="w-full bg-black col-span-6 flex items-center">
         <PostCarouselImages max-height="h-xl" :images="selectedPost?.images" />
       </div>
@@ -175,7 +131,7 @@ onMounted(() => {
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-4">
               <div class="w-10 h-10 rounded-full overflow-hidden">
-                <img src="/images/admin-icon.svg" class="w-full h-full object-cover">
+                <img :src="getImage(selectedPost?.user.images)" class="w-full h-full object-cover">
               </div>
 
               <div class="flex flex-col items-start">
@@ -193,9 +149,7 @@ onMounted(() => {
           <div class="flex items-center space-x-8">
             <div class="flex items-center space-x-2">
               <HeartIcon 
-                class="w-6 h-6 stroke-custom-brown-500 cursor-pointer" 
-                :class="[checkIfAlreadyReacted(selectedPost?.reactions ?? []) ? 'fill-custom-brown-500' : 'stroke-custom-brown-500']"
-                @click="checkIfAlreadyReacted(selectedPost?.reactions ?? []) ? unsubmitReaction(selectedPost?.reactions ?? []) : submitReaction()"
+                class="w-6 h-6 stroke-custom-brown-500"
               />
 
               <p class="text-sm text-custom-brown-500">{{ selectedPost?.reactions.length ?? '0' }}</p>

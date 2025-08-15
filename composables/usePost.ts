@@ -1,6 +1,7 @@
 import type { Post } from "~/types/general"
 
 const state = reactive({
+  post: [],
   isOpenPostModal: false,
   isViewPostModal: false,
   isPostEditing: false,
@@ -28,10 +29,23 @@ export default function () {
     state.isViewPostModal = !state.isViewPostModal
   }
 
+  async function getPosts() {
+    const { $useCustomFetch } = useNuxtApp()
+
+    const { data } = await $useCustomFetch('/api/posts', { 
+      method: 'GET',
+    })
+
+    if (data.value) {
+      state.post = data.value
+    }
+  }
+
   return {
     ...toRefs(state),
     openClosePostModal,
     openCloseViewPostModal,
     openCloseEditPostModal,
+    getPosts
   }
 }

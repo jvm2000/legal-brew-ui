@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { PhotoIcon, LinkIcon, XMarkIcon } from '@heroicons/vue/24/outline'
-import type { Post } from '~/types/general';
+import { PhotoIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+import type { Post } from '~/types/general'
+import { getImage } from '~/utils/image'
 
 type PostForm = {
   description: string,
@@ -23,7 +24,7 @@ const previews = ref<string[]>([])
 const form = ref<PostForm>({
   description: '',
   hyperlink: '',
-  images: images.value,
+  images: [],
   user_id: ''
 })
 
@@ -62,6 +63,8 @@ function handleFiles(event: Event) {
     reader.readAsDataURL(file)
   }
 
+  form.value.images = images.value
+  
   target.value = ''
 }
 
@@ -147,10 +150,6 @@ function resetForm() {
   previews.value = []
 }
 
-function getImage(path: string) {
-  return `${ useRuntimeConfig().public.apiBase }/storage/${path}`
-}
-
 onMounted(() => {
   autoResize()
 })
@@ -167,7 +166,12 @@ onMounted(() => {
   >
     <div class="space-y-2">
       <div class="flex items-center space-x-4">
-        <div class="w-8 h-8 rounded-full overflow-hidden bg-custom-brown-500 border border-custom-brown-300"></div>
+        <div class="w-8 h-8 rounded-full">
+          <img
+            :src="getImage(authUser?.images)"
+            class="w-full h-full object-cover"
+          />
+        </div>
 
         <p class="text-base font-medium text-custom-brown-500">{{ authUser?.full_name }}</p>
       </div>
@@ -193,7 +197,7 @@ onMounted(() => {
       </div>
 
       <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-4">
+        <div class="flex items-center">
           <div class="relative">
             <input 
               id="profile-photo"
@@ -208,10 +212,6 @@ onMounted(() => {
               class="w-6 h-6 stroke-gray-500 cursor-pointer"
             />
           </div>
-
-          <LinkIcon 
-            class="w-6 h-6 stroke-gray-500 cursor-pointer"
-          />
         </div>
 
         <div class="w-24">
