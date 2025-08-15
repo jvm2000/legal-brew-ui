@@ -144,7 +144,7 @@ await fetchCart()
 
 <template>
   <div class="max-w-6xl w-full bg-white rounded-md p-6">
-    <div class="grid grid-cols-2 divide-x-2 divide-custom-brown-200">
+    <div class="grid grid-cols-1 sm:grid-cols-2 sm:divide-x-2 divide-custom-brown-200">
       <div class="flex flex-col items-start space-y-6 pl-4 pr-14">
         <div class="flex items-center space-x-2 cursor-pointer" @click="navigateTo('/cart')">
           <ArrowLongLeftIcon class="w-6 h-6 stroke-custom-brown-500" />

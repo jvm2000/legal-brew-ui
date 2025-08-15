@@ -156,7 +156,7 @@ onMounted(() => {
   >
     <template #header></template>
 
-    <div :class="[hasImages ? 'w-full grid grid-cols-11' : 'w-full']">
+    <div :class="[hasImages ? 'w-full grid grid-cols-1 sm:grid-cols-11' : 'w-full']">
       <div v-if="hasImages" class="w-full bg-black col-span-6 flex items-center">
         <PostCarouselImages max-height="h-xl" :images="selectedPost?.images" />
       </div>

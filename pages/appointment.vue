@@ -57,7 +57,7 @@ await fetchAllAppointments()
 </script>
 
 <template>
-  <div class="w-full max-w-6xl grid grid-cols-2 gap-x-10">
+  <div class="w-full max-w-6xl grid grid-cols-1 sm:xl:grid-cols-2 gap-10">
     <div>
       <AppointmentCalendar 
         v-model="scheduledForToday"
@@ -66,14 +66,14 @@ await fetchAllAppointments()
       />
     </div>
 
-    <div class="flex flex-col items-start space-y-6">
+    <div class="flex flex-col items-start space-y-6 px-6 sm:xl:px-0">
       <div class="w-full flex items-center justify-between">
         <p class="text-2xl text-custom-brown-500 font-medium">Your schedule for today</p>
 
         <p class="text-sm text-custom-brown-500 font-medium">See previous</p>
       </div>
 
-      <div v-for="appointment in appointmentsData" class="flex items-center justify-between w-full">
+      <div v-for="appointment in appointmentsData" class="flex flex-col sm:flex-row items-center sm:justify-between w-full  space-y-6 sm:space-y-0">
         <div class="flex items-start">
           <div class="flex flex-col items-start space-y-0.5 pr-6">
             <p class="text-2xl font-bold text-custom-brown-500">{{ formatAppointmentDate(appointment.scheduledDay) }}</p>

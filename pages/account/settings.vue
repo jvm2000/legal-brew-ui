@@ -155,7 +155,7 @@ await handleOpen()
         />
       </div>
 
-      <div class="w-full grid grid-cols-2 gap-x-6">
+      <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div class="w-full">
           <label class="block text-sm font-medium text-custom-brown-500 mb-1">Email</label>
           <input

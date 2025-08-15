@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ShoppingCartIcon, ArrowLeftEndOnRectangleIcon, Cog6ToothIcon, CalendarDaysIcon } from '@heroicons/vue/24/outline'
-import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
+import { Menu, MenuButton, MenuItems } from '@headlessui/vue'
 
 const { user: authUser, token } = useAuth()
 const { $useCustomFetch } = useNuxtApp()
@@ -23,7 +23,7 @@ function getImage(path: any) {
 
 <template>
   <div class="app-container">
-    <div class="w-full bg-custom-brown-200 flex items-center justify-between drop-shadow-sm px-44 fixed top-0 z-[100]">
+    <div class="w-full bg-custom-brown-200 flex items-center justify-between drop-shadow-sm px-4 md:px-12 lg:px-20 sm:xl:px-44 fixed top-0 z-[100]">
       <div class="flex items-center space-x-4 py-6 cursor-pointer" @click="navigateTo('/dashboard')">
         <img src="/images/logo-landing.svg" />
 
@@ -39,7 +39,7 @@ function getImage(path: any) {
       <div class="flex items-center space-x-8">
         <CalendarDaysIcon 
           v-if="authUser?.role === 'admin'"
-          class="w-8 h-8 stroke-custom-brown-500 cursor-pointer"
+          class="w-8 h-8 stroke-custom-brown-500 cursor-pointer hidden sm:block"
           @click="navigateTo('/appointment')"
         />
 
@@ -74,7 +74,7 @@ function getImage(path: any) {
               leave-to-class="transform scale-95 opacity-0"
             >
               <MenuItems
-                class="absolute right-44 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none px-4 py-2"
+                class="absolute right-6 md:right-12 lg:right-20 sm:xl:right-44 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none px-4 py-2"
               >
                 <button v-if="authUser?.role === 'admin'" @click="navigateTo('/appointment')" class="py-2 flex items-center space-x-4 hover:bg-custom-brown-100 w-full rounded-lg px-4">
                   <CalendarDaysIcon class="w-6 h-6 stroke-custom-brown-500" />
@@ -100,7 +100,7 @@ function getImage(path: any) {
       </div>
     </div>
 
-    <div class="w-full flex flex-col items-center py-36">
+    <div class="w-full flex flex-col items-center py-32 sm:py-36">
       <slot />
     </div>
   </div>

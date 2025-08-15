@@ -62,6 +62,8 @@ function handleFiles(event: Event) {
     reader.readAsDataURL(file)
   }
 
+  form.value.images = images.value
+  
   target.value = ''
 }
 

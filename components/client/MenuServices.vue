@@ -129,7 +129,7 @@ fetchMenuServices()
 <template>
   <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
 
-  <div class="space-y-4 items-start py-4">
+  <div class="space-y-4 items-start py-4 px-6 sm:px-0">
     <div 
       v-for="(service, index) in services"
       :key="service.name"

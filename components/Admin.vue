@@ -29,7 +29,7 @@ onMounted(async() => {
 
 <template>
   <div class="max-w-xl w-full space-y-6">
-    <div class="text-4xl text-custom-brown-500">
+    <div class="text-4xl text-custom-brown-500 px-6 sm:px-0">
       <p>Good Morning,</p>
       <p class="capitalize">{{ authUser?.full_name }}</p>
     </div>
@@ -43,7 +43,7 @@ onMounted(async() => {
       </div>
       
       <div 
-        class="px-4 py-2 border border-gray-500 w-full rounded-md cursor-pointer whitespace-normal"
+        class="px-4 py-2 border border-gray-500 w-full sm:rounded-md cursor-pointer whitespace-normal"
         @click="openClosePostModal"
       >
         <p class="text-base text-gray-500">Create Post</p>

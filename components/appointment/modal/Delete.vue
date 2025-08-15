@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+
 const { isOpenDeleScheduleModal, selectedAppointment } = useAppointment()
 
 const emit = defineEmits<{
@@ -19,12 +21,15 @@ async function submit() {
 
   loading.value = false
 }
+
+const breakpoints = useBreakpoints(breakpointsTailwind)
+const xse = breakpoints.smallerOrEqual('sm')
 </script>
 
 <template>
   <BaseModal
     :open="isOpenDeleScheduleModal"
-    size="xs"
+    :size="xse ? 'sm' : 'xs'"
     @close="isOpenDeleScheduleModal = false"
   >
     <template #header></template>
