@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { HeartIcon } from '@heroicons/vue/24/outline';
+
 type Services = {
   label: string,
   price: string,
@@ -250,6 +252,115 @@ definePageMeta({
         </div>
       </div>
     </div>
+
+    <div class="flex flex-col items-center py-24">
+      <div class="max-w-5xl w-full grid grid-cols-2 items-center">
+        <div class="flex flex-col items-start space-y-6">
+          <p class="landing-login text-custom-brown-500 text-2xl font-bold">Send us a message</p>
+
+          <p class="text-sm text-custom-brown-500 w-80">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.
+          </p>
+
+          <div class="space-y-2 flex flex-col items-start">
+            <div class="flex items-center space-x-4">
+              <img src="/images/phone-icon.svg" alt="" />
+
+              <p class="text-sm font-medium text-custom-brown-500">0000-0000-0000</p>
+            </div>
+
+            <div class="flex items-center space-x-4">
+              <img src="/images/email-icon.svg" alt="" />
+
+              <p class="text-sm font-medium text-custom-brown-500">thelegalbrew@sample.com</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col items-start space-y-4">
+          <div class="w-full">
+            <BaseInput placeholder="Email" />
+          </div>
+
+          <div class="w-full">
+            <BaseInput placeholder="Subject" />
+          </div>
+
+          <div class="w-full">
+            <textarea
+              class="bg-custom-brown-200 text-sm p-3 rounded-md placeholder-custom-brown-300 w-full text-custom-brown-500 h-44"
+              placeholder="Enter message here"
+            ></textarea>
+          </div>
+
+          <div class="w-24">
+            <BaseButton>Send</BaseButton>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col items-center py-24">
+      <div class="max-w-3xl w-full flex flex-col items-start space-y-6 p-8 bg-custom-brown-200 rounded-lg">
+        <div class="flex items-center space-x-4">
+          <p class="text-2xl landing-login font-bold">Make a donation</p>
+
+          <HeartIcon class="w-5 h-5 fill-black" />
+        </div>
+
+        <p class="text-sm text-custom-brown-500">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.
+        </p>
+
+        <div class="w-full grid grid-cols-2 gap-x-6">
+          <div class="w-full rounded-lg bg-custom-brown-100 flex items-center space-x-4 p-6">
+            <img src="/images/payments/gcash.svg" />
+
+            <p class="text-sm text-custom-brown-500">Gcash</p>
+          </div>
+
+          <div class="w-full rounded-lg bg-custom-brown-100 flex items-center space-x-4 p-6">
+            <img src="/images/payments/paymaya.svg" />
+
+            <p class="text-sm text-custom-brown-500">Maya</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="w-full px-44 flex items-center justify-between bg-custom-brown-200">
+      <div class="flex items-center space-x-4 py-6">
+        <img src="/images/logo-landing.svg" />
+
+        <div class="space-y-2">
+          <img src="/images/logo-landing-text1.svg" />
+
+          <div class="w-28 h-[2px] bg-black" />
+
+          <img src="/images/logo-landing-text2.svg" />
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-6">
+        <p class="text-sm font-bold text-custom-brown-500">Follow Us</p>
+
+        <div class="w-8 h-8 grid place-items-center border border-custom-brown-500 rounded-full">
+          <img src="/images/follow/fb.svg" alt="">
+        </div>
+
+        <div class="w-8 h-8 grid place-items-center border border-custom-brown-500 rounded-full">
+          <img src="/images/follow/x.svg" alt="">
+        </div>
+
+        <div class="w-8 h-8 grid place-items-center border border-custom-brown-500 rounded-full">
+          <img src="/images/follow/tiktok.svg" alt="">
+        </div>
+
+        <div class="w-8 h-8 grid place-items-center border border-custom-brown-500 rounded-full">
+          <img src="/images/follow/ig.svg" alt="">
+        </div>
+      </div>
+    </footer>
   </div>
 </template>
 

@@ -16,10 +16,12 @@ type ButtonProps = {
 const props = withDefaults(
   defineProps<{
     isLoading?: ButtonProps['isLoading'],
+    isCancel?: ButtonProps['isLoading'],
     disabled?: ButtonProps['disabled'],
   }>(),
   {
     isLoading: false,
+    isCancel: false,
     disabled: false,
   }
 )
@@ -27,7 +29,8 @@ const props = withDefaults(
 
 <template>  
   <button 
-    class="bg-custom-brown-500 py-2 text-sm text-white text-center w-full rounded-md disabled:opacity-30"
+    class="py-2 text-sm text-center w-full rounded-md disabled:opacity-30"
+    :class="[props.isCancel ? 'bg-transparent border border-custom-brown-500 text-black' : 'bg-custom-brown-500 text-white']"
     :disabled="props.isLoading || props.disabled"
   >
     <div class="flex flex-col items-center w-full">

@@ -37,9 +37,8 @@ async function handleOpen() {
   userForm.value.email = authUser.value?.email ?? ''
   userForm.value.contact_no = authUser.value?.contact_no ?? ''
   userForm.value.birthdate = authUser.value?.birthdate ?? ''
-  userForm.value.images = images.value ?? []
 
-  preImage.value = authUser.value?.images ?? []
+  if (authUser.value?.images) return preImage.value = authUser.value?.images ?? []
 }
 
 function handleFiles(event: Event) {
@@ -63,6 +62,8 @@ function handleFiles(event: Event) {
   }
 
   target.value = ''
+
+  userForm.value.images = [...images.value]
 }
 
 function uploadImage() {
@@ -75,13 +76,32 @@ function clearImage() {
 }
 
 async function submit() {
-  const { data } = await $useCustomFetch('/api/userUpdate', { 
-    method: 'PUT',
-    body: userForm.value
+  const formData = new FormData()
+
+  formData.append('username', userForm.value.username || '')
+  formData.append('full_name', userForm.value.full_name || '')
+  formData.append('email', userForm.value.email || '')
+  formData.append('contact_no', userForm.value.contact_no || '')
+  formData.append('birthdate', userForm.value.birthdate || '')
+
+  if (userForm.value.images && userForm.value.images.length > 0) {
+    for (let i = 0; i < userForm.value.images.length; i++) {
+      formData.append('images[]', userForm.value.images[i])
+    }
+  }
+
+  formData.append('_method', 'PUT')
+
+  const { data, error } = await $useCustomFetch('/api/userUpdate', {
+    method: 'POST',
+    body: formData
   })
 
-  userForm.value = {}
-  navigateTo('/dashboard')
+  if (!error.value) {
+    navigateTo('/dashboard')
+  } else {
+    console.error(error.value)
+  }
 }
 
 function getImage(path: any) {

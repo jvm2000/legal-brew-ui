@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Appointment } from '~/types/general'
 import { EllipsisHorizontalIcon } from '@heroicons/vue/24/outline'
-import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
+import { Menu, MenuButton, MenuItems } from '@headlessui/vue'
 
 definePageMeta({
   layout: 'admin',
@@ -10,11 +10,20 @@ definePageMeta({
 
 useHead({ title: 'Appointment' })
 
-const { scheduledForToday, openAppointmentModal } = useAppointment()
+const { scheduledForToday, openAppointmentModal, openDeleteModal } = useAppointment()
+const allAppointments = ref<Appointment[]>([])
 const appointmentsData = ref<Appointment[]>([])
 const appointmentsUpcomingData = ref<Appointment[]>([])
 const { $useCustomFetch } = useNuxtApp()
 const { formatDateString, formatAppointmentDate, formatNextDateString, formatTime } = useFormat()
+
+async function fetchAllAppointments() {
+  const { data } = await $useCustomFetch<Appointment[]>('/api/appointments/getAll', {
+    method: 'GET',
+  })
+
+  allAppointments.value = data.value ?? []
+}
 
 async function fetchTodayAppointments() {
   const { data } = await $useCustomFetch<Appointment[]>('/api/appointments', {
@@ -44,12 +53,17 @@ async function fetchAppointments() {
 }
 
 await fetchAppointments()
+await fetchAllAppointments()
 </script>
 
 <template>
   <div class="w-full max-w-6xl grid grid-cols-2 gap-x-10">
     <div>
-      <AppointmentCalendar v-model="scheduledForToday" @update:modelValue="fetchAppointments" />
+      <AppointmentCalendar 
+        v-model="scheduledForToday"
+        :appointments="allAppointments"
+        @update:modelValue="fetchAppointments" 
+      />
     </div>
 
     <div class="flex flex-col items-start space-y-6">
@@ -112,6 +126,7 @@ await fetchAppointments()
 
                 <button 
                   class="py-2 hover:bg-custom-brown-100 w-full rounded-lg px-2 flex items-start"
+                  @click="openDeleteModal(appointment)"
                 >
                   <p class="text-sm text-custom-brown-500 font-medium">Cancel</p>
                 </button>
@@ -174,7 +189,10 @@ await fetchAppointments()
                   <p class="text-sm text-custom-brown-500 font-medium">Reschedule</p>
                 </button>
 
-                <button class="py-2 hover:bg-custom-brown-100 w-full rounded-lg px-2 flex items-start">
+                <button 
+                  class="py-2 hover:bg-custom-brown-100 w-full rounded-lg px-2 flex items-start"
+                  @click="openDeleteModal(appointment)"
+                >
                   <p class="text-sm text-custom-brown-500 font-medium">Cancel</p>
                 </button>
               </MenuItems>
@@ -185,5 +203,6 @@ await fetchAppointments()
     </div>
   </div>
 
-  <AppointmentModalReschedule @success="fetchAppointments" />
+  <AppointmentModalDelete @success="fetchAppointments(), fetchAllAppointments()" />
+  <AppointmentModalReschedule @success="fetchAppointments(), fetchAllAppointments()" />
 </template>

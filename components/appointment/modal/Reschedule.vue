@@ -35,7 +35,7 @@ function selectTime(value: string) {
 }
 
 function handleOpen() {
-  form.value.scheduledDate = formatToLocalDate(selectedAppointment.value?.scheduledDay) ?? ''
+  form.value.scheduledDate = formatToLocalDate(selectedAppointment.value?.scheduledDay ?? '')
   selectedTime.value = selectedAppointment.value?.scheduledTime ?? ''
 }
 

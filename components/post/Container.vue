@@ -87,6 +87,12 @@ async function deletePost() {
   emit('success')
 }
 
+function getImage(path: any) {
+  if (!path) return ''
+
+  return `${ useRuntimeConfig().public.apiBase }/storage/${path}`
+}
+
 function checkIfAlreadyReacted(reaction: Reaction[]) {
   return reaction?.some((reaction: any) => reaction.user_id === authUser?.value?.id)
 }
@@ -97,7 +103,10 @@ function checkIfAlreadyReacted(reaction: Reaction[]) {
     <div class="w-full flex items-center justify-between">
       <div class="flex items-center space-x-4">
         <div class="w-8 h-8 rounded-full overflow-hidden">
-          <img src="/images/admin-icon.svg" class="w-full h-full object-cover">
+          <img
+            :src="props.post?.user?.images?.[0] ? getImage(props.post.user.images[0]) : ''"
+            class="w-full h-full object-cover"
+          />
         </div>
 
         <div class="justify-start">

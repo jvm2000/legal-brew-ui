@@ -23,7 +23,7 @@ const previews = ref<string[]>([])
 const form = ref<PostForm>({
   description: '',
   hyperlink: '',
-  images: images.value,
+  images: [],
   user_id: ''
 })
 
@@ -193,7 +193,7 @@ onMounted(() => {
       </div>
 
       <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-4">
+        <div class="flex items-center">
           <div class="relative">
             <input 
               id="profile-photo"
@@ -208,10 +208,6 @@ onMounted(() => {
               class="w-6 h-6 stroke-gray-500 cursor-pointer"
             />
           </div>
-
-          <LinkIcon 
-            class="w-6 h-6 stroke-gray-500 cursor-pointer"
-          />
         </div>
 
         <div class="w-24">

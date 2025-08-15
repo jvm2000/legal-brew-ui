@@ -24,7 +24,7 @@ function getImage(path: any) {
 <template>
   <div class="app-container">
     <div class="w-full bg-custom-brown-200 flex items-center justify-between drop-shadow-sm px-44 fixed top-0 z-[100]">
-      <div class="flex items-center space-x-4 py-6">
+      <div class="flex items-center space-x-4 py-6 cursor-pointer" @click="navigateTo('/dashboard')">
         <img src="/images/logo-landing.svg" />
 
         <div class="space-y-2">

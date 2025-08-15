@@ -16,6 +16,12 @@ async function getPosts() {
   }
 }
 
+function getImage(path: any) {
+  if (!path) return '/images/admin-icon.svg'
+
+  return `${ useRuntimeConfig().public.apiBase }/storage/${path}`
+}
+
 onMounted(async() => {
   await getPosts()
 })
@@ -30,7 +36,10 @@ onMounted(async() => {
 
     <div class="w-full flex items-center p-6 space-x-4 bg-white rounded-md">
       <div class="w-8 h-8 rounded-full overflow-hidden whitespace-nowrap">
-        <img src="/images/admin-icon.svg" class="w-full h-full object-cover">
+        <img
+          :src="authUser?.images?.[0] ? getImage(authUser.images[0]) : ''"
+          class="w-full h-full object-cover"
+        />
       </div>
       
       <div 

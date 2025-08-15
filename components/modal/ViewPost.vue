@@ -175,7 +175,7 @@ onMounted(() => {
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-4">
               <div class="w-10 h-10 rounded-full overflow-hidden">
-                <img src="/images/admin-icon.svg" class="w-full h-full object-cover">
+                <img :src="getImage(selectedPost?.user.images[0])" class="w-full h-full object-cover">
               </div>
 
               <div class="flex flex-col items-start">

@@ -64,7 +64,7 @@ export const useFormat = () => {
     })
   }
 
-  function formatToLocalDate(dateStr: string | null): Date | null {
+  function formatToLocalDate(dateStr: string | null): Date | null | string {
     if (!dateStr) return null
 
     return new Date(dateStr)

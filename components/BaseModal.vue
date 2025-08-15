@@ -7,7 +7,7 @@ import { twMerge } from 'tailwind-merge'
 defineOptions({ inheritAttrs: false })
 
 type ModalProps = {
-  size: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl',
+  size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl',
   shape: 'straight' | 'rounded' | 'curved' | 'roundedTop',
   footerAlign: 'start' | 'end' | 'center' | 'between' | 'center-single',
 }
@@ -15,6 +15,7 @@ type ModalProps = {
 const emit = defineEmits(['close', 'open', 'before-enter', 'after-enter', 'before-leave', 'after-leave']);
 
 const sizeClasses: Record<ModalProps['size'], string> = {
+  xs: 'max-w-xs',
   sm: 'max-w-sm',
   md: 'max-w-md',
   lg: 'max-w-lg',
