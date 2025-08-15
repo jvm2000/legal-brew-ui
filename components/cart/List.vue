@@ -9,7 +9,7 @@ const servicesData = ref<Services[]>([])
 const loading = ref(false)
 const showToast = ref(false)
 const toastMessage = ref('')
-const { appointmentForm } = usePayment()
+const { appointmentForm, isAlreadyExistedModal } = usePayment()
 const selectedTime = ref<string>('')
 const consultationType = ref<string>('office')
 const officeTimeSlots = [
@@ -28,6 +28,7 @@ const onlineTimeSlots = [
   { label: '4:00 PM', value: '16:00' },
   { label: '5:00 PM', value: '17:00' }
 ]
+const checkList = ref<any>(null)
 const { $useCustomFetch } = useNuxtApp()
 
 async function fetchCart() {
@@ -77,12 +78,29 @@ function selectTime(value: string) {
 }
 
 async function proceedToPayment() {
+  const { formatDateString } = useFormat()
   loading.value = true
 
   appointmentForm.value.scheduledTime = selectedTime.value
   appointmentForm.value.setup = consultationType.value
 
+  const { data } = await $useCustomFetch('/api/appointments/check-availability', { 
+    method: 'POST',
+    body: {
+      scheduledDay: formatDateString(appointmentForm.value.scheduledDay),
+      scheduledTime: selectedTime.value
+    },
+  })
+
+  checkList.value = data.value
+
   loading.value = false
+
+  if (checkList.value.exists) {
+    isAlreadyExistedModal.value = true
+
+    return
+  }
 
   await navigateTo('/cart/payment')
 }
@@ -189,7 +207,8 @@ await fetchCart()
         </div>
 
         <div class="w-full">
-          <BaseButton 
+          <BaseButton
+            :isLoading="loading"
             @click="proceedToPayment"
             :disabled="isButtonDisabled"
           >Proceed to payment</BaseButton>
@@ -198,5 +217,7 @@ await fetchCart()
     </div>
   </div>
 
+  <CartAlreadyExistedModal />
+  
   <BaseToast :show="showToast" :message="toastMessage" />
 </template>

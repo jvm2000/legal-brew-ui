@@ -14,10 +14,12 @@ const appointmentForm = ref<AppointmentForm>({
   scheduledTime: '',
 })
 const isOpenSuccessModal = ref(false)
+const isAlreadyExistedModal = ref(false)
 
 export const usePayment = () => {
   return {
     appointmentForm,
-    isOpenSuccessModal
+    isOpenSuccessModal,
+    isAlreadyExistedModal
   }
 }

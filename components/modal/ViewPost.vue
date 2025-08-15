@@ -88,45 +88,6 @@ function handleClose() {
   commentForm.value.user_id = ''
 }
 
-async function submitReaction() {
-  showToast.value = true
-  toastMessage.value = 'Like Submitted!'
-
-  reactionForm.value.post_id = selectedPost.value?.id ?? ''
-  reactionForm.value.user_id =  authUser.value?.id ?? ''
-  reactionForm.value.type = 'heart'
-
-  const { error } = await $useCustomFetch<Post[]>('/api/reactions', {
-    method: 'POST',
-    body: reactionForm.value,
-  })
-
-  emit('success')
-
-  showToast.value = false
-}
-
-async function unsubmitReaction(reaction: Reaction[]) {
-  showToast.value = true
-  toastMessage.value = 'Unlike Submitted!'
-
-  const reactionObject = reaction?.find(
-    (reaction: any) => reaction.user_id === authUser?.value?.id
-  )
-
-  const { error } = await $useCustomFetch<Post[]>(`/api/reactions/${reactionObject?.id}`, {
-    method: 'DELETE',
-  })
-
-  emit('success')
-
-  showToast.value = false
-}
-
-function checkIfAlreadyReacted(reaction: Reaction[]) {
-  return reaction?.some((reaction: any) => reaction.user_id === authUser?.value?.id)
-}
-
 const hasImages = computed<boolean>(() => {
   if (selectedPost.value?.images && selectedPost.value?.images.length) return true
 
@@ -188,9 +149,7 @@ onMounted(() => {
           <div class="flex items-center space-x-8">
             <div class="flex items-center space-x-2">
               <HeartIcon 
-                class="w-6 h-6 stroke-custom-brown-500 cursor-pointer" 
-                :class="[checkIfAlreadyReacted(selectedPost?.reactions ?? []) ? 'fill-custom-brown-500' : 'stroke-custom-brown-500']"
-                @click="checkIfAlreadyReacted(selectedPost?.reactions ?? []) ? unsubmitReaction(selectedPost?.reactions ?? []) : submitReaction()"
+                class="w-6 h-6 stroke-custom-brown-500"
               />
 
               <p class="text-sm text-custom-brown-500">{{ selectedPost?.reactions.length ?? '0' }}</p>
