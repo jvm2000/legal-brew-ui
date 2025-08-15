@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ArrowLongLeftIcon } from '@heroicons/vue/24/outline'
+import { getImage } from '~/utils/image'
 
 definePageMeta({
   layout: 'admin',
@@ -99,15 +100,11 @@ async function submit() {
 
   if (!error.value) {
     navigateTo('/dashboard')
+
+    await window.location.reload()
   } else {
     console.error(error.value)
   }
-}
-
-function getImage(path: any) {
-  if (!path) return ''
-
-  return `${ useRuntimeConfig().public.apiBase }/storage/${path}`
 }
 
 await handleOpen()
@@ -125,7 +122,7 @@ await handleOpen()
 
     <div class="w-full flex flex-col items-center space-y-4">
       <div class="w-28 h-28 rounded-full relative overflow-hidden">
-        <img :src="previews[0] ?? getImage(preImage[0])" class="w-full h-full object-cover">
+        <img :src="getImage(preImage)" class="w-full h-full object-cover">
       </div>
 
       <div class="flex items-center space-x-4 relative">

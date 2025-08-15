@@ -1,26 +1,8 @@
 <script setup lang="ts">
-import type { Post } from '~/types/general';
+import { getImage } from '~/utils/image'
 
 const { user: authUser } = useAuth()
-const { openClosePostModal } = usePost()
-const posts = ref<Post[]>([])
-const { $useCustomFetch } = useNuxtApp()
-
-async function getPosts() {
-  const { data } = await $useCustomFetch<Post[]>('/api/posts', {
-    method: 'GET',
-  })
-
-  if (data.value) {
-    posts.value = data.value
-  }
-}
-
-function getImage(path: any) {
-  if (!path) return '/images/admin-icon.svg'
-
-  return `${ useRuntimeConfig().public.apiBase }/storage/${path}`
-}
+const { openClosePostModal, getPosts, post } = usePost()
 
 onMounted(async() => {
   await getPosts()
@@ -37,7 +19,7 @@ onMounted(async() => {
     <div class="w-full flex items-center p-6 space-x-4 bg-white rounded-md">
       <div class="w-8 h-8 rounded-full overflow-hidden whitespace-nowrap">
         <img
-          :src="authUser?.images?.[0] ? getImage(authUser.images[0]) : ''"
+          :src="getImage(authUser?.images)"
           class="w-full h-full object-cover"
         />
       </div>
@@ -50,7 +32,7 @@ onMounted(async() => {
       </div>
     </div>
 
-    <div v-for="post in posts">
+    <div v-for="post in post">
       <PostContainer :post @success="getPosts" />
     </div>
   </div>

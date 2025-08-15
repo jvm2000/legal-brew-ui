@@ -84,7 +84,7 @@ definePageMeta({
         <p class="text-sm text-border-custom-brown-500">THE GOOD OF THE PEOPLE IS THE GREATEST LAW</p>
       </div>
 
-      <form method="post" @submit.prevent="login" class="space-y-4 w-72">
+      <form method="post" @submit="login" class="space-y-4 w-72">
         <BaseInput 
           v-model="formLogin.email" 
           label="Username/Email" 
@@ -101,7 +101,7 @@ definePageMeta({
       </form>
 
       <div class="w-24">
-        <BaseButton @click="login" @keydown.enter="login" :isLoading="loading">Login</BaseButton>
+        <BaseButton type="submit" @click="login" :isLoading="loading">Login</BaseButton>
       </div>
 
       <p class="text-sm">

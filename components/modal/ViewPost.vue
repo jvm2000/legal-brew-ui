@@ -2,6 +2,7 @@
 import dayjs from 'dayjs'
 import type { Comment, Post, Reaction } from '~/types/general'
 import { XMarkIcon, PaperAirplaneIcon, HeartIcon, ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/vue/24/outline'
+import { getImage } from '~/utils/image'
 
 type CommentForm = {
   content: string,
@@ -70,12 +71,6 @@ async function submitComment() {
   await getComments()
 
   loading.value = false
-}
-
-function getImage(path: any) {
-  if (!path) return '/images/admin-icon.svg'
-
-  return `${ useRuntimeConfig().public.apiBase }/storage/${path}`
 }
 
 function autoResize() {
@@ -175,7 +170,7 @@ onMounted(() => {
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-4">
               <div class="w-10 h-10 rounded-full overflow-hidden">
-                <img :src="getImage(selectedPost?.user.images[0])" class="w-full h-full object-cover">
+                <img :src="getImage(selectedPost?.user.images)" class="w-full h-full object-cover">
               </div>
 
               <div class="flex flex-col items-start">

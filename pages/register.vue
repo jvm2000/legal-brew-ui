@@ -59,12 +59,21 @@ async function submit() {
     credentials: 'include',
   })
 
+  await useFetch('/api/verification/send', {
+    baseURL: useRuntimeConfig().public.apiBase,
+    method: 'POST',
+    body: {
+      email: form.value.email
+    },
+    credentials: 'include',
+  })
+
   showToast.value = false
 
   if (!error.value) {
     loading.value = false
 
-    navigateTo('/')
+    await navigateTo('/')
     return
   }
 
@@ -108,7 +117,6 @@ const isDisabled = computed(() => {
 })
 
 definePageMeta({
-  layout: 'landing',
   middleware: 'guest'
 })
 </script>

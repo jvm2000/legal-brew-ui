@@ -86,7 +86,9 @@ await fetchAllAppointments()
           </div>
 
           <div class="flex flex-col items-start space-y-1 pl-6 border-l-2 border-custom-brown-500">
-            <p class="text-base text-custom-brown-500 font-medium">{{ appointment.user.full_name }}</p>
+            <p class="text-base text-custom-brown-500 font-medium">
+              {{ appointment.user.full_name }} - {{ appointment.user.contact_no }}
+            </p>
 
             <div v-for="service in appointment.services" class="flex flex-col items-start">
               <p class="text-sm text-custom-brown-500">{{ service.name }}</p>
@@ -151,7 +153,9 @@ await fetchAllAppointments()
           </div>
 
           <div class="flex flex-col items-start space-y-1 pl-6 border-l-2 border-custom-brown-500">
-            <p class="text-base text-custom-brown-500 font-medium">{{ appointment.user.full_name }}</p>
+            <p class="text-base text-custom-brown-500 font-medium">
+              {{ appointment.user.full_name }} - {{ appointment.user.contact_no }}
+            </p>
 
             <div v-for="service in appointment.services" class="flex flex-col items-start">
               <p class="text-sm text-custom-brown-500">{{ service.name }}</p>

@@ -6,7 +6,9 @@ export type User = {
   contact_no: string,
   birthdate: string,
   images: any[],
-  password: string
+  password: string,
+  verified: boolean,
+  role: string
 }
 
 export type Post = {

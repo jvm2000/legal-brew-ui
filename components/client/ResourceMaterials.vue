@@ -1,27 +1,17 @@
 <script setup lang="ts">
 import type { Post } from '~/types/general';
 
-const posts = ref<Post[]>([])
-const { $useCustomFetch } = useNuxtApp()
+const props = defineProps<{
+  type?: string,
+  post?: Post[]
+}>()
 
-async function getPosts() {
-  const { data } = await $useCustomFetch('/api/posts', { 
-    method: 'GET',
-  })
-
-  if (data.value) {
-    posts.value = data.value
-  }
-}
-
-onMounted(async() => {
-  await getPosts()
-})
+const { getPosts } = usePost()
 </script>
 
 <template>
-  <div class="max-w-xl w-full space-y-6">
-    <div v-for="post in posts">
+  <div class="max-w-xl w-full space-y-6 py-6">
+    <div v-for="post in props.post">
       <PostContainer :post @success="getPosts" />
     </div>
 

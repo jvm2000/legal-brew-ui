@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ShoppingCartIcon, ArrowLeftEndOnRectangleIcon, Cog6ToothIcon, CalendarDaysIcon } from '@heroicons/vue/24/outline'
 import { Menu, MenuButton, MenuItems } from '@headlessui/vue'
+import { getImage } from '~/utils/image'
 
 const { user: authUser, token } = useAuth()
 const { $useCustomFetch } = useNuxtApp()
@@ -12,12 +13,6 @@ async function logout() {
   authUser.value = null
 
   await navigateTo('/')
-}
-
-function getImage(path: any) {
-  if (!path) return '/images/admin-icon.svg'
-
-  return `${ useRuntimeConfig().public.apiBase }/storage/${path}`
 }
 </script>
 
@@ -45,7 +40,7 @@ function getImage(path: any) {
 
         <ShoppingCartIcon 
           v-if="authUser?.role === 'client'"
-          class="w-8 h-8 stroke-custom-brown-500 cursor-pointer"
+          class="w-8 h-8 stroke-custom-brown-500 cursor-pointer hidden sm:block"
           @click="navigateTo('/cart')"
         />
 
@@ -58,7 +53,8 @@ function getImage(path: any) {
                 </div>
 
                 <div class="flex flex-col items-start">
-                  <p class="text-sm font-medium custom-brown-500">{{ authUser?.full_name }}</p>
+                  <p class="text-sm font-medium custom-brown-500 hidden sm:block">{{ authUser?.full_name }}</p>
+                  <p class="text-sm font-medium custom-brown-500 block sm:hidden">{{ authUser?.username }}</p>
 
                   <p class="text-xs text-custom-brown-500">{{ authUser?.role }}</p>
                 </div>
@@ -80,6 +76,12 @@ function getImage(path: any) {
                   <CalendarDaysIcon class="w-6 h-6 stroke-custom-brown-500" />
 
                   <p class="text-sm text-custom-brown-500 font-medium">Appointments</p>
+                </button>
+
+                <button v-if="authUser?.role === 'client'" @click="navigateTo('/cart')" class="py-2 flex sm:hidden items-center space-x-4 hover:bg-custom-brown-100 w-full rounded-lg px-4">
+                  <ShoppingCartIcon class="w-6 h-6 stroke-custom-brown-500" />
+
+                  <p class="text-sm text-custom-brown-500 font-medium">Cart</p>
                 </button>
 
                 <button @click="navigateTo('/account/settings')" class="py-2 flex items-center space-x-4 hover:bg-custom-brown-100 w-full rounded-lg px-4">

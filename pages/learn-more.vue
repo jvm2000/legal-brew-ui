@@ -16,7 +16,7 @@ definePageMeta({
         <p class="text-sm text-custom-brown-500 font-medium">Back</p>
       </div>
 
-      <p class="text-2xl text-custom-brown-500 font-bold">Background</p>
+      <p class="text-2xl text-custom-brown-500 font-bold landing-login">Background</p>
 
       <div class="flex items-start space-x-10">
         <div class="flex flex-col items-start space-y-4 text-justify">
@@ -44,7 +44,7 @@ definePageMeta({
       </div>
 
       <div class="flex flex-col items-start py-12 w-full space-y-4 text-justify">
-        <p class="w-full text-2xl text-custom-brown-500 font-bold text-center">PEOPLE POWER: THE CONSTITUTIONAL PERSPECTIVE</p>
+        <p class="w-full text-2xl text-custom-brown-500 font-bold text-center landing-login">PEOPLE POWER: THE CONSTITUTIONAL PERSPECTIVE</p>
 
         <p class="text-sm text-custom-brown-500 indent-10">
           When we study the Constitution, it is important to note the context which paved the way to its
@@ -372,3 +372,9 @@ definePageMeta({
     </div>
   </div>
 </template>
+
+<style>
+.landing-login {
+  font-family: 'Merriweather', serif;
+}
+</style>

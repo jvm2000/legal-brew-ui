@@ -4,7 +4,8 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import { EllipsisHorizontalIcon, HeartIcon, ChatBubbleOvalLeftEllipsisIcon, TrashIcon, PencilIcon } from '@heroicons/vue/24/outline'
 import type { Post, Reaction } from '~/types/general'
 import CarouselImages from './CarouselImages.vue'
-import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
+import { Menu, MenuButton, MenuItems } from '@headlessui/vue'
+import { getImage } from '~/utils/image'
 
 type ReactionForm = {
   post_id: string,
@@ -87,12 +88,6 @@ async function deletePost() {
   emit('success')
 }
 
-function getImage(path: any) {
-  if (!path) return ''
-
-  return `${ useRuntimeConfig().public.apiBase }/storage/${path}`
-}
-
 function checkIfAlreadyReacted(reaction: Reaction[]) {
   return reaction?.some((reaction: any) => reaction.user_id === authUser?.value?.id)
 }
@@ -104,7 +99,7 @@ function checkIfAlreadyReacted(reaction: Reaction[]) {
       <div class="flex items-center space-x-4">
         <div class="w-8 h-8 rounded-full overflow-hidden">
           <img
-            :src="props.post?.user?.images?.[0] ? getImage(props.post.user.images[0]) : ''"
+            :src="getImage(props.post?.user.images)"
             class="w-full h-full object-cover"
           />
         </div>
