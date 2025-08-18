@@ -7,12 +7,9 @@ const { user: authUser, token } = useAuth()
 const { $useCustomFetch } = useNuxtApp()
 
 async function logout() {
-  await $useCustomFetch('/api/logout', { method: 'POST' })
+  $useCustomFetch('/api/logout', { method: 'POST' })
 
-  token.value = null
-  authUser.value = null
-
-  await navigateTo('/')
+  navigateTo('/')
 }
 </script>
 

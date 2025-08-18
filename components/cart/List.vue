@@ -1,14 +1,14 @@
 <script setup lang="ts">
+import { useToast } from 'vue-toastification'
 import { ArrowLongLeftIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import type { Cart, Services } from '~/types/general'
 import { usePayment } from '~/composables/usePayment'
 
+const toast = useToast()
 const { user: authUser } = useAuth()
 const cartData = ref<Cart[]>([])
 const servicesData = ref<Services[]>([])
 const loading = ref(false)
-const showToast = ref(false)
-const toastMessage = ref('')
 const { appointmentForm, isAlreadyExistedModal } = usePayment()
 const selectedTime = ref<string>('')
 const consultationType = ref<string>('office')
@@ -106,14 +106,17 @@ async function proceedToPayment() {
 }
 
 async function deleteService(service: Services) {
-  showToast.value = true
-  toastMessage.value = 'Removed Service Successfully!'
+  if (loading.value) return
+  
+  loading.value = true
+
+  toast.success('Cart Removed Successfully!')
 
   const { error } = await $useCustomFetch(`/api/services/${service.id}`, { 
     method: 'DELETE',
   })
 
-  showToast.value = false
+  loading.value = false
 
   await fetchServices()
 }
@@ -224,6 +227,4 @@ await fetchCart()
   </div>
 
   <CartAlreadyExistedModal />
-  
-  <BaseToast :show="showToast" :message="toastMessage" />
 </template>

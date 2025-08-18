@@ -28,7 +28,7 @@ type InputProps = {
   /**
    * An error message or messages value indicating whether the input is in an error state.
    */
-  error: string,
+  error?: string | string[],
 
   /**
    * If the input is required.

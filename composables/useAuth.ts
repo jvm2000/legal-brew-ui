@@ -1,11 +1,10 @@
 import type { User } from "~/types/general"
 
 export const useAuth = () => {
-  const errors = ref([])
+  const errors = ref<string[] | null>([])
   const loading = ref(false)
   const user = useState<User | null>('fetchedUser', () => null)
-  const token = useCookie('token')
-
+  const token = useCookie<any>('token')
   const config = useRuntimeConfig()
   const formLogin = ref({
     email: '',
@@ -13,7 +12,7 @@ export const useAuth = () => {
   })
 
   async function login() {
-    errors.value = []
+    errors.value = null
 
     loading.value = true
 
@@ -43,9 +42,15 @@ export const useAuth = () => {
     loading.value = false
   }
 
-  const loggedIn = computed((): boolean => {
-    return !!user.value
-  });
+  async function getAuth() {
+    const { $useCustomFetch } = useNuxtApp()
+
+    const { data } = await $useCustomFetch<User>('/api/user')
+
+    user.value = data.value ?? null
+  }
+
+  const loggedIn = computed(() => !!user.value)
 
   return {
     user,
@@ -54,6 +59,7 @@ export const useAuth = () => {
     formLogin,
     loggedIn,
     loading,
-    login
+    login,
+    getAuth
   }
 }
