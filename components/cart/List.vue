@@ -164,6 +164,12 @@ await fetchCart()
 
           <XMarkIcon class="w-6 h-6 stroke-custom-brown-500 cursor-pointer" @click="deleteService(service)" />
         </div>
+
+        <div v-if="!servicesData.length" class="flex flex-col items-center w-full space-y-4">
+          <img src="/images/empty-cart.svg" />
+
+          <p claas="text-sm text-custom-brown-500 font-medium">Your cart is empty</p>
+        </div>
       </div>
 
       <div class="py-6 sm:py-2 px-2 sm:px-8 flex flex-col items-start space-y-4">
