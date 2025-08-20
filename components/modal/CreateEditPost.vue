@@ -29,13 +29,18 @@ const form = ref<PostForm>({
   images: [],
   user_id: ''
 })
+const existingImages = ref<string[]>([])
 
-function handleOpen() {
-  if (!isPostEditing.value) return
+function handleOpen() {  
+  if (!isPostEditing.value) {
+    existingImages.value = []
+
+    return
+  }
 
   form.value.description = selectedPost.value.description
-  images.value = selectedPost.value.images ?? []
-  previews.value = selectedPost.value.images ?? []
+  existingImages.value = selectedPost.value.images ?? []
+  form.value.images = [...existingImages.value]  
 }
 
 function autoResize() {
@@ -65,8 +70,8 @@ function handleFiles(event: Event) {
     reader.readAsDataURL(file)
   }
 
-  // form.value.images = images.value
-  
+  form.value.images = images.value
+
   target.value = ''
 }
 
@@ -193,13 +198,12 @@ onMounted(() => {
       ></textarea>
 
       <div class="flex items-center space-x-2">
-        <div 
-          v-for="(src, index) in previews"
-          :key="index"
-          class="w-24 h-24 relative overflow-hidden"
-        >
+        <div v-for="(src, index) in existingImages" :key="index" class="w-24 h-24 relative overflow-hidden">
           <img :src="getImage(src)" class="w-full h-full object-cover">
+        </div>
 
+        <div v-for="(src, index) in previews" :key="index" class="w-24 h-24 relative overflow-hidden">
+          <img :src="src" class="w-full h-full object-cover">
           <XMarkIcon class="w-4 h-4 absolute top-1 right-1 cursor-pointer" @click="removeImage(index)" />
         </div>
       </div>

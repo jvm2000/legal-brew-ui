@@ -3,10 +3,29 @@ import { getImage } from '~/utils/image'
 
 const { user: authUser } = useAuth()
 const { openClosePostModal, getPosts, post } = usePost()
+
 const loading = ref(false)
+const page = ref(1)
 
 function delay(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+async function loadPosts() {
+  if (loading.value) return
+
+  await delay(200)
+  await getPosts(page.value)
+  
+  page.value++
+}
+
+async function handleScroll() {
+  const { scrollTop, scrollHeight, clientHeight } = document.documentElement
+
+  if (scrollTop + clientHeight >= scrollHeight - 10) {
+    await loadPosts()
+  }
 }
 
 onMounted(async () => {
@@ -16,6 +35,7 @@ onMounted(async () => {
   await getPosts()
 
   loading.value = false
+  window.addEventListener('scroll', handleScroll)
 })
 </script>
 
@@ -42,18 +62,17 @@ onMounted(async () => {
       </div>
     </div>
 
-    <div v-if="!loading" class="space-y-6">
+    <div v-if="post.length" class="space-y-6">
       <div v-for="post in post">
-        <PostContainer :post @success="getPosts" />
+        <PostContainer :post @success="loadPosts" />
       </div>
     </div>
     
     <div v-if="loading">
-      <BaseLoading :isLoading="loading"></BaseLoading>
+      <BaseLoading :isLoading="loading" />
     </div>
   </div>
 
-  <ModalCreateEditPost @success="getPosts" />
-
-  <ModalViewPost @success="getPosts" />
+  <ModalCreateEditPost @success="loadPosts" />
+  <ModalViewPost @success="loadPosts" />
 </template>
