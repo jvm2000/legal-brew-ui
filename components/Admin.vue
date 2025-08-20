@@ -3,9 +3,19 @@ import { getImage } from '~/utils/image'
 
 const { user: authUser } = useAuth()
 const { openClosePostModal, getPosts, post } = usePost()
+const loading = ref(false)
 
-onMounted(async() => {
+function delay(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+onMounted(async () => {
+  loading.value = true
+
+  await delay(200)
   await getPosts()
+
+  loading.value = false
 })
 </script>
 
@@ -32,8 +42,14 @@ onMounted(async() => {
       </div>
     </div>
 
-    <div v-for="post in post">
-      <PostContainer :post @success="getPosts" />
+    <div v-if="!loading" class="space-y-6">
+      <div v-for="post in post">
+        <PostContainer :post @success="getPosts" />
+      </div>
+    </div>
+    
+    <div v-if="loading">
+      <BaseLoading :isLoading="loading"></BaseLoading>
     </div>
   </div>
 

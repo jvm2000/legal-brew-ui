@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { HeartIcon } from '@heroicons/vue/24/outline';
+import { HeartIcon } from '@heroicons/vue/24/outline'
 
 type Services = {
   label: string,
@@ -67,7 +67,7 @@ const materials = ref([
     image: '/images/materials/4.svg'
   }
 ])
-const { user, errors, formLogin, login, loading, token } = useAuth()
+const { errors, formLogin, login, loading } = useAuth()
 
 definePageMeta({
   layout: 'landing',
@@ -96,13 +96,14 @@ definePageMeta({
           type="password"
           label="Password"
           placeholder="Enter password"
-          :error="errors"
+          :error="errors ?? null"
         />
+
+        <div class="w-24">
+          <BaseButton type="submit" @click="login" :isLoading="loading">Login</BaseButton>
+        </div>
       </form>
 
-      <div class="w-24">
-        <BaseButton type="submit" @click="login" :isLoading="loading">Login</BaseButton>
-      </div>
 
       <p class="text-sm">
         <span class="text-custom-brown-400">Don't have an account?</span> <span class="text-custom-brown-500 cursor-pointer" @click="navigateTo('/register')">Sign Up</span>

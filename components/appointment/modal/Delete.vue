@@ -19,6 +19,7 @@ async function submit() {
 
   emit('success')
 
+  isOpenDeleScheduleModal.value = false
   loading.value = false
 }
 

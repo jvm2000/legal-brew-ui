@@ -30,6 +30,7 @@ const userForm = ref<UserForm>({
 const images = ref<File[]>([])
 const preImage = ref<string[]>([]) 
 const previews = ref<string[]>([]) 
+const loading = ref(false)
 const { $useCustomFetch } = useNuxtApp()
 
 async function handleOpen() {
@@ -43,8 +44,6 @@ async function handleOpen() {
 }
 
 function handleFiles(event: Event) {
-  preImage.value = []
-
   const target = event.target as HTMLInputElement
   const files = target.files
 
@@ -72,11 +71,14 @@ function uploadImage() {
 }
 
 function clearImage() {
+  if (!preImage.value) preImage.value = []
+  
+  images.value = []
   previews.value = []
-  preImage.value = []
 }
 
 async function submit() {
+  loading.value = true
   const formData = new FormData()
 
   formData.append('username', userForm.value.username || '')
@@ -93,21 +95,28 @@ async function submit() {
 
   formData.append('_method', 'PUT')
 
-  const { data, error } = await $useCustomFetch('/api/userUpdate', {
+  const { error } = await $useCustomFetch('/api/userUpdate', {
     method: 'POST',
     body: formData
   })
 
-  if (!error.value) {
-    navigateTo('/dashboard')
+  loading.value = false
 
+  if (!error.value) {
     await window.location.reload()
   } else {
     console.error(error.value)
   }
 }
 
-await handleOpen()
+function delay(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+onMounted(async () => {
+  await delay(500)
+  await handleOpen()
+})
 </script>
 
 <template>
@@ -122,7 +131,7 @@ await handleOpen()
 
     <div class="w-full flex flex-col items-center space-y-4">
       <div class="w-28 h-28 rounded-full relative overflow-hidden">
-        <img :src="getImage(preImage)" class="w-full h-full object-cover">
+        <img :src="previews[0] ?? getImage(preImage)" class="w-full h-full object-cover">
       </div>
 
       <div class="flex items-center space-x-4 relative">
@@ -201,9 +210,9 @@ await handleOpen()
         />
       </div>
 
-      <div class="w-full flex justify-end">
-        <div class="w-36 ">
-          <BaseButton @click="submit">Save Changes</BaseButton>
+      <div class="w-full flex sm:justify-end">
+        <div class="w-full sm:w-36">
+          <BaseButton :isLoading="loading" @click="submit">Save Changes</BaseButton>
         </div>
       </div>
     </div>

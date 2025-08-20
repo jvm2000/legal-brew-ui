@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { useToast } from 'vue-toastification'
 import { ShoppingCartIcon } from '@heroicons/vue/24/outline'
 import type { Cart, Services } from '~/types/general'
+import { formatPrice } from '~/utils/price'
 
 type ServiceForm = {
   cart_id: string,
@@ -9,8 +11,6 @@ type ServiceForm = {
   price: number
 }
 
-const showToast = ref(false)
-const toastMessage = ref('')
 const { user: authUser } = useAuth()
 const cartData = ref<Cart[]>([])
 const servicesData = ref<Services[]>([])
@@ -22,6 +22,8 @@ const serviceForm = ref<ServiceForm>({
 })
 const services = ref<Services[]>([])
 const { $useCustomFetch } = useNuxtApp()
+const toast = useToast()
+const loading = ref(false)
 
 async function fetchMenuServices() {
   await fetchServices()
@@ -56,8 +58,7 @@ function isServiceInList(service: Services): boolean {
 }
 
 async function addToCart(service: Services) {
-  showToast.value = true
-  toastMessage.value = 'Added to cart successfully!'
+  toast.success('Cart Added Successfully!')
 
   await fetchCart()
 
@@ -77,16 +78,12 @@ async function addToCart(service: Services) {
 
     await submitToAddToCartService()
 
-    showToast.value = false
-
     await fetchMenuServices()
 
     return
   }
 
   serviceForm.value.cart_id = cartData.value[0].id ?? ''
-
-  showToast.value = false
 
   await submitToAddToCartService()
 
@@ -99,15 +96,12 @@ async function submitToAddToCartService() {
     body: serviceForm.value,
   })
 
-  serviceForm.value = {}
-}
-
-function formatPrice(price: number) {
-  return new Intl.NumberFormat('en-PH', {
-    style: 'currency',
-    currency: 'PHP',
-    minimumFractionDigits: 2,
-  }).format(price)
+  serviceForm.value = {
+    cart_id: '',
+    name: '',
+    description: '',
+    price: 0
+  }
 }
 
 function getImage(name: string) {
@@ -122,16 +116,22 @@ function getImage(name: string) {
   if (name === 'Capuccino Case Files') return '/images/services/cappucino-case-files.svg'
 }
 
-await fetchCart()
-fetchMenuServices()
+onMounted(async () => {
+  loading.value = true
+
+  await fetchCart()
+  await fetchMenuServices()
+
+  loading.value = false
+})
 </script>
 
 <template>
   <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
 
-  <div class="space-y-4 items-start py-4 px-6 sm:px-0">
+  <div v-if="!loading" class="space-y-4 items-start py-4 px-6 sm:px-0">
     <div 
-      v-for="(service, index) in services"
+      v-for="service in services"
       :key="service.name"
       class="flex flex-col items-start space-y-6 border-b border-custom-brown-500 pb-6"
     >
@@ -167,7 +167,7 @@ fetchMenuServices()
     </div>
   </div>
 
-  <BaseToast :show="showToast" :message="toastMessage" />
+  <BaseLoading :isLoading="loading" />
 </template>
 
 <style scoped>

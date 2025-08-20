@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useToast } from 'vue-toastification'
 import { PhotoIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import type { Post } from '~/types/general'
 import { getImage } from '~/utils/image'
@@ -14,6 +15,7 @@ const emit = defineEmits<{
   success: [void]
 }>()
 
+const toast = useToast()
 const { $useCustomFetch } = useNuxtApp()
 const loading = ref(false)
 const { user: authUser } = useAuth()
@@ -63,7 +65,7 @@ function handleFiles(event: Event) {
     reader.readAsDataURL(file)
   }
 
-  form.value.images = images.value
+  // form.value.images = images.value
   
   target.value = ''
 }
@@ -99,6 +101,8 @@ async function submit() {
     body: formData
   })
 
+  toast.success('Post added Successfully!')
+
   emit('success')
 
   loading.value = false
@@ -123,10 +127,14 @@ async function submitUpdate() {
     }
   }
 
+  formData.append('_method', 'PUT')
+
   const { error } = await $useCustomFetch(`/api/posts/${selectedPost.value.id}`, { 
-    method: 'PUT',
+    method: 'POST',
     body: formData,
   })
+
+  toast.success('Post updated Successfully!')
 
   emit('success')
 
@@ -190,7 +198,7 @@ onMounted(() => {
           :key="index"
           class="w-24 h-24 relative overflow-hidden"
         >
-          <img :src="isPostEditing ? getImage(src) : src" class="w-full h-full object-cover">
+          <img :src="getImage(src)" class="w-full h-full object-cover">
 
           <XMarkIcon class="w-4 h-4 absolute top-1 right-1 cursor-pointer" @click="removeImage(index)" />
         </div>
@@ -217,6 +225,7 @@ onMounted(() => {
         <div class="w-24">
           <BaseButton
             :isLoading="loading"
+            :disabled="!form.description"
             @click="submitUpdateOrCreate"
           >Post</BaseButton>
         </div>

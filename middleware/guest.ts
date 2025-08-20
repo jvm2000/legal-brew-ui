@@ -1,7 +1,12 @@
 export default defineNuxtRouteMiddleware(async () => {
-  const { loggedIn, user: authUser } = useAuth()
+  const { getAuth, loggedIn } = useAuth()
+  const route = useRoute()
 
-  if (authUser.value && import.meta.client) {
-    return navigateTo('/dashboard')
+  if (import.meta.client) {
+    await getAuth()
+
+    if (loggedIn.value && route.path === "/") {
+      return navigateTo("/dashboard", { replace: true })
+    }
   }
 })

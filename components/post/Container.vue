@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import { useToast } from 'vue-toastification'
 import { EllipsisHorizontalIcon, HeartIcon, ChatBubbleOvalLeftEllipsisIcon, TrashIcon, PencilIcon } from '@heroicons/vue/24/outline'
 import type { Post, Reaction } from '~/types/general'
 import CarouselImages from './CarouselImages.vue'
@@ -15,18 +16,15 @@ type ReactionForm = {
 
 dayjs.extend(relativeTime)
 
-const props = withDefaults(defineProps<{
-  post: Post | null,
-}>(), {
-  post: null,
-})
+const props = defineProps<{
+  post: Post,
+}>()
 
 const emit = defineEmits<{
   success: [void]
 }>()
 
-const showToast = ref(false)
-const toastMessage = ref('')
+const toast = useToast()
 const { openCloseViewPostModal, openCloseEditPostModal } = usePost()
 const { user: authUser } = useAuth()
 const reactionForm = ref<ReactionForm>({
@@ -41,49 +39,36 @@ function getRemainingTime(date: Date | string) {
 }
 
 async function submitReaction() {
-  showToast.value = true
-  toastMessage.value = 'Like Submitted!'
-
   reactionForm.value.post_id = props.post?.id ?? ''
   reactionForm.value.user_id =  authUser.value?.id ?? ''
   reactionForm.value.type = 'heart'
 
-  const { error } = await $useCustomFetch<Post[]>('/api/reactions', {
+  $useCustomFetch<Post[]>('/api/reactions', {
     method: 'POST',
     body: reactionForm.value,
   })
-
-  showToast.value = false
 
   emit('success')
 }
 
 async function unsubmitReaction(reaction: Reaction[]) {
-  showToast.value = true
-  toastMessage.value = 'Unlike Submitted!'
-
   const reactionObject = reaction?.find(
     (reaction: any) => reaction.user_id === authUser?.value?.id
   )
 
-  const { error } = await $useCustomFetch<Post[]>(`/api/reactions/${reactionObject?.id}`, {
+  $useCustomFetch<Post[]>(`/api/reactions/${reactionObject?.id}`, {
     method: 'DELETE',
   })
-
-  showToast.value = false
 
   emit('success')
 }
 
 async function deletePost() {
-  showToast.value = true
-  toastMessage.value = 'Delete Post Successfully!'
-
   const { error } = await $useCustomFetch<Post[]>(`/api/posts/${props.post?.id}`, {
     method: 'DELETE',
   })
 
-  showToast.value = false
+  toast.success('Post deleted Successfully!')
 
   emit('success')
 }
@@ -94,7 +79,7 @@ function checkIfAlreadyReacted(reaction: Reaction[]) {
 </script>
 
 <template>
-  <div class="w-full py-6 sm:px-6 space-y-4 bg-white rounded-md overflow-hidden">
+  <div class="w-full py-6 sm:px-6 space-y-4 bg-white rounded-md">
     <div class="w-full px-6 sm:px-0 flex items-center justify-between">
       <div class="flex items-center space-x-4">
         <div class="w-8 h-8 rounded-full overflow-hidden">
@@ -111,8 +96,8 @@ function checkIfAlreadyReacted(reaction: Reaction[]) {
         </div>
       </div>
 
-      <div v-if="authUser?.role === 'admin'" class="relative">
-        <Menu>
+      <div v-if="authUser?.role === 'admin'">
+        <Menu as="div" class="relative inline-block text-left z-50">
           <MenuButton>
             <EllipsisHorizontalIcon class="w-6 h-6 stroke-gray-500 cursor-pointer" />
           </MenuButton>
@@ -177,6 +162,4 @@ function checkIfAlreadyReacted(reaction: Reaction[]) {
       </div>
     </div>
   </div>
-
-  <BaseToast :show="showToast" :message="toastMessage" />
 </template>

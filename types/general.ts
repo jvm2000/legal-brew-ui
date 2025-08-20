@@ -23,12 +23,14 @@ export type Post = {
 }
 
 export type Comment = {
+  id?: string,
   content: string,
   created_at: any,
   user: User
 }
 
 export type Reaction = {
+  id?: string,
   content: string,
   created_at: any,  
   user_id: string
@@ -44,6 +46,7 @@ export type Services = {
   id?: string,
   name: string,
   price: number,
+  loading?: boolean,
   description: string,
   image: string
 }

@@ -30,6 +30,7 @@ async function submitPayment() {
   })
 
   showToast.value = false
+  isOpenSuccessModal.value = false
 
   navigateTo('/dashboard')
 }
