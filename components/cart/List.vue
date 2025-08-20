@@ -2,7 +2,7 @@
 import { useToast } from 'vue-toastification'
 import { ArrowLongLeftIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import type { Cart, Services } from '~/types/general'
-import { usePayment } from '~/composables/usePayment'
+import { formatPrice } from '~/utils/price'
 
 const toast = useToast()
 const { user: authUser } = useAuth()
@@ -119,14 +119,6 @@ async function deleteService(service: Services) {
   loading.value = false
 
   await fetchServices()
-}
-
-function formatPrice(price: number) {
-  return new Intl.NumberFormat('en-PH', {
-    style: 'currency',
-    currency: 'PHP',
-    minimumFractionDigits: 2,
-  }).format(price)
 }
 
 const isButtonDisabled = computed<boolean>(() => {

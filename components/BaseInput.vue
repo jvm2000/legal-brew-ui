@@ -28,7 +28,7 @@ type InputProps = {
   /**
    * An error message or messages value indicating whether the input is in an error state.
    */
-  error?: string | string[],
+  error?: string | string[] | null,
 
   /**
    * If the input is required.
@@ -53,7 +53,7 @@ const props = withDefaults(
 )
 
 const isPlainText = ref(false)
-const errorMessage = ref('')
+const errorMessage = ref<string[] | string | null>('')
 
 watch(
   () => props.error,

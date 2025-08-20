@@ -2,6 +2,7 @@
 import { ArrowLongLeftIcon } from '@heroicons/vue/24/outline'
 import type { Cart, Services } from '~/types/general'
 import { loadStripe } from '@stripe/stripe-js'
+import { formatPrice } from '~/utils/price'
 
 const showToast = ref(false)
 const toastMessage = ref('')
@@ -73,14 +74,6 @@ async function pay() {
   } else if (result.paymentIntent.status === 'succeeded') {
     alert('Payment succeeded!')
   }
-}
-
-function formatPrice(price: number) {
-  return new Intl.NumberFormat('en-PH', {
-    style: 'currency',
-    currency: 'PHP',
-    minimumFractionDigits: 2,
-  }).format(price)
 }
 
 async function payWithGCash() {

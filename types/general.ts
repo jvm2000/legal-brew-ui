@@ -23,6 +23,7 @@ export type Post = {
 }
 
 export type Comment = {
+  id?: string,
   content: string,
   created_at: any,
   user: User

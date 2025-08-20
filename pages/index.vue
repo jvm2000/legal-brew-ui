@@ -96,7 +96,7 @@ definePageMeta({
           type="password"
           label="Password"
           placeholder="Enter password"
-          :error="errors ?? []"
+          :error="errors ?? null"
         />
 
         <div class="w-24">

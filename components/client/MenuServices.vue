@@ -2,6 +2,7 @@
 import { useToast } from 'vue-toastification'
 import { ShoppingCartIcon } from '@heroicons/vue/24/outline'
 import type { Cart, Services } from '~/types/general'
+import { formatPrice } from '~/utils/price'
 
 type ServiceForm = {
   cart_id: string,
@@ -57,9 +58,9 @@ function isServiceInList(service: Services): boolean {
 }
 
 async function addToCart(service: Services) {
-  service.loading = true
-
   toast.success('Cart Added Successfully!')
+
+  await fetchCart()
 
   serviceForm.value.name = service.name ?? ''
   serviceForm.value.description = service.description ?? ''
@@ -79,12 +80,9 @@ async function addToCart(service: Services) {
 
     await fetchMenuServices()
 
-    service.loading = false
-
     return
   }
 
-  service.loading = false
   serviceForm.value.cart_id = cartData.value[0].id ?? ''
 
   await submitToAddToCartService()
@@ -106,14 +104,6 @@ async function submitToAddToCartService() {
   }
 }
 
-function formatPrice(price: number) {
-  return new Intl.NumberFormat('en-PH', {
-    style: 'currency',
-    currency: 'PHP',
-    minimumFractionDigits: 2,
-  }).format(price)
-}
-
 function getImage(name: string) {
   if (name === 'Latte Legalizations') return '/images/services/latte-legalization.svg'
 
@@ -125,13 +115,6 @@ function getImage(name: string) {
 
   if (name === 'Capuccino Case Files') return '/images/services/cappucino-case-files.svg'
 }
-
-const servicesWithLoading = computed(() =>
-  services.value.map(service => ({
-    ...service,
-    loading: true
-  }))
-)
 
 onMounted(async () => {
   loading.value = true
@@ -148,7 +131,7 @@ onMounted(async () => {
 
   <div v-if="!loading" class="space-y-4 items-start py-4 px-6 sm:px-0">
     <div 
-      v-for="service in servicesWithLoading"
+      v-for="service in services"
       :key="service.name"
       class="flex flex-col items-start space-y-6 border-b border-custom-brown-500 pb-6"
     >
@@ -170,7 +153,6 @@ onMounted(async () => {
         class="py-2 text-sm text-center w-full rounded-md flex flex-col items-center"
         :class="[isServiceInList(service) ? 'bg-transparent border border-custom-brown-300 text-custom-brown-500' : 'bg-custom-brown-300 text-white']"
         @click="addToCart(service)"
-        :isLoading="service.loading"
         :disabled="isServiceInList(service)"
       >
         <div class="flex items-center space-x-2">

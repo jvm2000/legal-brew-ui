@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
-import type { Comment, Post, Reaction } from '~/types/general'
-import { XMarkIcon, PaperAirplaneIcon, HeartIcon, ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/vue/24/outline'
+import type { Comment } from '~/types/general'
+import { XMarkIcon, PaperAirplaneIcon, HeartIcon, ChatBubbleOvalLeftEllipsisIcon, EllipsisHorizontalIcon, TrashIcon } from '@heroicons/vue/24/outline'
 import { getImage } from '~/utils/image'
+import { Combobox, Menu, MenuButton, MenuItems } from '@headlessui/vue'
 
 type CommentForm = {
   content: string,
@@ -53,6 +54,14 @@ async function getComments() {
   }
 }
 
+async function deleteComment(comment: Comment) {
+  const { data } = await $useCustomFetch(`/api/comments/${comment.id}`, { 
+    method: 'DELETE' 
+  })
+
+  await getComments()
+}
+
 async function submitComment() {
   if (loading.value) return 
 
@@ -86,6 +95,10 @@ function handleClose() {
   commentForm.value.content = ''
   commentForm.value.post_id = ''
   commentForm.value.user_id = ''
+}
+
+function commentOwnUser(comment: Comment) {
+  return comment.user.id === authUser?.value?.id
 }
 
 const hasImages = computed<boolean>(() => {
@@ -191,24 +204,51 @@ onMounted(() => {
             </div>
           </div>
 
-          <div v-for="comment in comments" class="grid grid-cols-10 w-full items-center">
-            <div class="w-8 h-8 rounded-full overflow-hidden col-span-1">
-              <img :src="getImage(comment.user?.images?.length ? comment.user.images[0] : null)" class="w-full h-full object-cover" />
-            </div>
-
-            <div class="space-y-1 flex flex-col items-start col-span-9">
-              <div class="flex items-center space-x-3">
-                <p class="text-base font-medium capitalize">{{ comment.user?.full_name }}</p>
-
-                <div class="w-1 h-1 bg-custom-brown-500 rounded-full"/>
-
-                <p class="text-sm text-custom-brown-500">{{ getRemainingTime(comment.created_at) }}</p>
+          <div v-for="comment in comments" class="flex items-center justify-between w-full">
+            <div class="flex items-center space-x-4">
+              <div class="w-8 h-8 rounded-full overflow-hidden col-span-1">
+                <img :src="getImage(comment.user?.images?.length ? comment.user.images[0] : null)" class="w-full h-full object-cover" />
               </div>
 
-              <p class="text-sm text-custom-brown-500 text-left">
-                {{ comment.content }}
-              </p>
+              <div class="space-y-1 flex flex-col items-start col-span-9">
+                <div class="flex items-center space-x-3">
+                  <p class="text-base font-medium capitalize">{{ comment.user?.full_name }}</p>
+
+                  <div class="w-1 h-1 bg-custom-brown-500 rounded-full"/>
+
+                  <p class="text-sm text-custom-brown-500">{{ getRemainingTime(comment.created_at) }}</p>
+                </div>
+
+                <p class="text-sm text-custom-brown-500 text-left">
+                  {{ comment.content }}
+                </p>
+              </div>
             </div>
+            
+            <Menu as="div" class="relative inline-block text-left" v-if="commentOwnUser(comment)">
+              <MenuButton>
+                <EllipsisHorizontalIcon class="w-6 h-6 stroke-gray-500 cursor-pointer z-0" />
+              </MenuButton>
+
+              <transition
+                enter-active-class="transition duration-100 ease-out"
+                enter-from-class="transform scale-95 opacity-0"
+                enter-to-class="transform scale-100 opacity-100"
+                leave-active-class="transition duration-75 ease-in"
+                leave-from-class="transform scale-100 opacity-100"
+                leave-to-class="transform scale-95 opacity-0"
+              >
+                <MenuItems
+                  class="absolute right-0 mt-0 w-36 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none p-4 z-[999]"
+                >
+                  <div @click="deleteComment(comment)" class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-slate-100">
+                    <TrashIcon class="w-4 h-4 stroke-custom-brown-500" />
+
+                    <p class="text-sm text-custom-brown-500">Delete</p>
+                  </div>
+                </MenuItems>
+              </transition>
+            </Menu>
           </div>
         </div>
       </div>

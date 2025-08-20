@@ -1,7 +1,7 @@
 import type { User } from "~/types/general"
 
 export const useAuth = () => {
-  const errors = ref<string[] | null>([])
+  const errors = ref<string[] | null>(null)
   const loading = ref(false)
   const user = useState<User | null>('fetchedUser', () => null)
   const token = useCookie<any>('token')

@@ -23,7 +23,14 @@ function changeTab(index: number) {
   router.push({ path: "dashboard", query: { tab } })
 }
 
-await getPosts()
+function delay(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+onMounted(async () => {
+  await delay(200)
+  await getPosts()
+})
 </script>
 
 <template>

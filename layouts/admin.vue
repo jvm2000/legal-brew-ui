@@ -2,14 +2,17 @@
 import { ShoppingCartIcon, ArrowLeftEndOnRectangleIcon, Cog6ToothIcon, CalendarDaysIcon } from '@heroicons/vue/24/outline'
 import { Menu, MenuButton, MenuItems } from '@headlessui/vue'
 import { getImage } from '~/utils/image'
+import { useToast } from 'vue-toastification'
 
-const { user: authUser, token } = useAuth()
+const { user: authUser } = useAuth()
 const { $useCustomFetch } = useNuxtApp()
+const toast = useToast()
 
 async function logout() {
-  $useCustomFetch('/api/logout', { method: 'POST' })
-
   navigateTo('/')
+  toast.success('Logging out kindly wait.')
+
+  $useCustomFetch('/api/logout', { method: 'POST' })
 }
 </script>
 
