@@ -5,7 +5,6 @@ const router = useRouter()
 const route = useRoute()
 const { user: authUser } = useAuth()
 const { getPosts, post } = usePost()
-const page = ref(1)
 
 const selectedTab = computed(() => {
   if (!route.query.tab) return 0
@@ -28,26 +27,9 @@ function delay(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-async function loadPosts() {
-  await delay(200)
-  await getPosts(page.value)
-  
-  page.value++
-}
-
-async function handleScroll() {
-  const { scrollTop, scrollHeight, clientHeight } = document.documentElement
-
-  if (scrollTop + clientHeight >= scrollHeight - 10) {
-    await loadPosts()
-  }
-}
-
 onMounted(async () => {
   await delay(200)
   await getPosts()
-
-  window.addEventListener('scroll', handleScroll)
 })
 </script>
 
