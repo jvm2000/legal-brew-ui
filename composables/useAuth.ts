@@ -17,13 +17,13 @@ export const useAuth = () => {
     loading.value = true
 
     await $fetch('/sanctum/csrf-cookie', {
-      baseURL: 'laravel.restaurolegalservices.com',
+      baseURL: config.public.apiBase,
       credentials: 'include',
     })
 
     try {
       const response = await $fetch<any>('/api/login', {
-        baseURL: 'laravel.restaurolegalservices.com',
+        baseURL: config.public.apiBase,
         method: 'POST',
         credentials: 'include',
           body: { 

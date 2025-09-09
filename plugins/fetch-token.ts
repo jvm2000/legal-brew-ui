@@ -7,7 +7,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
     const mergedOptions = {
       ...options,
-      baseURL: 'laravel.restaurolegalservices.com', // e.g. 'http://localhost:8000'
+      baseURL: config.public.apiBase, // e.g. 'http://localhost:8000'
       credentials: options.credentials ?? 'include',
       headers: {
         ...(options.headers || {}),
