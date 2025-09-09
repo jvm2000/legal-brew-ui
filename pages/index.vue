@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { HeartIcon } from '@heroicons/vue/24/outline'
-import { useToast } from 'vue-toastification'
 
 type Services = {
   label: string,
@@ -76,7 +75,6 @@ const contactForm = ref({
   message: ''
 })
 const contactLoading = ref(false)
-const toast = useToast()
 
 function scrollToTop() {
   loginFirstError.value = null
@@ -95,8 +93,6 @@ function handleInput() {
 
 async function submitContact() {
   contactLoading.value = true
-
-  toast.success('Message Sent Successfully!')
 
   const { data } = await $useCustomFetch(`/api/send-message`, { 
     method: 'POST',
