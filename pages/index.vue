@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { HeartIcon } from '@heroicons/vue/24/outline'
-import { useLanding } from '~/composables/useLanding'
+import { useToast } from 'vue-toastification'
 
 type Services = {
   label: string,
@@ -38,13 +38,11 @@ const services = ref<Services[]>([
     image: '/images/services/cappucino-case-files.svg'
   }
 ])
-
 const events = ref([
   { label: 'Webinars', image: '/images/events/webinars.svg' },
   { label: 'Seminars and Trainings', image: '/images/events/seminars.svg' },
   { label: 'Online Discussions', image: '/images/events/discussions.svg' }
 ])
-
 const materials = ref([
   { 
     description: 'Yorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -71,6 +69,14 @@ const materials = ref([
 const { errors, formLogin, login, loading } = useAuth()
 const loginFirstError = ref<string | null>(null)
 const { isOpenGCashModal, isOpenMayaModal } = useLanding()
+const { $useCustomFetch } = useNuxtApp()
+const contactForm = ref({
+  email: '',
+  subject: '',
+  message: ''
+})
+const contactLoading = ref(false)
+const toast = useToast()
 
 function scrollToTop() {
   loginFirstError.value = null
@@ -85,6 +91,25 @@ function scrollToTop() {
 
 function handleInput() {
   loginFirstError.value = null
+}
+
+async function submitContact() {
+  contactLoading.value = true
+
+  toast.success('Message Sent Successfully!')
+
+  const { data } = await $useCustomFetch(`/api/send-message`, { 
+    method: 'POST',
+    body: contactForm.value
+  })
+
+  contactForm.value = {
+    email: '',
+    subject: '',
+    message: ''
+  }
+
+  contactLoading.value = false
 }
 
 definePageMeta({
@@ -277,22 +302,26 @@ definePageMeta({
 
       <div class="flex flex-col items-start space-y-4">
         <div class="w-full">
-          <BaseInput placeholder="Email" type="email" />
+          <BaseInput v-model="contactForm.email" placeholder="Email" type="email" />
         </div>
 
         <div class="w-full">
-          <BaseInput placeholder="Subject" />
+          <BaseInput v-model="contactForm.subject" placeholder="Subject" />
         </div>
 
         <div class="w-full">
           <textarea
+            v-model="contactForm.message"
             class="bg-custom-brown-200 text-sm p-3 rounded-md placeholder-custom-brown-300 w-full text-custom-brown-500 h-44"
             placeholder="Enter message here"
           ></textarea>
         </div>
 
         <div class="w-24">
-          <BaseButton>Send</BaseButton>
+          <BaseButton 
+            :isLoading="contactLoading" 
+            @click="submitContact"
+          >Send</BaseButton>
         </div>
       </div>
     </div>
