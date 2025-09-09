@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   modules: ["@nuxtjs/tailwindcss"],
   runtimeConfig: {
     public: {
-      apiBase: '',
+      apiBase: 'laravel.restaurolegalservices.com',
     },
     head: {
       meta: [{ name: 'csrf-token', content: '' }],
