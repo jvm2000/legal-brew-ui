@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useToast } from 'vue-toastification'
 import { CheckIcon } from '@heroicons/vue/24/outline'
 import type { Cart, Services } from '~/types/general'
 
@@ -7,12 +8,13 @@ const cartData = ref<Cart[]>([])
 const servicesData = ref<Services[]>([])
 const { $useCustomFetch } = useNuxtApp()
 const { user: authUser } = useAuth()
-const showToast = ref(false)
-const toastMessage = ref('')
+const toast = useToast()
+const loading = ref(false)
 
 async function submitPayment() {
-  showToast.value = true
-  toastMessage.value = 'Added Appointment Successfully!'
+  loading.value = true
+
+  toast.success('Appointment Submitted Successfully! Please wait..')
 
   servicesData.value.forEach((service: Services) => {
     appointmentForm.value.services.push(service?.id)
@@ -20,7 +22,7 @@ async function submitPayment() {
 
   const { data } = await $useCustomFetch('/api/appointments', { 
     method: 'POST',
-    body: appointmentForm
+    body: appointmentForm.value
   })
 
   appointmentForm.value = {}
@@ -29,8 +31,8 @@ async function submitPayment() {
     method: 'DELETE',
   })
 
-  showToast.value = false
   isOpenSuccessModal.value = false
+  loading.value = false
 
   navigateTo('/dashboard')
 }
@@ -68,13 +70,11 @@ async function fetchServices() {
         <CheckIcon class="w-6 h-6 stroke-white" />
       </div>
 
-      <p class="text-2xl font-semibold text-custom-brown-500">Payment Successful</p>
+      <p class="text-2xl font-semibold text-custom-brown-500">Appointment Created Successfully</p>
 
       <div class="w-24">
-        <BaseButton @click="submitPayment">Close</BaseButton>
+        <BaseButton :isLoading="loading" @click="submitPayment">Confirm</BaseButton>
       </div>
     </div>
   </BaseModal>
-
-  <BaseToast :show="showToast" :message="toastMessage" />
 </template>
