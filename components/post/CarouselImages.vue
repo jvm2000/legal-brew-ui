@@ -21,7 +21,7 @@ function prev() {
 }
 
 function getImage(path: string) {
-  return `${ useRuntimeConfig().public.apiBase }/storage/${path}`
+  return `laravel.restaurolegalservices.com/storage/${path}`
 }
 </script>
 

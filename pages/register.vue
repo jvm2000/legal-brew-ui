@@ -53,14 +53,14 @@ async function submit() {
   }
 
   const { error } = await useFetch('/api/register', {
-    baseURL: useRuntimeConfig().public.apiBase,
+    baseURL: 'laravel.restaurolegalservices.com',
     method: 'POST',
     body: formData,
     credentials: 'include',
   })
 
   await useFetch('/api/verification/send', {
-    baseURL: useRuntimeConfig().public.apiBase,
+    baseURL: 'laravel.restaurolegalservices.com',
     method: 'POST',
     body: {
       email: form.value.email
