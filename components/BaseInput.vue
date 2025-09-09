@@ -81,7 +81,8 @@ function toggle() {
         :type="props.type === 'password' && isPlainText ? 'text' : props.type"
         v-model="model"
         v-bind="$attrs"
-        class="bg-custom-brown-200 text-sm p-3 rounded-md placeholder-custom-brown-300 w-full text-custom-brown-500"
+        class="bg-custom-brown-200 text-sm p-3 rounded-md w-full text-custom-brown-500"
+        :class="[errorMessage ? 'ring-1 ring-red-500 placeholder-red-500' : 'placeholder-custom-brown-300']"
         :placeholder="props.placeholder ?? 'Enter value'"
         @input="handleInput"
       />

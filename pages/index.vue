@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { HeartIcon } from '@heroicons/vue/24/outline'
+import { useLanding } from '~/composables/useLanding'
 
 type Services = {
   label: string,
@@ -68,6 +69,23 @@ const materials = ref([
   }
 ])
 const { errors, formLogin, login, loading } = useAuth()
+const loginFirstError = ref<string | null>(null)
+const { isOpenGCashModal, isOpenMayaModal } = useLanding()
+
+function scrollToTop() {
+  loginFirstError.value = null
+
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth' // smooth scrolling effect
+  })
+
+  loginFirstError.value = 'Logging in is required'
+}
+
+function handleInput() {
+  loginFirstError.value = null
+}
 
 definePageMeta({
   layout: 'landing',
@@ -88,7 +106,9 @@ definePageMeta({
         <BaseInput 
           v-model="formLogin.email" 
           label="Username/Email" 
-          placeholder="Enter username or email" 
+          placeholder="Enter username or email"
+          :error="loginFirstError ?? null"
+          @input="handleInput"
         />
 
         <BaseInput 
@@ -156,7 +176,7 @@ definePageMeta({
         :key="index"
         class="flex items-center justify-between border-b border-custom-brown-500 pb-8"
       >
-        <div class="flex flex-col sm:flex-row items-start sm:items-center sm:space-x-8 space-y-8 sm:space-y-0">
+        <div @click="scrollToTop" class="flex flex-col sm:flex-row items-start sm:items-center sm:space-x-8 space-y-8 sm:space-y-0 cursor-pointer">
           <div class="w-24 h-24 bg-custom-brown-300 rounded-md grid place-items-center whitespace-nowrap">
             <img :src="service.image" />
           </div>
@@ -190,7 +210,7 @@ definePageMeta({
   <div id="materials" class="flex flex-col items-center py-24">
     <div class="w-full flex items-center relative justify-between">
       <div></div>
-      <div class="w-full sm:xl:w-[615px] h-[529px] bg-custom-brown-400 sm:xl:rounded-l-md"></div>
+      <div class="w-full max-w-full h-[529px] bg-custom-brown-400 sm:xl:rounded-l-md"></div>
 
       <div 
         ref="container"
@@ -205,13 +225,14 @@ definePageMeta({
           class="flex flex-col space-y-10"
         >
           <div class="flex items-center space-x-4">
-            <p class="text-2xl text-white pl-4 sm:xl:pl-0 sm:xl:text-custom-brown-500 font-bold landing-login">Resource Materials</p>
+            <p class="text-2xl text-white pl-4 sm:xl:pl-0 font-bold landing-login">Resource Materials</p>
           </div>
 
           <div class="flex items-center space-x-6">
             <div 
               v-for="material in materials" 
               class="bg-white w-[356px] rounded-xl drop-shadow-xl overflow-hidden" aria-readonly="true"
+              @click="scrollToTop"
             >
                 <img :src="material.image" class="object-fit">
 
@@ -231,32 +252,32 @@ definePageMeta({
   </div>
 
   <div id="contact" class="flex flex-col items-center py-10 lg:py-24">
-    <div class="max-w-5xl w-full grid lg:grid-cols-2 items-center px-10 sm:xl:px-0 gap-y-6 lg:gap-y-0">
-      <div class="flex flex-col items-start space-y-6">
+    <div class="max-w-full sm:max-w-3xl w-full grid lg:grid-cols-2 items-center px-10 sm:xl:px-0 gap-y-6 lg:gap-y-0">
+      <div class="flex flex-col items-start space-y-6 pb-16">
         <p class="landing-login text-custom-brown-500 text-2xl font-bold">Send us a message</p>
 
-        <p class="text-sm text-custom-brown-500 w-80">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.
+        <p class="text-sm text-custom-brown-500 w-48">
+          If your matter is urgent, please contact us directly at
         </p>
 
         <div class="space-y-2 flex flex-col items-start">
           <div class="flex items-center space-x-4">
             <img src="/images/phone-icon.svg" alt="" />
 
-            <p class="text-sm font-medium text-custom-brown-500">0000-0000-0000</p>
+            <p class="text-base font-medium text-custom-brown-500">09457123972</p>
           </div>
 
           <div class="flex items-center space-x-4">
             <img src="/images/email-icon.svg" alt="" />
 
-            <p class="text-sm font-medium text-custom-brown-500">thelegalbrew@sample.com</p>
+            <p class="text-base font-medium text-custom-brown-500">ruth.restauro2018@gmail.com</p>
           </div>
         </div>
       </div>
 
       <div class="flex flex-col items-start space-y-4">
         <div class="w-full">
-          <BaseInput placeholder="Email" />
+          <BaseInput placeholder="Email" type="email" />
         </div>
 
         <div class="w-full">
@@ -286,17 +307,17 @@ definePageMeta({
       </div>
 
       <p class="text-sm text-custom-brown-500">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.
+        Every contribution, big or small, makes a difference. Thank you for helping us grow and serve better!
       </p>
 
       <div class="w-full grid grid-cols-2 gap-x-6">
-        <div class="w-full rounded-lg bg-custom-brown-100 flex items-center space-x-4 p-6">
+        <div @click="isOpenGCashModal = true" class="w-full rounded-lg bg-custom-brown-100 flex items-center space-x-4 p-6 cursor-pointer">
           <img src="/images/payments/gcash.svg" />
 
           <p class="text-sm text-custom-brown-500">Gcash</p>
         </div>
 
-        <div class="w-full rounded-lg bg-custom-brown-100 flex items-center space-x-4 p-6">
+        <div @click="isOpenMayaModal = true" class="w-full rounded-lg bg-custom-brown-100 flex items-center space-x-4 p-6 cursor-pointer">
           <img src="/images/payments/paymaya.svg" />
 
           <p class="text-sm text-custom-brown-500">Maya</p>
@@ -338,6 +359,9 @@ definePageMeta({
       </div>
     </div>
   </footer>
+
+  <ModalGCashDonation />
+  <ModalMayaDonation />
 </template>
 
 <style scoped>
