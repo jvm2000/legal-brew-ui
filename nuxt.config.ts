@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   modules: ["@nuxtjs/tailwindcss"],
   runtimeConfig: {
     public: {
-      apiBase: 'http://128.199.156.88', // Laravel API
+      apiBase: 'https://http://restaurolegalservices-api.com', // Laravel API
     },
     head: {
       meta: [{ name: 'csrf-token', content: '' }],
