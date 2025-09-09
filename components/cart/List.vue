@@ -30,6 +30,7 @@ const onlineTimeSlots = [
 ]
 const checkList = ref<any>(null)
 const { $useCustomFetch } = useNuxtApp()
+const { isOpenSuccessModal } = usePayment()
 
 async function fetchCart() {
   const { data } = await $useCustomFetch<Cart[]>(`/api/cart/${authUser.value?.id}`, { 
@@ -77,7 +78,7 @@ function selectTime(value: string) {
   selectedTime.value = value
 }
 
-async function proceedToPayment() {
+async function proceedToAppointment() {
   const { formatDateString } = useFormat()
   loading.value = true
 
@@ -102,7 +103,7 @@ async function proceedToPayment() {
     return
   }
 
-  await navigateTo('/cart/payment')
+  isOpenSuccessModal.value = true
 }
 
 async function deleteService(service: Services) {
@@ -210,13 +211,14 @@ await fetchCart()
         <div class="w-full">
           <BaseButton
             :isLoading="loading"
-            @click="proceedToPayment"
+            @click="proceedToAppointment"
             :disabled="isButtonDisabled"
-          >Proceed to payment</BaseButton>
+          >Make Appointment</BaseButton>
         </div>
       </div>
     </div>
   </div>
 
   <CartAlreadyExistedModal />
+  <ModalSuccessPayment />
 </template>

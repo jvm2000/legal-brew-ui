@@ -5,7 +5,11 @@ const state = reactive({
   isOpenPostModal: false,
   isViewPostModal: false,
   isPostEditing: false,
-  selectedPost: {} as Post
+  selectedPost: {} as Post,
+  pagination: {
+    currentPage: 1,
+    lastPage: 1,
+  }
 })
 
 export default function () { 
@@ -29,15 +33,15 @@ export default function () {
     state.isViewPostModal = !state.isViewPostModal
   }
 
-  async function getPosts() {
+  async function getPosts(page = 1) {
     const { $useCustomFetch } = useNuxtApp()
 
-    const { data } = await $useCustomFetch('/api/posts', { 
-      method: 'GET',
-    })
+    const { data } = await $useCustomFetch(`/api/posts?page=${page}`, { method: 'GET' })
 
-    if (data.value) {
-      state.post = data.value
+    state.post = data.value ?? []
+    state.pagination = {
+      currentPage: data.value.current_page,
+      lastPage: data.value.last_page,
     }
   }
 

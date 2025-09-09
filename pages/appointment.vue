@@ -10,7 +10,7 @@ definePageMeta({
 
 useHead({ title: 'Appointment' })
 
-const { scheduledForToday, openAppointmentModal, openDeleteModal } = useAppointment()
+const { scheduledForToday, openAppointmentModal, openDeleteModal, openMarkAsDoneModal } = useAppointment()
 const allAppointments = ref<Appointment[]>([])
 const appointmentsData = ref<Appointment[]>([])
 const appointmentsUpcomingData = ref<Appointment[]>([])
@@ -69,8 +69,6 @@ await fetchAllAppointments()
     <div class="flex flex-col items-start space-y-6 px-6 sm:xl:px-0">
       <div class="w-full flex items-center justify-between">
         <p class="text-2xl text-custom-brown-500 font-medium">Your schedule for today</p>
-
-        <p class="text-sm text-custom-brown-500 font-medium">See previous</p>
       </div>
 
       <div v-for="appointment in appointmentsData" class="flex flex-col sm:flex-row items-center sm:justify-between w-full  space-y-6 sm:space-y-0">
@@ -98,7 +96,7 @@ await fetchAllAppointments()
 
         <div class="flex items-center space-x-4">
           <div class="w-36">
-            <BaseButton>Mark as Done</BaseButton>
+            <BaseButton @click="openMarkAsDoneModal(appointment)">Mark as Done</BaseButton>
           </div>
 
           <Menu>
@@ -165,7 +163,7 @@ await fetchAllAppointments()
 
         <div class="flex items-center space-x-4">
           <div class="w-36">
-            <BaseButton>Mark as Done</BaseButton>
+            <BaseButton @click="openMarkAsDoneModal(appointment)">Mark as Done</BaseButton>
           </div>
 
           <Menu>
@@ -208,5 +206,6 @@ await fetchAllAppointments()
   </div>
 
   <AppointmentModalDelete @success="fetchAppointments(), fetchAllAppointments()" />
+  <AppointmentModalMarkAsDone @success="fetchAppointments(), fetchAllAppointments()" />
   <AppointmentModalReschedule @success="fetchAppointments(), fetchAllAppointments()" />
 </template>
