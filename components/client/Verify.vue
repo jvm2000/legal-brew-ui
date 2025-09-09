@@ -17,7 +17,7 @@ async function resendCode() {
   loading.value = true
 
   await useFetch('/api/verification/send', {
-    baseURL: useRuntimeConfig().public.apiBase,
+    baseURL: 'laravel.restaurolegalservices.com',
     method: 'POST',
     body: {
       email: authUser.value?.email
