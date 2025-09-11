@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useToast } from 'vue-toastification'
 import { ShoppingCartIcon } from '@heroicons/vue/24/outline'
 import type { Cart, Services } from '~/types/general'
 import { formatPrice } from '~/utils/price'
@@ -13,7 +12,6 @@ type ServiceForm = {
 
 const { user: authUser } = useAuth()
 const { $useCustomFetch } = useNuxtApp()
-const toast = useToast()
 
 const cartData = ref<Cart[]>([])
 const servicesData = ref<Services[]>([])
@@ -59,8 +57,6 @@ function isServiceInList(service: Services): boolean {
 }
 
 async function addToCart(service: Services) {
-  toast.success('Cart Added Successfully!')
-
   await fetchCart()
 
   serviceForm.value.name = service.name ?? ''

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useToast } from 'vue-toastification'
 import { PhotoIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import type { Post } from '~/types/general'
 import { getImage } from '~/utils/image'
@@ -15,7 +14,6 @@ const emit = defineEmits<{
   success: [void]
 }>()
 
-const toast = useToast()
 const { $useCustomFetch } = useNuxtApp()
 const { user: authUser } = useAuth()
 const { isOpenPostModal, isPostEditing, selectedPost } = usePost()
@@ -107,8 +105,6 @@ async function submit() {
     body: formData
   })
 
-  toast.success('Post added Successfully!')
-
   emit('success')
 
   loading.value = false
@@ -139,8 +135,6 @@ async function submitUpdate() {
     method: 'POST',
     body: formData,
   })
-
-  toast.success('Post updated Successfully!')
 
   emit('success')
 

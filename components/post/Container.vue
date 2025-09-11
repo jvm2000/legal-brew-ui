@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { useToast } from 'vue-toastification'
 import { EllipsisHorizontalIcon, HeartIcon, ChatBubbleOvalLeftEllipsisIcon, TrashIcon, PencilIcon } from '@heroicons/vue/24/outline'
 import type { Post, Reaction } from '~/types/general'
 import CarouselImages from './CarouselImages.vue'
@@ -24,7 +23,6 @@ const emit = defineEmits<{
   success: [void]
 }>()
 
-const toast = useToast()
 const { openCloseViewPostModal, openCloseEditPostModal } = usePost()
 const { user: authUser } = useAuth()
 const { $useCustomFetch } = useNuxtApp() 
@@ -68,8 +66,6 @@ async function deletePost() {
   const { error } = await $useCustomFetch<Post[]>(`/api/posts/${props.post?.id}`, {
     method: 'DELETE',
   })
-
-  toast.success('Post deleted Successfully!')
 
   emit('success')
 }

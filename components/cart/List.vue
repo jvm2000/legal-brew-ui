@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useToast } from 'vue-toastification'
 import { ArrowLongLeftIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import type { Cart, Services } from '~/types/general'
 import { formatPrice } from '~/utils/price'
@@ -8,7 +7,6 @@ const { appointmentForm, isAlreadyExistedModal } = usePayment()
 const { user: authUser } = useAuth()
 const { $useCustomFetch } = useNuxtApp()
 const { isOpenSuccessModal } = usePayment()
-const toast = useToast()
 
 const cartData = ref<Cart[]>([])
 const servicesData = ref<Services[]>([])
@@ -111,8 +109,6 @@ async function deleteService(service: Services) {
   if (loading.value) return
   
   loading.value = true
-
-  toast.success('Cart Removed Successfully!')
 
   const { error } = await $useCustomFetch(`/api/services/${service.id}`, { 
     method: 'DELETE',

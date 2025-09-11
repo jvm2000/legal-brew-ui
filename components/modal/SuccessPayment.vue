@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { useToast } from 'vue-toastification'
 import { CheckIcon } from '@heroicons/vue/24/outline'
 import type { Cart, Services } from '~/types/general'
 
 const { isOpenSuccessModal, appointmentForm } = usePayment()
 const { $useCustomFetch } = useNuxtApp()
 const { user: authUser } = useAuth()
-const toast = useToast()
 
 const cartData = ref<Cart[]>([])
 const servicesData = ref<Services[]>([])
@@ -14,8 +12,6 @@ const loading = ref(false)
 
 async function submitPayment() {
   loading.value = true
-
-  toast.success('Appointment Submitted Successfully! Please wait..')
 
   servicesData.value.forEach((service: Services) => {
     appointmentForm.value.services.push(service?.id)
