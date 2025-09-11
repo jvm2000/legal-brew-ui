@@ -120,11 +120,9 @@ function uploadImage() {
   document.getElementById('profile-photo')?.click()
 }
 
-const isDisabled = computed(() => {
-  if (!form.value.birthdate || !form.value.contact_no || !form.value.email || !form.value.full_name || !form.value.images || !form.value.password || !form.value.username) return true
-
-  return false
-})
+function getErrors(errors: Record<string, any>, field: string): string {
+  return errors?.[field]?.[0] ?? '';
+}
 
 definePageMeta({
   middleware: 'guest'
@@ -188,7 +186,7 @@ definePageMeta({
           v-model="form.username"
           label="Username"
           placeholder="Enter Username"
-          :error="errors.username[0]"
+          :error="getErrors(errors, 'username')"
         />
 
         <div class="flex flex-col space-y-1.5">
@@ -206,14 +204,14 @@ definePageMeta({
           v-model="form.email"
           label="Email"
           placeholder="Enter Email"
-          :error="errors.email[0]"
+          :error="getErrors(errors, 'email')"
         />
 
         <TextInput 
           v-model="form.contact_no"
           label="Contact number"
           placeholder="Enter Contact number"
-          :error="errors.contact_no[0]"
+          :error="getErrors(errors, 'contact_no')"
         />
 
         <div class="flex flex-col space-y-1.5">
