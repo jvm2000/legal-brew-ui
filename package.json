@@ -26,6 +26,6 @@
     "cookie": "^1.0.2",
     "dayjs": "^1.11.13",
     "tailwind-merge": "^3.3.1",
-    "vite-plugin-mkcert": "^1.17.8",
+    "vite-plugin-mkcert": "^1.17.8"
   }
 }
