@@ -31,6 +31,7 @@ const form = ref<RegisterForm>({
   images: images.value
 })
 const isPlainText = ref(false)
+const config = useRuntimeConfig()
 
 async function submit() {
   showToast.value = true
@@ -55,14 +56,14 @@ async function submit() {
   }
 
   const { error } = await useFetch('/api/register', {
-    baseURL: useRuntimeConfig().public.apiBase,
+    baseURL: config.public.apiBase,
     method: 'POST',
     body: formData,
     credentials: 'include',
   })
 
   await useFetch('/api/verification/send', {
-    baseURL: useRuntimeConfig().public.apiBase,
+    baseURL: config.public.apiBase,
     method: 'POST',
     body: {
       email: form.value.email
