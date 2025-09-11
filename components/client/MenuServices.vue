@@ -12,6 +12,9 @@ type ServiceForm = {
 }
 
 const { user: authUser } = useAuth()
+const { $useCustomFetch } = useNuxtApp()
+const toast = useToast()
+
 const cartData = ref<Cart[]>([])
 const servicesData = ref<Services[]>([])
 const serviceForm = ref<ServiceForm>({
@@ -21,8 +24,6 @@ const serviceForm = ref<ServiceForm>({
   price: 0
 })
 const services = ref<Services[]>([])
-const { $useCustomFetch } = useNuxtApp()
-const toast = useToast()
 const loading = ref(false)
 
 async function fetchMenuServices() {

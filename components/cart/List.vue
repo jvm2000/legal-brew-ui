@@ -4,12 +4,15 @@ import { ArrowLongLeftIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import type { Cart, Services } from '~/types/general'
 import { formatPrice } from '~/utils/price'
 
-const toast = useToast()
+const { appointmentForm, isAlreadyExistedModal } = usePayment()
 const { user: authUser } = useAuth()
+const { $useCustomFetch } = useNuxtApp()
+const { isOpenSuccessModal } = usePayment()
+const toast = useToast()
+
 const cartData = ref<Cart[]>([])
 const servicesData = ref<Services[]>([])
 const loading = ref(false)
-const { appointmentForm, isAlreadyExistedModal } = usePayment()
 const selectedTime = ref<string>('')
 const consultationType = ref<string>('office')
 const officeTimeSlots = [
@@ -29,8 +32,6 @@ const onlineTimeSlots = [
   { label: '5:00 PM', value: '17:00' }
 ]
 const checkList = ref<any>(null)
-const { $useCustomFetch } = useNuxtApp()
-const { isOpenSuccessModal } = usePayment()
 
 async function fetchCart() {
   const { data } = await $useCustomFetch<Cart[]>(`/api/cart/${authUser.value?.id}`, { 

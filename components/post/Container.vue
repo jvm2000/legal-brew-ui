@@ -27,12 +27,13 @@ const emit = defineEmits<{
 const toast = useToast()
 const { openCloseViewPostModal, openCloseEditPostModal } = usePost()
 const { user: authUser } = useAuth()
+const { $useCustomFetch } = useNuxtApp() 
+
 const reactionForm = ref<ReactionForm>({
   post_id: '',
   user_id: '',
   type: ''
 })
-const { $useCustomFetch } = useNuxtApp() 
 
 function getRemainingTime(date: Date | string) {
   return dayjs(date).fromNow()
