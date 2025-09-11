@@ -32,7 +32,7 @@ const form = ref<RegisterForm>({
 })
 const isPlainText = ref(false)
 const config = useRuntimeConfig()
-
+const errors = ref<any[]>([])
 async function submit() {
   showToast.value = true
   toastMessage.value = 'Registered Successfully!'
@@ -62,14 +62,22 @@ async function submit() {
     credentials: 'include',
   })
 
-  await useFetch('/api/verification/send', {
-    baseURL: config.public.apiBase,
-    method: 'POST',
-    body: {
-      email: form.value.email
-    },
-    credentials: 'include',
-  })
+  if (error.value) {
+    errors.value = error.value.data?.errors || error.value.data || error.value
+
+    return
+  }
+
+  if (!error.value) {
+    await useFetch('/api/verification/send', {
+      baseURL: config.public.apiBase,
+      method: 'POST',
+      body: {
+        email: form.value.email
+      },
+      credentials: 'include',
+    })
+  }
 
   showToast.value = false
 
@@ -170,27 +178,18 @@ definePageMeta({
           <p class="text-sm text-custom-brown-500 font-medium">Add Picture</p>
         </div>
 
-        <div class="flex flex-col space-y-1.5">
-          <label for="" class="text-sm font-medium text-custom-brown-500">Full Name</label>
+        <TextInput 
+          v-model="form.full_name"
+          label="Full Name"
+          placeholder="Enter Full Name"
+        />
 
-          <input 
-            v-model="form.full_name"
-            type="text"
-            class="text-sm ring-0 focus:ring-0 outline-none px-4 py-2 border border-gray-300 rounded-md"
-            placeholder="Enter Full Name"
-          >
-        </div>
-
-        <div class="flex flex-col space-y-1.5">
-          <label for="" class="text-sm font-medium text-custom-brown-500">Username</label>
-
-          <input 
-            v-model="form.username"
-            type="text"
-            class="text-sm ring-0 focus:ring-0 outline-none px-4 py-2 border border-gray-300 rounded-md"
-            placeholder="Enter Username"
-          >
-        </div>
+        <TextInput 
+          v-model="form.username"
+          label="Username"
+          placeholder="Enter Username"
+          :error="errors.username[0]"
+        />
 
         <div class="flex flex-col space-y-1.5">
           <label for="" class="text-sm font-medium text-custom-brown-500">Birthdate</label>
@@ -203,27 +202,19 @@ definePageMeta({
           >
         </div>
 
-        <div class="flex flex-col space-y-1.5">
-          <label for="" class="text-sm font-medium text-custom-brown-500">Email</label>
+        <TextInput 
+          v-model="form.email"
+          label="Email"
+          placeholder="Enter Email"
+          :error="errors.email[0]"
+        />
 
-          <input 
-            v-model="form.email"
-            type="text"
-            class="text-sm ring-0 focus:ring-0 outline-none px-4 py-2 border border-gray-300 rounded-md"
-            placeholder="Enter email"
-          >
-        </div>
-
-        <div class="flex flex-col space-y-1.5">
-          <label for="" class="text-sm font-medium text-custom-brown-500">Contact No.</label>
-
-          <input 
-            v-model="form.contact_no"
-            type="text"
-            class="text-sm ring-0 focus:ring-0 outline-none px-4 py-2 border border-gray-300 rounded-md"
-            placeholder="Enter contact number"
-          >
-        </div>
+        <TextInput 
+          v-model="form.contact_no"
+          label="Contact number"
+          placeholder="Enter Contact number"
+          :error="errors.contact_no[0]"
+        />
 
         <div class="flex flex-col space-y-1.5">
           <label for="" class="text-sm font-medium text-custom-brown-500">Password</label>
@@ -255,7 +246,7 @@ definePageMeta({
             <p class="text-custom-brown-500 cursor-pointer text-sm font-medium" @click="navigateTo('/')">Back</p>
 
             <div class="w-24">
-              <BaseButton :disabled="isDisabled" @click="submit">
+              <BaseButton @click="submit">
                 Done
               </BaseButton>
             </div>
