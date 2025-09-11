@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { CameraIcon} from '@heroicons/vue/24/outline'
+import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
 
 useHead({ title: 'Sign Up' })
 
@@ -29,6 +30,7 @@ const form = ref<RegisterForm>({
   role: 'client',
   images: images.value
 })
+const isPlainText = ref(false)
 
 async function submit() {
   showToast.value = true
@@ -101,9 +103,8 @@ function handleFiles(event: Event) {
   target.value = ''
 }
 
-function removeImage(index: number) {
-  images.value.splice(index, 1)
-  previews.value.splice(index, 1)
+function toggle() {
+  isPlainText.value = !isPlainText.value
 }
 
 function uploadImage() {
@@ -142,7 +143,7 @@ definePageMeta({
         <div class="space-y-1.5">
           <p class="text-2xl font-medium text-custom-brown-500">Registration Form</p>
 
-          <p class="text-sm text-custom-brown-500">Vorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          <p class="text-sm text-custom-brown-500">Register now to access our legal services and stay connected with Restauro Legal Services.</p>
         </div>
 
         <div class="py-2 flex flex-col items-center space-y-2">
@@ -226,19 +227,37 @@ definePageMeta({
         <div class="flex flex-col space-y-1.5">
           <label for="" class="text-sm font-medium text-custom-brown-500">Password</label>
 
-          <input 
-            v-model="form.password"
-            type="password"
-            class="text-sm ring-0 focus:ring-0 outline-none px-4 py-2 border border-gray-300 rounded-md"
-            placeholder="Enter password"
-          >
+          <div class="relative w-full flex items-center">
+            <input 
+              v-model="form.password"
+              :type="isPlainText ? 'text' : 'password'"
+              class="text-sm ring-0 focus:ring-0 outline-none px-4 py-2 border border-gray-300 rounded-md w-full"
+              placeholder="Enter password"
+            >
+
+            <EyeIcon
+              v-if="!isPlainText"
+              class="w-4 h-4 stroke-custom-brown-300 cursor-pointer absolute right-3 z-[1]"
+              @click="toggle"
+            />
+
+            <EyeSlashIcon
+              v-if="isPlainText"
+              class="w-4 h-4 stroke-custom-brown-300 cursor-pointer absolute right-3 z-[1]"
+              @click="toggle"
+            />
+          </div>
         </div>
 
         <div class="w-full flex justify-end">
-          <div class="w-24">
-            <BaseButton :disabled="isDisabled" @click="submit">
-              Done
-            </BaseButton>
+          <div class="flex items-center space-x-4">
+            <p class="text-custom-brown-500 cursor-pointer text-sm font-medium" @click="navigateTo('/')">Back</p>
+
+            <div class="w-24">
+              <BaseButton :disabled="isDisabled" @click="submit">
+                Done
+              </BaseButton>
+            </div>
           </div>
         </div>
       </div>

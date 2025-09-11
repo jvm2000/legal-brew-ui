@@ -4,5 +4,7 @@ export function getImage(path: any) {
   }
 
   const finalPath = Array.isArray(path) ? path[0] : path
-  return `laravel.restaurolegalservices.com/storage/${finalPath}`
+  const config = useRuntimeConfig()
+
+  return `${config.public.apiBase}/storage/${finalPath}`
 }
