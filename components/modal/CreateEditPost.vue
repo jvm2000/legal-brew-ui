@@ -17,9 +17,10 @@ const emit = defineEmits<{
 
 const toast = useToast()
 const { $useCustomFetch } = useNuxtApp()
-const loading = ref(false)
 const { user: authUser } = useAuth()
 const { isOpenPostModal, isPostEditing, selectedPost } = usePost()
+
+const loading = ref(false)
 const textareaRef = ref<HTMLTextAreaElement  | null>(null)
 const images = ref<File[]>([])
 const previews = ref<string[]>([]) 

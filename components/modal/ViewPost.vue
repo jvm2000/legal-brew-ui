@@ -22,9 +22,11 @@ const emit = defineEmits<{
 }>()
 
 const { user: authUser } = useAuth()
+const { isViewPostModal, openCloseViewPostModal, selectedPost } = usePost()
+const { $useCustomFetch } = useNuxtApp()
+
 const comments = ref<Comment[]>([])
 const loading = ref(false)
-const { isViewPostModal, openCloseViewPostModal, selectedPost } = usePost()
 const commentForm = ref<CommentForm>({
   content: '',
   post_id: '',
@@ -35,7 +37,6 @@ const reactionForm = ref<ReactionForm>({
   user_id: '',
   type: ''
 })
-const { $useCustomFetch } = useNuxtApp()
 const inputRef = ref<HTMLTextAreaElement | null>(null)
 const showToast = ref(false)
 const toastMessage = ref('')

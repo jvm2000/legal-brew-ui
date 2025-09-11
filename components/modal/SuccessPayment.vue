@@ -4,11 +4,12 @@ import { CheckIcon } from '@heroicons/vue/24/outline'
 import type { Cart, Services } from '~/types/general'
 
 const { isOpenSuccessModal, appointmentForm } = usePayment()
-const cartData = ref<Cart[]>([])
-const servicesData = ref<Services[]>([])
 const { $useCustomFetch } = useNuxtApp()
 const { user: authUser } = useAuth()
 const toast = useToast()
+
+const cartData = ref<Cart[]>([])
+const servicesData = ref<Services[]>([])
 const loading = ref(false)
 
 async function submitPayment() {

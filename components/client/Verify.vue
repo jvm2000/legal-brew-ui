@@ -5,19 +5,20 @@ type Form = {
 }
 
 const { user: authUser } = useAuth()
+const { $useCustomFetch } = useNuxtApp()
+
 const loading = ref(false)
 const verifyForm = ref<Form>({
   email: authUser.value?.email ?? '',
   code: ''
 })
-const { $useCustomFetch } = useNuxtApp()
 const errors = ref([])
 
 async function resendCode() {
   loading.value = true
 
   await useFetch('/api/verification/send', {
-    baseURL: 'laravel.restaurolegalservices.com',
+    baseURL: useRuntimeConfig().public.apiBase,
     method: 'POST',
     body: {
       email: authUser.value?.email
