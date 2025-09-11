@@ -117,7 +117,7 @@ definePageMeta({
 <template>
   <div id="home" class="pt-20 sm:pt-36 pb-24 flex items-center relative pl-10 lg:pl-64 max-w-full">
     <div class="space-y-6">
-      <div class="border-b pb-6 border-custom-brown-500 space-y-1">
+      <div class="border-b pb-6 border-custom-brown-500 space-y-1 z-[1]">
         <p class="text-3xl sm:text-[48px] landing-login font-bold text-border-custom-brown-500 md:pb-4 sm:pb-0">Restauro Legal Services</p>
 
         <p class="text-sm text-border-custom-brown-500">THE GOOD OF THE PEOPLE IS THE GREATEST LAW</p>
@@ -219,7 +219,11 @@ definePageMeta({
       <p class="text-2xl landing-login text-custom-brown-500 w-full text-center font-bold">Events</p>
 
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-x-16 gap-y-10 sm:gap-y-0">
-        <div v-for="event in events" class="rounded-md overflow-hidden justify-center bg-custom-brown-200 shadow-lg">
+        <div 
+          v-for="event in events" 
+          @click="scrollToTop" 
+          class="rounded-md overflow-hidden justify-center bg-custom-brown-200 shadow-lg cursor-pointer"
+        >
           <img :src="event.image" class="object-cover sm:object-fill w-full sm:w-auto" />
 
           <p class="text-base text-custom-brown-500 text-center w-full py-4">{{ event.label }}</p>
@@ -239,6 +243,9 @@ definePageMeta({
         @mousemove="handleDrag" 
         @mouseup="endDrag" 
         @mouseleave="endDrag"
+        @touchstart="startDrag"
+        @touchmove="handleDrag"
+        @touchend="endDrag"
         class="absolute top-12 lg:left-36 sm:xl:left-64 horizontal z-20 cursor-pointer prevent-select" 
       >
         <div
@@ -396,8 +403,6 @@ definePageMeta({
 
 .container {
   width: 100%;
-  overflow-x: auto;
-  white-space: nowrap;
 }
 
 .content {

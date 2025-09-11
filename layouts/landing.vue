@@ -6,8 +6,8 @@ import { Menu, MenuButton, MenuItems } from '@headlessui/vue'
 <template>
   <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
   
-  <div class="app-container overflow-x-hidden">
-    <div class="w-full bg-custom-brown-200 flex items-center justify-between drop-shadow-sm px-4 md:px-12 lg:px-20 sm:xl:px-44">
+  <div class="app-container">
+    <div class="w-full bg-custom-brown-200 flex items-center justify-between drop-shadow-sm px-4 md:px-12 lg:px-20 sm:xl:px-44 relative z-[1]">
       <div class="flex items-center space-x-4 py-6">
         <img src="/images/logo-landing.svg" />
 
@@ -30,7 +30,7 @@ import { Menu, MenuButton, MenuItems } from '@headlessui/vue'
         <a href="#donate" class="text-sm text-[#3A1F09] font-medium">Donate</a>
       </div>
 
-      <Menu as="div" class="relative inline-block text-left lg:hidden z-50">
+      <Menu as="div" class="relative inline-block text-left lg:hidden">
         <MenuButton>
           <Bars4Icon 
             class="w-8 h-8 stroke-custom-brown-500 cursor-pointer"
@@ -46,33 +46,33 @@ import { Menu, MenuButton, MenuItems } from '@headlessui/vue'
           leave-to-class="transform scale-95 opacity-0"
         >
           <MenuItems
-            class="absolute right-0 mt-0 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none px-4 py-2 z-50"
+            class="fixed right-4 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none p-4 z-[999]"
           >
-            <a href="" class="py-2 flex items-center space-x-4 hover:bg-custom-brown-100 w-full rounded-lg px-4">
+            <a href="#home" class="py-2 flex items-center space-x-4 hover:bg-custom-brown-100 w-full rounded-lg px-4">
               <p class="text-sm text-custom-brown-500 font-medium">Home</p>
             </a>
 
-            <a href="" class="py-2 flex items-center space-x-4 hover:bg-custom-brown-100 w-full rounded-lg px-4">
+            <a href="#about-us" class="py-2 flex items-center space-x-4 hover:bg-custom-brown-100 w-full rounded-lg px-4">
               <p class="text-sm text-custom-brown-500 font-medium">About Us</p>
             </a>
 
-            <a href="" class="py-2 flex items-center space-x-4 hover:bg-custom-brown-100 w-full rounded-lg px-4">
+            <a href="#services" class="py-2 flex items-center space-x-4 hover:bg-custom-brown-100 w-full rounded-lg px-4">
               <p class="text-sm text-custom-brown-500 font-medium">Menu of Services</p>
             </a>
 
-            <a href="" class="py-2 flex items-center space-x-4 hover:bg-custom-brown-100 w-full rounded-lg px-4">
+            <a href="#events" class="py-2 flex items-center space-x-4 hover:bg-custom-brown-100 w-full rounded-lg px-4">
               <p class="text-sm text-custom-brown-500 font-medium">Events</p>
             </a>
 
-            <a href="" class="py-2 flex items-center space-x-4 hover:bg-custom-brown-100 w-full rounded-lg px-4">
+            <a href="#materials" class="py-2 flex items-center space-x-4 hover:bg-custom-brown-100 w-full rounded-lg px-4">
               <p class="text-sm text-custom-brown-500 font-medium">Resource Materials</p>
             </a>
 
-            <a href="" class="py-2 flex items-center space-x-4 hover:bg-custom-brown-100 w-full rounded-lg px-4">
+            <a href="#contact" class="py-2 flex items-center space-x-4 hover:bg-custom-brown-100 w-full rounded-lg px-4">
               <p class="text-sm text-custom-brown-500 font-medium">Contact Us</p>
             </a>
 
-            <a href="" class="py-2 flex items-center space-x-4 hover:bg-custom-brown-100 w-full rounded-lg px-4">
+            <a href="#donate" class="py-2 flex items-center space-x-4 hover:bg-custom-brown-100 w-full rounded-lg px-4">
               <p class="text-sm text-custom-brown-500 font-medium">Donate</p>
             </a>
           </MenuItems>
@@ -80,7 +80,9 @@ import { Menu, MenuButton, MenuItems } from '@headlessui/vue'
       </Menu>
     </div>
 
-    <slot />
+    <div class="relative z-0 mt-6">
+      <slot />
+    </div>
   </div>
 </template>
 
@@ -88,5 +90,6 @@ import { Menu, MenuButton, MenuItems } from '@headlessui/vue'
 .app-container {
   background-color: #FAF1E9;
   min-height: 100vh;
+  overflow: hidden;
 }
 </style>

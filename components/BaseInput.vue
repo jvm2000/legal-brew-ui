@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { EyeIcon, EyeSlashIcon, InformationCircleIcon } from '@heroicons/vue/24/outline';
-import { twMerge } from 'tailwind-merge'
+import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
 
 defineOptions({ inheritAttrs: false })
 

@@ -6,8 +6,8 @@ const props = defineProps<{
   post?: Post[]
 }>()
 
-const route = useRoute()
 const { getPosts } = usePost()
+const route = useRoute()
 const page = ref(1)
 
 function delay(ms: number) {

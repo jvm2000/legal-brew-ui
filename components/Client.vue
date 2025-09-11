@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
 
-const router = useRouter()
-const route = useRoute()
 const { user: authUser } = useAuth()
 const { getPosts, post } = usePost()
+const router = useRouter()
+const route = useRoute()
 
 const selectedTab = computed(() => {
   if (!route.query.tab) return 0

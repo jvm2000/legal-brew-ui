@@ -178,7 +178,7 @@ onMounted(() => {
           </div>
         </div>
 
-        <div class="space-y-6 px-6 pb-4 items-start flex flex-col w-full max-h-[400px] overflow-auto">
+        <div class="space-y-6 px-6 pb-4 items-start flex flex-col w-full h-[350px] overflow-auto">
           <p class="text-base text-custom-brown-500">Comments({{ comments?.length ?? '0' }})</p>
 
           <div class="grid grid-cols-10 w-full items-center">
