@@ -19,6 +19,7 @@ type UserForm = {
 }
 
 const { user: authUser } = useAuth()
+const { $useCustomFetch } = useNuxtApp()
 const userForm = ref<UserForm>({
   username: '',
   full_name: '',
@@ -31,7 +32,6 @@ const images = ref<File[]>([])
 const preImage = ref<string[]>([]) 
 const previews = ref<string[]>([]) 
 const loading = ref(false)
-const { $useCustomFetch } = useNuxtApp()
 
 async function handleOpen() {
   userForm.value.username = authUser.value?.username ?? ''
