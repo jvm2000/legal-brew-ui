@@ -1,7 +1,8 @@
-import type { User } from "~/types/general"
+import type { Post, User } from "~/types/general"
 
 export const useAuth = () => {
   const errors = ref<string[] | null>(null)
+  const landingPosts = ref <Post[]>([])
   const loading = ref(false)
   const user = useState<User | null>('fetchedUser', () => null)
   const token = useCookie<any>('token')
@@ -50,6 +51,14 @@ export const useAuth = () => {
     user.value = data.value ?? null
   }
 
+  async function getPosts() {
+    const data = await $fetch<Post[]>('/api/postsLanding', {
+      baseURL: config.public.apiBase,
+      credentials: 'include',
+    })
+    landingPosts.value = data ?? null
+  }
+
   const loggedIn = computed(() => !!user.value)
 
   return {
@@ -59,7 +68,9 @@ export const useAuth = () => {
     formLogin,
     loggedIn,
     loading,
+    landingPosts,
     login,
-    getAuth
+    getAuth,
+    getPosts
   }
 }
