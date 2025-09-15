@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { HeartIcon } from '@heroicons/vue/24/outline'
+import type { Post } from '~/types/general'
 
 type Services = {
   label: string,
@@ -8,6 +9,7 @@ type Services = {
   image: string
 }
 
+const { getPosts, landingPosts: post } = useAuth()
 const { container, startDrag, endDrag, handleDrag, data } = useScroll()
 const services = ref<Services[]>([
   {
@@ -75,6 +77,9 @@ const contactForm = ref({
   message: ''
 })
 const contactLoading = ref(false)
+const { formatDate } = useFormat()
+
+const basicPosts = computed(() : Post[] => post.value.slice(0,5))
 
 function scrollToTop() {
   loginFirstError.value = null
@@ -112,6 +117,8 @@ definePageMeta({
   layout: 'landing',
   middleware: 'guest'
 })
+
+onBeforeMount(async() => { await getPosts() })
 </script>
 
 <template>
@@ -258,18 +265,18 @@ definePageMeta({
 
           <div class="flex items-center space-x-6">
             <div 
-              v-for="material in materials" 
+              v-for="material in basicPosts" 
               class="bg-white w-[356px] rounded-xl drop-shadow-xl overflow-hidden" aria-readonly="true"
               @click="scrollToTop"
             >
-                <img :src="material.image" class="object-fit">
+                <img :src="getImage(material.images[0])" class="object-cover">
 
                 <div class="p-4 space-y-4">
                 <p class="text-custom-brown-500 text-base">{{ material.description }}</p>
 
                 <div>
-                  <p class="text-custom-brown-500 font-medium text-xs">By {{ material.author }}</p>
-                  <p class="text-custom-brown-500 text-[12px]">{{ material.date }}</p>
+                  <p class="text-custom-brown-500 font-medium text-xs">By {{ material.user.full_name }}</p>
+                  <p class="text-custom-brown-500 text-[12px]">{{ formatDate(material.updated_at) }}</p>
                 </div>
                 </div>
             </div>

@@ -5,6 +5,7 @@ import { getImage } from '~/utils/image'
 
 type PostForm = {
   description: string,
+  title?: string,
   hyperlink: string,
   images: any[],
   user_id: string
@@ -24,6 +25,7 @@ const images = ref<File[]>([])
 const previews = ref<string[]>([]) 
 const form = ref<PostForm>({
   description: '',
+  title: '',
   hyperlink: '',
   images: [],
   user_id: ''
@@ -91,6 +93,7 @@ async function submit() {
   const formData = new FormData()
 
   formData.append('description', form.value.description || '')
+  formData.append('title', form.value.title || '')
   formData.append('hyperlink', form.value.hyperlink || '')
   formData.append('user_id', authUser.value?.id || '')
 
@@ -120,6 +123,7 @@ async function submitUpdate() {
   const formData = new FormData()
 
   formData.append('description', form.value.description || '')
+  formData.append('title', form.value.title || '')
   formData.append('hyperlink', form.value.hyperlink || '')
   formData.append('user_id', authUser.value?.id || '')
 
@@ -151,6 +155,7 @@ function submitUpdateOrCreate() {
 
 function resetForm() {
   form.value.description = ''
+  form.value.title = ''
   form.value.hyperlink = ''
   form.value.images = []
 
@@ -183,6 +188,8 @@ onMounted(() => {
 
         <p class="text-base font-medium text-custom-brown-500">{{ authUser?.full_name }}</p>
       </div>
+
+      <TextInput v-model="form.title" label="Title (optional)" placeholder="Enter Title" />
 
       <textarea
         ref="textareaRef"

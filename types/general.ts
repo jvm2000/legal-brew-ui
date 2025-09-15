@@ -14,6 +14,7 @@ export type User = {
 export type Post = {
   id: string,
   description: string,
+  title: string,
   hyperlink: string,
   images: any[],
   user: User,

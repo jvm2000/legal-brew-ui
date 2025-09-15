@@ -94,7 +94,7 @@ function checkIfAlreadyReacted(reaction: Reaction[]) {
       </div>
 
       <div v-if="authUser?.role === 'admin'">
-        <Menu as="div" class="relative inline-block text-left z-50">
+        <Menu v-slot="{ close }" as="div" class="relative inline-block text-left z-50">
           <MenuButton>
             <EllipsisHorizontalIcon class="w-6 h-6 stroke-gray-500 cursor-pointer" />
           </MenuButton>
@@ -119,7 +119,7 @@ function checkIfAlreadyReacted(reaction: Reaction[]) {
                 <p class="text-sm text-custom-brown-500">Edit</p>
               </div>
 
-              <div @click="deletePost" class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-slate-100">
+              <div @click="deletePost(), close()" class="p-2 flex items-center space-x-4 cursor-pointer hover:bg-slate-100">
                 <TrashIcon class="w-4 h-4 stroke-custom-brown-500" />
 
                 <p class="text-sm text-custom-brown-500">Delete</p>
@@ -131,7 +131,7 @@ function checkIfAlreadyReacted(reaction: Reaction[]) {
     </div>
 
     <p class="text-custom-brown-500 text-sm px-6 sm:px-0">
-      {{ props.post?.description }}
+      <span v-if="props.post?.title" class="font-medium">Title: {{ props.post?.title }} - </span>{{ props.post?.description }}
     </p>
 
     <div v-if="props.post?.images.length">
