@@ -40,6 +40,7 @@ function handleOpen() {
   }
 
   form.value.description = selectedPost.value.description
+  form.value.title = selectedPost.value.title
   existingImages.value = selectedPost.value.images ?? []
   form.value.images = [...existingImages.value]  
 }

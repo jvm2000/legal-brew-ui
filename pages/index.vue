@@ -269,7 +269,7 @@ onBeforeMount(async() => { await getPosts() })
               class="bg-white w-[356px] rounded-xl drop-shadow-xl overflow-hidden" aria-readonly="true"
               @click="scrollToTop"
             >
-                <img :src="getImage(material.images[0])" class="object-cover">
+                <img :src="getImage(material.images[0])" class="object-cover w-full h-36">
 
                 <div class="p-4 space-y-4">
                 <p class="text-custom-brown-500 text-base">{{ material.description }}</p>
