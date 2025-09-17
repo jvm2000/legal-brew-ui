@@ -130,7 +130,7 @@ function checkIfAlreadyReacted(reaction: Reaction[]) {
       </div>
     </div>
 
-    <p v-if="props.post?.title" class="font-medium">{{ props.post?.title }}</p>
+    <p v-if="props.post?.title" class="font-medium px-6 sm:px-0">{{ props.post?.title }}</p>
 
     <p class="text-custom-brown-500 text-sm px-6 sm:px-0">
       {{ props.post?.description }}
