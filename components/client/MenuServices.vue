@@ -40,6 +40,19 @@ async function fetchCart() {
   })
 
   cartData.value = data.value ?? []
+
+  if (!data.value) {
+    const { data } = await $useCustomFetch('/api/carts', { 
+      method: 'POST',
+      body: {
+        user_id: authUser.value?.id
+      },
+    })
+
+    serviceForm.value.cart_id = data.value?.id ?? ''
+
+    return
+  }
 }
 
 async function fetchServices() {
@@ -84,21 +97,6 @@ async function submitToAddToCartService() {
   }
 }
 
-async function submitCartMount() {
-  if (!cartData.value.length) {
-    const { data } = await $useCustomFetch('/api/carts', { 
-      method: 'POST',
-      body: {
-        user_id: authUser.value?.id
-      },
-    })
-
-    serviceForm.value.cart_id = data.value?.id ?? ''
-
-    return
-  }
-}
-
 function getImage(name: string) {
   if (name === 'Latte Legalizations') return '/images/services/latte-legalization.svg'
 
@@ -116,8 +114,6 @@ onMounted(async () => {
 
   await fetchCart()
   await fetchMenuServices()
-
-  await submitCartMount()
 
   loading.value = false
 })
