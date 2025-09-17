@@ -40,6 +40,19 @@ async function fetchCart() {
   })
 
   cartData.value = data.value ?? []
+
+  if (!data.value) {
+    const { data } = await $useCustomFetch('/api/carts', { 
+      method: 'POST',
+      body: {
+        user_id: authUser.value?.id
+      },
+    })
+
+    serviceForm.value.cart_id = data.value?.id ?? ''
+
+    return
+  }
 }
 
 async function fetchServices() {
@@ -62,23 +75,6 @@ async function addToCart(service: Services) {
   serviceForm.value.name = service.name ?? ''
   serviceForm.value.description = service.description ?? ''
   serviceForm.value.price = service.price ?? ''
-
-  if (!cartData.value.length) {
-    const { data } = await $useCustomFetch('/api/carts', { 
-      method: 'POST',
-      body: {
-        user_id: authUser.value?.id
-      },
-    })
-
-    serviceForm.value.cart_id = data.value?.id ?? ''
-
-    await submitToAddToCartService()
-
-    await fetchMenuServices()
-
-    return
-  }
 
   serviceForm.value.cart_id = cartData.value[0].id ?? ''
 
