@@ -142,11 +142,12 @@ function checkIfAlreadyReacted(reaction: Reaction[]) {
 
     <div class="flex items-center space-x-8 px-6 sm:px-0">
       <div class="flex items-center space-x-2">
-        <HeartIcon 
-          class="w-6 h-6 cursor-pointer"
-          :class="[checkIfAlreadyReacted(props.post?.reactions ?? []) ? 'fill-custom-brown-500' : 'stroke-custom-brown-500']"
-          @click="checkIfAlreadyReacted(props.post?.reactions ?? []) ? unsubmitReaction(props.post?.reactions ?? []) : submitReaction()"
-        />
+        <button @click="checkIfAlreadyReacted(props.post?.reactions ?? []) ? unsubmitReaction(props.post?.reactions ?? []) : submitReaction()">
+          <HeartIcon 
+            class="w-6 h-6 cursor-pointer"
+            :class="[checkIfAlreadyReacted(props.post?.reactions ?? []) ? 'fill-custom-brown-500' : 'stroke-custom-brown-500']"
+          />
+        </button>
 
         <p class="text-sm text-custom-brown-500">{{ props.post?.reactions.length ?? '0' }}</p>
       </div>
