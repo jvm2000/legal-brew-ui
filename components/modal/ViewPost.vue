@@ -156,8 +156,10 @@ onMounted(() => {
             </div>
           </div>
 
+          <p v-if="selectedPost?.title" class="font-medium w-full text-left">{{ selectedPost?.title }}</p>
+
           <p class="text-sm text-custom-brown-500 text-left">
-            <span v-if="selectedPost?.title" class="font-medium">Title: {{ selectedPost?.title }} - </span>{{ selectedPost?.description }}
+            {{ selectedPost?.description }}
           </p>
 
           <div class="flex items-center space-x-8">

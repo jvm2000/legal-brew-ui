@@ -33,6 +33,7 @@ const form = ref<RegisterForm>({
 const isPlainText = ref(false)
 const config = useRuntimeConfig()
 const errors = ref<any[]>([])
+
 async function submit() {
   showToast.value = true
   toastMessage.value = 'Registered Successfully!'
@@ -244,7 +245,7 @@ definePageMeta({
             <p class="text-custom-brown-500 cursor-pointer text-sm font-medium" @click="navigateTo('/')">Back</p>
 
             <div class="w-24">
-              <BaseButton @click="submit">
+              <BaseButton :is-loading="loading" @click="submit">
                 Done
               </BaseButton>
             </div>

@@ -55,7 +55,7 @@ onMounted(async () => {
       </div>
       
       <div 
-        class="px-4 py-2 border border-gray-500 w-full sm:rounded-md cursor-pointer whitespace-normal"
+        class="px-4 py-2 border border-gray-500 w-full rounded-full cursor-pointer whitespace-normal"
         @click="openClosePostModal"
       >
         <p class="text-base text-gray-500">Create Post</p>
