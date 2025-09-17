@@ -79,7 +79,7 @@ const contactForm = ref({
 const contactLoading = ref(false)
 const { formatDate } = useFormat()
 
-const basicPosts = computed(() : Post[] => post.value.slice(0,5))
+const basicPosts = computed(() : Post[] => post.value.slice(0,4))
 
 function scrollToTop() {
   loginFirstError.value = null
