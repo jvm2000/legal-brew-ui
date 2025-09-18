@@ -122,45 +122,47 @@ onBeforeMount(async() => { await getPosts() })
 </script>
 
 <template>
-  <div id="home" class="pt-20 sm:pt-36 pb-24 flex items-center relative pl-10 lg:pl-64 max-w-full">
-    <div class="space-y-6">
-      <div class="border-b pb-6 border-custom-brown-500 space-y-1 z-[1]">
-        <p class="text-3xl sm:text-[48px] landing-login font-bold text-border-custom-brown-500 md:pb-4 sm:pb-0">Restauro Legal Services</p>
+  <div class="flex flex-col items-center">
+    <div id="home" class="pt-20 sm:pt-36 pb-24 flex items-center relative max-w-6xl w-full px-6 md:px-6 sm:lg:px-10">
+      <div class="space-y-6">
+        <div class="border-b pb-6 border-custom-brown-500 space-y-1 z-[1]">
+          <p class="text-3xl sm:text-[48px] landing-login font-bold text-border-custom-brown-500 md:pb-4 sm:pb-0">Restauro Legal Services</p>
 
-        <p class="text-sm text-border-custom-brown-500">THE GOOD OF THE PEOPLE IS THE GREATEST LAW</p>
+          <p class="text-sm text-border-custom-brown-500">THE GOOD OF THE PEOPLE IS THE GREATEST LAW</p>
+        </div>
+
+        <form method="post" @submit="login" class="space-y-4 w-72">
+          <BaseInput 
+            v-model="formLogin.email" 
+            label="Username/Email" 
+            placeholder="Enter username or email"
+            :error="loginFirstError ?? null"
+            @input="handleInput"
+          />
+
+          <BaseInput 
+            v-model="formLogin.password" 
+            type="password"
+            label="Password"
+            placeholder="Enter password"
+            :error="errors ?? null"
+          />
+
+          <div class="w-24">
+            <BaseButton type="submit" @click="login" :isLoading="loading">Login</BaseButton>
+          </div>
+        </form>
+
+
+        <p class="text-sm">
+          <span class="text-custom-brown-400">Don't have an account?</span> <span class="text-custom-brown-500 cursor-pointer" @click="navigateTo('/register')">Sign Up</span>
+        </p>
       </div>
 
-      <form method="post" @submit="login" class="space-y-4 w-72">
-        <BaseInput 
-          v-model="formLogin.email" 
-          label="Username/Email" 
-          placeholder="Enter username or email"
-          :error="loginFirstError ?? null"
-          @input="handleInput"
-        />
-
-        <BaseInput 
-          v-model="formLogin.password" 
-          type="password"
-          label="Password"
-          placeholder="Enter password"
-          :error="errors ?? null"
-        />
-
-        <div class="w-24">
-          <BaseButton type="submit" @click="login" :isLoading="loading">Login</BaseButton>
-        </div>
-      </form>
-
-
-      <p class="text-sm">
-        <span class="text-custom-brown-400">Don't have an account?</span> <span class="text-custom-brown-500 cursor-pointer" @click="navigateTo('/register')">Sign Up</span>
-      </p>
+        <img src="/images/woman.svg" alt="" class="absolute right-0 bottom-0 z-[3] hidden sm:lg:block">
+        <img src="/images/shape-elipse-landing.svg" class="absolute z-[2] top-48 right-24 hidden sm:lg:block">
+        <img src="/images/shape-rectangle-landing.svg" class="absolute z-[0] bottom-0 right-0 hidden sm:lg:block">
     </div>
-
-      <img src="/images/woman.svg" alt="" class="absolute right-64 bottom-0 z-[3] hidden sm:xl:block">
-      <img src="/images/shape-elipse-landing.svg" class="absolute z-[2] top-48 right-[340px] hidden sm:xl:block">
-      <img src="/images/shape-rectangle-landing.svg" class="absolute z-[0] bottom-0 right-60 hidden sm:xl:block">
   </div>
 
   <div id="about-us" class="flex flex-col items-center py-8 bg-custom-brown-500">
@@ -171,7 +173,7 @@ onBeforeMount(async() => { await getPosts() })
         <p class="text-2xl landing-login text-white font-bold">About Us</p>
 
         <p class="text-sm text-white">
-          At The Legal Brew, we're driven to shatter barriers and democratize access to justice.
+          At Restauro Legal Services, we're driven to shatter barriers and democratize access to justice.
         </p>
 
         <p class="text-sm text-white">
