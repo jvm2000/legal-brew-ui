@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { CheckIcon } from '@heroicons/vue/24/outline'
-import type { Cart, Services } from '~/types/general'
+import type { Cart, Services, SubService } from '~/types/general'
 
 const { isOpenSuccessModal, appointmentForm } = usePayment()
 const { $useCustomFetch } = useNuxtApp()
@@ -13,7 +13,7 @@ const loading = ref(false)
 async function submitPayment() {
   loading.value = true
 
-  servicesData.value.forEach((service: Services) => {
+  servicesData.value.forEach((service: any) => {
     appointmentForm.value.services.push(service?.id)
   })
 

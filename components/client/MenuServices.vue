@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { ShoppingCartIcon } from '@heroicons/vue/24/outline'
-import type { Cart, Services } from '~/types/general'
+import type { Cart, Services, SubService } from '~/types/general'
 import { formatPrice } from '~/utils/price'
 
 type ServiceForm = {
   cart_id: string,
-  name: string,
-  description: string,
-  price: number
+  menu_services_id: string,
+  details: string,
 }
 
 const { user: authUser } = useAuth()
@@ -17,9 +16,8 @@ const cartData = ref<Cart[]>([])
 const servicesData = ref<Services[]>([])
 const serviceForm = ref<ServiceForm>({
   cart_id: '',
-  name: '',
-  description: '',
-  price: 0
+  menu_services_id: '',
+  details: '',
 })
 const services = ref<Services[]>([])
 const loading = ref(false)
@@ -41,7 +39,7 @@ async function fetchCart() {
 
   cartData.value = data.value ?? []
 
-  if (!data.value) {
+  if (!cartData.value.length) {
     const { data } = await $useCustomFetch('/api/carts', { 
       method: 'POST',
       body: {
@@ -65,17 +63,15 @@ async function fetchServices() {
   servicesData.value = data.value ?? []
 }
 
-function isServiceInList(service: Services): boolean {
-  return servicesData.value.some(s => s.name === service.name)
+function isServiceInList(service: SubService): boolean {
+  return servicesData.value.some(s => s.details === service.details)
 }
 
-async function addToCart(service: Services) {
+async function addToCart(service: SubService, parentServiceId: string) {
   await fetchCart()
 
-  serviceForm.value.name = service.name ?? ''
-  serviceForm.value.description = service.description ?? ''
-  serviceForm.value.price = service.price ?? ''
-
+  serviceForm.value.menu_services_id = parentServiceId ?? ''
+  serviceForm.value.details = service.details ?? ''
   serviceForm.value.cart_id = cartData.value[0].id ?? ''
 
   await submitToAddToCartService()
@@ -91,22 +87,14 @@ async function submitToAddToCartService() {
 
   serviceForm.value = {
     cart_id: '',
-    name: '',
-    description: '',
-    price: 0
+    menu_services_id: '',
+    details: '',
   }
 }
 
-function getImage(name: string) {
-  if (name === 'Latte Legalizations') return '/images/services/latte-legalization.svg'
-
-  if (name === 'Espresso Advise') return '/images/services/espress-advise.svg'
-
-  if (name === 'Americano Agreements') return '/images/services/americano-agreements.svg'
-
-  if (name === 'Barista Grind') return '/images/services/barista-grind.svg'
-
-  if (name === 'Capuccino Case Files') return '/images/services/cappucino-case-files.svg'
+function formatPesos(text: string): string {
+  // Replace peso amounts with a span having font-medium
+  return text.replace(/(₱[\d,]+(?:\.\d{2})?)/g, '<span class="font-medium">$1</span>')
 }
 
 onMounted(async () => {
@@ -128,35 +116,34 @@ onMounted(async () => {
       :key="service.name"
       class="flex flex-col items-start space-y-6 border-b border-custom-brown-500 pb-6"
     >
-      <div class="flex items-center space-x-2">
-        <div class="w-12 h-12 bg-custom-brown-300 rounded-md grid place-items-center">
-          <img :src="getImage(service.name)" class="w-full h-9" />
-        </div>
+      <div>
+        <p class="text-base font-bold text-custom-brown-500 landing-login">{{ service.name }}</p>
 
-        <div>
-          <p class="text-base font-bold text-custom-brown-500 landing-login">{{ service.name }}</p>
-
-          <p class="text-sm font-medium text-custom-brown-500">Starts at {{ formatPrice(service.price) }}</p>
-        </div>
+        <p class="text-sm text-custom-brown-500 max-w-4xl w-full">{{ service.description }}</p>
       </div>
 
-      <p class="text-sm text-custom-brown-500 max-w-4xl w-full">{{ service.description }}</p>
+      <div v-for="item in service.sub_services" class="space-y-6 w-full">
+        <p class="text-sm text-custom-brown-500">
+          <span class="w-1.5 h-1.5 rounded-full bg-custom-brown-500 mt-1 mr-2 inline-block"></span>
+          <span v-html="formatPesos(item.details)"></span>
+        </p>
 
-      <button 
-        class="py-2 text-sm text-center w-full rounded-md flex flex-col items-center"
-        :class="[isServiceInList(service) ? 'bg-transparent border border-custom-brown-300 text-custom-brown-500' : 'bg-custom-brown-300 text-white']"
-        @click="addToCart(service)"
-        :disabled="isServiceInList(service)"
-      >
-        <div class="flex items-center space-x-2">
-          <ShoppingCartIcon 
-            class="w-4 h-4"
-            :class="[isServiceInList(service) ? 'hidden' : 'stroke-white block']"
-          />
+        <button 
+          class="py-2 text-sm text-center w-full rounded-md flex flex-col items-center"
+          :class="[isServiceInList(item) ? 'bg-transparent border border-custom-brown-300 text-custom-brown-500' : 'bg-custom-brown-300 text-white']"
+          @click="addToCart(item, service?.id)"
+          :disabled="isServiceInList(item)"
+        >
+          <div class="flex items-center space-x-2">
+            <ShoppingCartIcon 
+              class="w-4 h-4"
+              :class="[isServiceInList(item) ? 'hidden' : 'stroke-white block']"
+            />
 
-          <span>{{ isServiceInList(service) ? 'Added' : 'Add to Cart'}}</span>
-        </div>
-      </button>
+            <span>{{ isServiceInList(item) ? 'Added' : 'Add to Cart'}}</span>
+          </div>
+        </button>
+      </div>
     </div>
   </div>
 

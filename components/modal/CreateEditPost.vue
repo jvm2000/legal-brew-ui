@@ -194,7 +194,8 @@ onMounted(() => {
 
       <textarea
         ref="textareaRef"
-        class="w-full text-sm text-custom-brown-500 ring-0 focus:ring-0 bg-inherit outline-none py-3 h-auto max-h-56  overflow-hidden resize-none"
+        class="w-full text-sm text-custom-brown-500 ring-0 focus:ring-0 bg-inherit outline-none py-3 overflow-y-auto resize-none"
+        :class="[isPostEditing ? 'h-56' : 'h-auto max-h-56']"
         placeholder="Write your post here"
         v-model="form.description"
         @input="autoResize"

@@ -271,10 +271,12 @@ onBeforeMount(async() => { await getPosts() })
               class="bg-white w-[356px] rounded-xl drop-shadow-xl overflow-hidden" aria-readonly="true"
               @click="scrollToTop"
             >
-                <img :src="getImage(material.images[0])" class="object-cover w-full h-36">
+                <div class="w-full h-36 overflow-hidden">
+                  <img :src="getImage(material.images[0])" class="object-cover w-full h-full">
+                </div>
 
                 <div class="p-4 space-y-4">
-                <p class="text-custom-brown-500 text-base">{{ material.description }}</p>
+                <p class="text-custom-brown-500 text-base line-clamp-3">{{ material.description }}</p>
 
                 <div>
                   <p class="text-custom-brown-500 font-medium text-xs">By {{ material.user.full_name }}</p>
@@ -352,16 +354,12 @@ onBeforeMount(async() => { await getPosts() })
       </p>
 
       <div class="w-full grid grid-cols-2 gap-x-6">
-        <div @click="isOpenGCashModal = true" class="w-full rounded-lg bg-custom-brown-100 flex items-center space-x-4 p-6 cursor-pointer">
-          <img src="/images/payments/gcash.svg" />
-
-          <p class="text-sm text-custom-brown-500">Gcash</p>
+        <div @click="isOpenGCashModal = true" class="w-full rounded-lg bg-custom-brown-100 flex items-center p-6 cursor-pointer">
+          <img class="h-8" src="/images/gcash-logo.png" />
         </div>
 
-        <div @click="isOpenMayaModal = true" class="w-full rounded-lg bg-custom-brown-100 flex items-center space-x-4 p-6 cursor-pointer">
-          <img src="/images/payments/paymaya.svg" />
-
-          <p class="text-sm text-custom-brown-500">Maya</p>
+        <div @click="isOpenMayaModal = true" class="w-full rounded-lg bg-custom-brown-100 flex items-center p-6 cursor-pointer">
+          <img class="h-5" src="/images/BPI-logo.png" />
         </div>
       </div>
     </div>

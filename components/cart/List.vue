@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ArrowLongLeftIcon, XMarkIcon } from '@heroicons/vue/24/outline'
-import type { Cart, Services } from '~/types/general'
-import { formatPrice } from '~/utils/price'
+import type { Cart, Services, SubService } from '~/types/general'
 
 const { appointmentForm, isAlreadyExistedModal } = usePayment()
 const { user: authUser } = useAuth()
@@ -105,7 +104,7 @@ async function proceedToAppointment() {
   isOpenSuccessModal.value = true
 }
 
-async function deleteService(service: Services) {
+async function deleteService(service: SubService) {
   if (loading.value) return
   
   loading.value = true
@@ -125,6 +124,26 @@ const isButtonDisabled = computed<boolean>(() => {
   return false
 })
 
+const servicesCategorized = computed<Services[]>(() =>
+  Object.values(
+    servicesData.value.reduce((acc, service) => {
+      const { menu_service, id, details, cart_id, appointment_id, created_at, updated_at } = service;
+      if (!menu_service) return acc
+
+      const menuServiceId = menu_service.id
+      acc[menuServiceId] ??= { ...menu_service, sub_services: [] }
+      acc[menuServiceId].sub_services.push({ id, details, cart_id, appointment_id, created_at, updated_at })
+
+      return acc
+    }, {} as Record<string, any>)
+  )
+)
+
+function formatPesos(text: string): string {
+  // Replace peso amounts with a span having font-medium
+  return text.replace(/(₱[\d,]+(?:\.\d{2})?)/g, '<span class="font-medium">$1</span>')
+}
+
 await fetchCart()
 </script>
 
@@ -142,20 +161,31 @@ await fetchCart()
           <p class="text-2xl font-semibold">Your Cart</p>
         </div>
 
-        <div v-for="service in servicesData" class="flex items-center w-full justify-between pb-6 border-b border-b-custom-brown-200">
-          <div class="flex items-center space-x-2">
-            <div class="w-14 h-14 bg-custom-brown-300 rounded-md grid place-items-center">
-              <img :src="getImage(service.name)" class="w-full h-9" />
+        <div v-for="service in servicesCategorized" class="flex items-center w-full justify-between pb-6 border-b border-b-custom-brown-200">
+          <div class="space-y-2 w-full">
+            <div class="flex items-center space-x-2">
+              <div class="space-y-0.5 w-full">
+                <div class="flex items-center justify-between w-full">
+                  <p class="text-base text-custom-brown-500 font-medium">{{ service.name }}</p>
+                </div>
+
+                <p class="text-sm">{{ service.description }}</p>
+              </div>
             </div>
 
-            <div class="space-y-0.5">
-              <p class="text-base text-custom-brown-500 font-medium">{{ service.name }}</p>
-
-              <p class="text-sm font-medium">Starts at {{ formatPrice(service.price) }}</p>
+            <div v-for="item in service.sub_services" class="space-y-6 w-full">
+              <p class="text-sm text-custom-brown-500 flex items-start">
+                <span class="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-custom-brown-500 mt-2 mr-2 inline-block"></span>
+                
+                <span class="flex-1 flex items-center">
+                  <span v-html="formatPesos(item.details)" class="whitespace-pre-line"></span>
+                  <button @click="deleteService(item)" class="ml-2">
+                    <XMarkIcon class="w-4 h-4 stroke-custom-brown-500" />
+                  </button>
+                </span>
+              </p>
             </div>
           </div>
-
-          <XMarkIcon class="w-6 h-6 stroke-custom-brown-500 cursor-pointer" @click="deleteService(service)" />
         </div>
 
         <div v-if="!servicesData.length" class="flex flex-col items-center w-full space-y-4">

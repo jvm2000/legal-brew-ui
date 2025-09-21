@@ -100,16 +100,16 @@ onMounted(async () => {
               </p>
 
               <div v-for="service in appointment.services" class="flex flex-col items-start">
-                <p class="text-sm text-custom-brown-500">{{ service.name }}</p>
+                <p class="text-sm text-custom-brown-500">
+                  <span class="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-custom-brown-500 mr-2 inline-block"></span>
+
+                  {{ service.details }}
+                </p>
               </div>
             </div>
           </div>
 
-          <div class="flex items-center space-x-4">
-            <div class="w-36">
-              <BaseButton @click="openMarkAsDoneModal(appointment)">Mark as Done</BaseButton>
-            </div>
-
+          <div class="flex items-center">
             <Menu>
               <MenuButton>
                 <button>
@@ -128,6 +128,13 @@ onMounted(async () => {
                 <MenuItems
                   class="absolute right-44 mt-24 w-44 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none px-4 py-2"
                 >
+                  <button 
+                    class="py-2 hover:bg-custom-brown-100 w-full rounded-lg px-2 flex items-start"
+                    @click="openMarkAsDoneModal(appointment)"
+                  >
+                    <p class="text-sm text-custom-brown-500 font-medium">Mark as Done</p>
+                  </button>
+                  
                   <button 
                     class="py-2 hover:bg-custom-brown-100 w-full rounded-lg px-2 flex items-start" 
                     @click="openAppointmentModal(appointment)"
@@ -167,16 +174,16 @@ onMounted(async () => {
               </p>
 
               <div v-for="service in appointment.services" class="flex flex-col items-start">
-                <p class="text-sm text-custom-brown-500">{{ service.name }}</p>
+                <p class="text-sm text-custom-brown-500">
+                  <span class="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-custom-brown-500 mt-2 mr-2 inline-block"></span>
+
+                  {{ service.details }}
+                </p>
               </div>
             </div>
           </div>
 
-          <div class="flex items-center space-x-4">
-            <div class="w-36">
-              <BaseButton @click="openMarkAsDoneModal(appointment)">Mark as Done</BaseButton>
-            </div>
-
+          <div class="flex items-start">
             <Menu>
               <MenuButton>
                 <button>
@@ -195,6 +202,13 @@ onMounted(async () => {
                 <MenuItems
                   class="absolute right-44 mt-24 w-44 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none px-4 py-2"
                 >
+                  <button 
+                    class="py-2 hover:bg-custom-brown-100 w-full rounded-lg px-2 flex items-start"
+                    @click="openMarkAsDoneModal(appointment)"
+                  >
+                    <p class="text-sm text-custom-brown-500 font-medium">Mark as Done</p>
+                  </button>
+
                   <button 
                     class="py-2 hover:bg-custom-brown-100 w-full rounded-lg px-2 flex items-start"
                     @click="openAppointmentModal(appointment)"
