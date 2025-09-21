@@ -117,9 +117,7 @@ onMounted(async () => {
       class="flex flex-col items-start space-y-6 border-b border-custom-brown-500 pb-6"
     >
       <div>
-        <p class="text-base font-bold text-custom-brown-500 landing-login">{{ service.name }}</p>
-
-        <p class="text-sm text-custom-brown-500 max-w-4xl w-full">{{ service.description }}</p>
+        <p class="text-base font-bold text-custom-brown-500 landing-login">{{ service.description }}</p>
       </div>
 
       <div v-for="item in service.sub_services" class="space-y-6 w-full">

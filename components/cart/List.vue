@@ -151,15 +151,7 @@ await fetchCart()
 
         <div v-for="service in servicesCategorized" class="flex items-center w-full justify-between pb-6 border-b border-b-custom-brown-200">
           <div class="space-y-2 w-full">
-            <div class="flex items-center space-x-2">
-              <div class="space-y-0.5 w-full">
-                <div class="flex items-center justify-between w-full">
-                  <p class="text-base text-custom-brown-500 font-medium">{{ service.name }}</p>
-                </div>
-
-                <p class="text-sm">{{ service.description }}</p>
-              </div>
-            </div>
+            <p class="text-base text-custom-brown-500 font-medium">{{ service.description }}</p>
 
             <div v-for="item in service.sub_services" class="space-y-6 w-full">
               <p class="text-sm text-custom-brown-500 flex items-start">
