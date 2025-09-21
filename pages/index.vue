@@ -196,10 +196,8 @@ onBeforeMount(async () => {
         class="w-full border-b border-custom-brown-500 py-8"
       >
         <div class="flex flex-col">
-          <div class="space-y-2 mb-4">
-            <p class="text-xl font-bold text-custom-brown-500 landing-login">{{ service.name }}</p>
-
-            <p class="text-sm text-custom-brown-500 max-w-4xl w-full">{{ service.description }}</p>
+          <div class="mb-4">
+            <p class="text-xl font-bold text-custom-brown-500 landing-login">{{ service.description }}</p>
           </div>
 
           <div v-for="item in service.sub_services" class="space-y-1.5 w-full">
