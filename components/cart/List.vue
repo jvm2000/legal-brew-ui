@@ -50,18 +50,6 @@ async function fetchServices() {
   servicesData.value = data.value ?? []
 }
 
-function getImage(name: string) {
-  if (name === 'Latte Legalizations') return '/images/services/latte-legalization.svg'
-
-  if (name === 'Espresso Advise') return '/images/services/espress-advise.svg'
-
-  if (name === 'Americano Agreements') return '/images/services/americano-agreements.svg'
-
-  if (name === 'Barista Grind') return '/images/services/barista-grind.svg'
-
-  if (name === 'Capuccino Case Files') return '/images/services/cappucino-case-files.svg'
-}
-
 function selectConsultationType(type: string) {
   consultationType.value = type
 }
