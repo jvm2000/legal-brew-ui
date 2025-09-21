@@ -16,7 +16,7 @@ const { isOpenGCashModal } = useLanding()
     </template>
 
     <div class="flex flex-col items-center">
-      <img class="h-48" src="/images/qr-sample.svg" alt="">
+      <img class="h-48" src="/images/gcash-qrcode.png" alt="">
     </div>
   </BaseModal>
 </template>

@@ -46,17 +46,21 @@ export type Cart = {
 export type Services = {
   id?: string,
   name: string,
-  price: number,
   loading?: boolean,
   description: string,
-  image: string
+  sub_services: SubService[]
+}
+
+export type SubService = {
+  id?: string,
+  details: string
 }
 
 export type Appointment = {
   id?: string,
   scheduledDay: string,
   scheduledTime: string,
-  services: Services[],
+  services: SubService[],
   setup: 'office' | 'online'
   user: User
 }

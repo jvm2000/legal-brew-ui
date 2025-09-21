@@ -27,6 +27,7 @@ const { openCloseViewPostModal, openCloseEditPostModal } = usePost()
 const { user: authUser } = useAuth()
 const { $useCustomFetch } = useNuxtApp() 
 
+const expanded = ref(false)
 const reactionForm = ref<ReactionForm>({
   post_id: '',
   user_id: '',
@@ -73,6 +74,14 @@ async function deletePost() {
 function checkIfAlreadyReacted(reaction: Reaction[]) {
   return reaction?.some((reaction: any) => reaction.user_id === authUser?.value?.id)
 }
+
+function toggleExpand() {
+  expanded.value = !expanded.value
+}
+
+const needsTruncate = computed(() => {
+  return props.post?.description?.split(/\r\n|\r|\n/).length > 4 || props.post?.description?.length > 200
+})
 </script>
 
 <template>
@@ -132,8 +141,16 @@ function checkIfAlreadyReacted(reaction: Reaction[]) {
 
     <p v-if="props.post?.title" class="font-medium px-6 sm:px-0">{{ props.post?.title }}</p>
 
-    <p class="text-custom-brown-500 text-sm px-6 sm:px-0">
-      {{ props.post?.description }}
+    <p class="text-custom-brown-500 text-sm px-6 sm:px-0 overflow-hidden whitespace-pre-line">
+      <span :class="!expanded ? 'line-clamp-4' : ''">{{ props.post?.description }} &nbsp;</span>
+
+      <span
+        v-if="needsTruncate"
+        @click="toggleExpand"
+        class="text-blue-500 text-sm hover:underline cursor-pointer"
+      >
+        {{ expanded ? 'See less' : 'See more' }}
+      </span>
     </p>
 
     <div v-if="props.post?.images.length">
