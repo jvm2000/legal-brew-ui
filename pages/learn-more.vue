@@ -43,7 +43,7 @@ definePageMeta({
         <img src="/images/attorney.svg" alt="" class="hidden sm:xl:block">
       </div>
 
-      <div class="flex flex-col items-start py-12 w-full space-y-4 text-justify">
+      <!-- <div class="flex flex-col items-start py-12 w-full space-y-4 text-justify">
         <p class="w-full text-2xl text-custom-brown-500 font-bold text-center landing-login">PEOPLE POWER: THE CONSTITUTIONAL PERSPECTIVE</p>
 
         <p class="text-sm text-custom-brown-500 indent-10">
@@ -368,7 +368,7 @@ definePageMeta({
         <p class="text-sm text-custom-brown-500 indent-10">En.wikipedia.org/wiki/People_Power_Revolution</p>
 
         <p class="text-sm text-custom-brown-500 indent-10">http://www.rappler.com/business</p>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

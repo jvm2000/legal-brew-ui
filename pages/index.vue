@@ -1,72 +1,44 @@
 <script setup lang="ts">
 import { HeartIcon } from '@heroicons/vue/24/outline'
-import type { Post } from '~/types/general'
-
-type Services = {
-  label: string,
-  price: string,
-  description: string,
-  image: string
-}
+import type { Post, Services } from '~/types/general'
 
 const { getPosts, landingPosts: post } = useAuth()
+const config = useRuntimeConfig()
 const { container, startDrag, endDrag, handleDrag, data } = useScroll()
-const services = ref<Services[]>([
-  {
-    label: 'Latte Legalizations',
-    price: '500',
-    description: 'Drafting of documents such as letters, special power of attorneys, promissory notes, compromise agreements, and others.',
-    image: '/images/services/latte-legalization.svg'
-  }, {
-    label: 'Espresso Advise',
-    price: '500',
-    description: 'Online consultations with the lawyer.',
-    image: '/images/services/espress-advise.svg'
-  }, {
-    label: 'Americano Agreements',
-    price: '1,000',
-    description: 'Drafting of contracts; review of existing contracts and drafting of revised contract.',
-    image: '/images/services/americano-agreements.svg'
-  }, {
-    label: 'Barista Grind',
-    price: '2,000',
-    description: 'Thorough research and analysis of legal issues, study of applicable laws and statutes, and provision of legal documentation and research services.',
-    image: '/images/services/barista-grind.svg'
-  }, {
-    label: 'Capuccino Case Files',
-    price: '20,000',
-    description: 'Assistance with litigation of cases, including court representation and preparation of pleadings in the areas of: Labor law, Marriage and family relations, Property law, Corporate law, Immigration law.',
-    image: '/images/services/cappucino-case-files.svg'
-  }
-])
+// const services = ref<Services[]>([
+//   {
+//     label: 'Latte Legalizations',
+//     price: '500',
+//     description: 'Drafting of documents such as letters, special power of attorneys, promissory notes, compromise agreements, and others.',
+//     image: '/images/services/latte-legalization.svg'
+//   }, {
+//     label: 'Espresso Advise',
+//     price: '500',
+//     description: 'Online consultations with the lawyer.',
+//     image: '/images/services/espress-advise.svg'
+//   }, {
+//     label: 'Americano Agreements',
+//     price: '1,000',
+//     description: 'Drafting of contracts; review of existing contracts and drafting of revised contract.',
+//     image: '/images/services/americano-agreements.svg'
+//   }, {
+//     label: 'Barista Grind',
+//     price: '2,000',
+//     description: 'Thorough research and analysis of legal issues, study of applicable laws and statutes, and provision of legal documentation and research services.',
+//     image: '/images/services/barista-grind.svg'
+//   }, {
+//     label: 'Capuccino Case Files',
+//     price: '20,000',
+//     description: 'Assistance with litigation of cases, including court representation and preparation of pleadings in the areas of: Labor law, Marriage and family relations, Property law, Corporate law, Immigration law.',
+//     image: '/images/services/cappucino-case-files.svg'
+//   }
+// ])
 const events = ref([
   { label: 'Webinars', image: '/images/events/webinars.svg' },
   { label: 'Seminars and Trainings', image: '/images/events/seminars.svg' },
   { label: 'Online Discussions', image: '/images/events/discussions.svg' }
 ])
-const materials = ref([
-  { 
-    description: 'Yorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    author: 'Author Name',
-    date: 'July 07, 2025',
-    image: '/images/materials/1.svg'
-  }, { 
-    description: 'Yorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    author: 'Author Name',
-    date: 'July 07, 2025',
-    image: '/images/materials/2.svg'
-  }, { 
-    description: 'Yorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    author: 'Author Name',
-    date: 'July 07, 2025',
-    image: '/images/materials/3.svg'
-  }, { 
-    description: 'Yorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    author: 'Author Name',
-    date: 'July 07, 2025',
-    image: '/images/materials/4.svg'
-  }
-])
+const services = ref<Services[]>([])
 const { errors, formLogin, login, loading } = useAuth()
 const loginFirstError = ref<string | null>(null)
 const { isOpenGCashModal, isOpenMayaModal } = useLanding()
@@ -113,12 +85,29 @@ async function submitContact() {
   contactLoading.value = false
 }
 
+async function fetchMenuServices() {
+  const data = await $fetch<Services[]>('/api/getAllMenuServices', {
+    baseURL: config.public.apiBase,
+    credentials: 'include',
+  })
+
+  services.value = data ?? []
+}
+
+function formatPesos(text: string): string {
+  // Replace peso amounts with a span having font-medium
+  return text.replace(/(₱[\d,]+(?:\.\d{2})?)/g, '<span class="font-medium">$1</span>')
+}
+
 definePageMeta({
   layout: 'landing',
   middleware: 'guest'
 })
 
-onBeforeMount(async() => { await getPosts() })
+onBeforeMount(async () => {
+  await getPosts()
+  await fetchMenuServices()
+})
 </script>
 
 <template>
@@ -204,19 +193,20 @@ onBeforeMount(async() => { await getPosts() })
       <div 
         v-for="(service, index) in services"
         :key="index"
-        class="flex items-center justify-between border-b border-custom-brown-500 pb-8"
+        class="w-full border-b border-custom-brown-500 py-8"
       >
-        <div @click="scrollToTop" class="flex flex-col sm:flex-row items-start sm:items-center sm:space-x-8 space-y-8 sm:space-y-0 cursor-pointer">
-          <div class="w-24 h-24 bg-custom-brown-300 rounded-md grid place-items-center whitespace-nowrap">
-            <img :src="service.image" />
-          </div>
-
-          <div class="space-y-4">
-            <p class="text-xl font-bold text-custom-brown-500 landing-login">{{ service.label }}</p>
-
-            <p class="text-sm font-bold text-custom-brown-500">Starts at P {{ service.price }}</p>
+        <div class="flex flex-col">
+          <div class="space-y-2 mb-4">
+            <p class="text-xl font-bold text-custom-brown-500 landing-login">{{ service.name }}</p>
 
             <p class="text-sm text-custom-brown-500 max-w-4xl w-full">{{ service.description }}</p>
+          </div>
+
+          <div v-for="item in service.sub_services" class="space-y-1.5 w-full">
+            <p class="text-sm text-custom-brown-500">
+              <span class="w-1.5 h-1.5 rounded-full bg-custom-brown-500 mt-1 mr-2 inline-block"></span>
+              <span v-html="formatPesos(item.details)"></span>
+            </p>
           </div>
         </div>
       </div>
@@ -268,20 +258,24 @@ onBeforeMount(async() => { await getPosts() })
           <div class="flex items-center space-x-6">
             <div 
               v-for="material in basicPosts" 
-              class="bg-white w-[356px] rounded-xl drop-shadow-xl overflow-hidden" aria-readonly="true"
+              class="bg-white w-[356px] h-72 rounded-xl drop-shadow-xl overflow-hidden" aria-readonly="true"
               @click="scrollToTop"
             >
-                <div class="w-full h-36 overflow-hidden">
+                <div v-if="material.images.length" class="w-full h-36 overflow-hidden">
                   <img :src="getImage(material.images[0])" class="object-cover w-full h-full">
                 </div>
 
                 <div class="p-4 space-y-4">
-                <p class="text-custom-brown-500 text-base line-clamp-3">{{ material.description }}</p>
+                  <p class="text-custom-brown-500 text-base font-medium">{{ material.title }}</p>
 
-                <div>
-                  <p class="text-custom-brown-500 font-medium text-xs">By {{ material.user.full_name }}</p>
-                  <p class="text-custom-brown-500 text-[12px]">{{ formatDate(material.updated_at) }}</p>
-                </div>
+                  <p 
+                    :class="[material.images ? 'text-custom-brown-500 text-sm line-clamp-6' : 'text-custom-brown-500 text-sm line-clamp-3']"
+                  >{{ material.description }}</p>
+
+                  <div>
+                    <p class="text-custom-brown-500 font-medium text-xs">By {{ material.user.full_name }}</p>
+                    <p class="text-custom-brown-500 text-[12px]">{{ formatDate(material.updated_at) }}</p>
+                  </div>
                 </div>
             </div>
           </div>
