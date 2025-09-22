@@ -85,7 +85,7 @@ const needsTruncate = computed(() => {
 </script>
 
 <template>
-  <div class="w-full py-6 sm:px-6 space-y-4 bg-white rounded-md">
+  <div class="w-full py-6 sm:px-6 space-y-4 bg-white border-custom-brown-500 rounded-md">
     <div class="w-full px-6 sm:px-0 flex items-center justify-between">
       <div class="flex items-center space-x-4">
         <div class="w-8 h-8 rounded-full overflow-hidden">
