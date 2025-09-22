@@ -88,7 +88,7 @@ import { Menu, MenuButton, MenuItems } from '@headlessui/vue'
 
 <style scoped>
 .app-container {
-  background-color: #FAF1E9;
+  background-color: #fffafa;
   min-height: 100vh;
   overflow: hidden;
 }

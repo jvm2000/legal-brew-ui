@@ -99,6 +99,19 @@ function formatPesos(text: string): string {
   return text.replace(/(₱[\d,]+(?:\.\d{2})?)/g, '<span class="font-medium">$1</span>')
 }
 
+function openInstagram() {
+  window.open(
+    "https://www.instagram.com/restaurolegalservices?igsh=MWdheTl2eDQxZmZwdA%3D%3D",
+    "_blank"
+  );
+}
+
+function openFacebook() {
+  window.open(
+    "https://www.facebook.com/profile.php?id=61581148055857",
+  );
+}
+
 definePageMeta({
   layout: 'landing',
   middleware: 'guest'
@@ -148,7 +161,7 @@ onBeforeMount(async () => {
         </p>
       </div>
 
-        <img src="/images/woman.svg" alt="" class="absolute right-0 bottom-0 z-[3] hidden sm:lg:block">
+        <img src="/images/restauro-pic.png" alt="" class="absolute right-0 bottom-0 z-[3] hidden sm:lg:block h-[28rem]">
         <img src="/images/shape-elipse-landing.svg" class="absolute z-[2] top-48 right-24 hidden sm:lg:block">
         <img src="/images/shape-rectangle-landing.svg" class="absolute z-[0] bottom-0 right-0 hidden sm:lg:block">
     </div>
@@ -186,7 +199,6 @@ onBeforeMount(async () => {
       <p class="text-xl landing-login text-custom-brown-500 font-bold">Menu of Services</p>
 
       <div>
-        <p class="text-sm text-custom-brown-500">*Services can be bundled or served ala carte.</p>
         <p class="text-sm text-custom-brown-500">*All rates depend on the duration, novelty and difficulty of the client’s legal needs.</p>
       </div>
 
@@ -373,21 +385,13 @@ onBeforeMount(async () => {
     <div class="flex items-center space-x-6">
       <p class="text-sm font-bold text-custom-brown-500">Follow Us</p>
 
-      <div class="w-8 h-8 grid place-items-center border border-custom-brown-500 rounded-full">
+      <button @click="openFacebook" class="w-8 h-8 grid place-items-center border border-custom-brown-500 rounded-full">
         <img src="/images/follow/fb.svg" alt="">
-      </div>
+      </button>
 
-      <div class="w-8 h-8 grid place-items-center border border-custom-brown-500 rounded-full">
-        <img src="/images/follow/x.svg" alt="">
-      </div>
-
-      <div class="w-8 h-8 grid place-items-center border border-custom-brown-500 rounded-full">
-        <img src="/images/follow/tiktok.svg" alt="">
-      </div>
-
-      <div class="w-8 h-8 grid place-items-center border border-custom-brown-500 rounded-full">
+      <button @click="openInstagram" class="w-8 h-8 grid place-items-center border border-custom-brown-500 rounded-full">
         <img src="/images/follow/ig.svg" alt="">
-      </div>
+      </button>
     </div>
   </footer>
 
