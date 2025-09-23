@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { ShoppingCartIcon } from '@heroicons/vue/24/outline'
+import { ShoppingCartIcon, PencilIcon } from '@heroicons/vue/24/outline'
 import type { Cart, Services, SubService } from '~/types/general'
-import { formatPrice } from '~/utils/price'
 
 type ServiceForm = {
   cart_id: string,
@@ -10,6 +9,7 @@ type ServiceForm = {
 }
 
 const { user: authUser } = useAuth()
+const { openEditModal } = useMenuServices()
 const { $useCustomFetch } = useNuxtApp()
 
 const cartData = ref<Cart[]>([])
@@ -127,6 +127,21 @@ onMounted(async () => {
         </p>
 
         <button 
+          v-if="authUser?.role === 'admin'"
+          class="py-2 text-sm text-center w-full rounded-md flex flex-col items-center bg-custom-brown-300 text-white"
+          @click="openEditModal(item)"
+        >
+          <div class="flex items-center space-x-2">
+            <PencilIcon 
+              class="w-4 h-4 stroke-white block"
+            />
+
+            <span>Edit</span>
+          </div>
+        </button>
+
+        <button 
+          v-if="authUser?.role === 'client'"
           class="py-2 text-sm text-center w-full rounded-md flex flex-col items-center"
           :class="[isServiceInList(item) ? 'bg-transparent border border-custom-brown-300 text-custom-brown-500' : 'bg-custom-brown-300 text-white']"
           @click="addToCart(item, service?.id)"
@@ -146,6 +161,7 @@ onMounted(async () => {
   </div>
 
   <BaseLoading :isLoading="loading" />
+  <ModalEditMenuServices @success="fetchMenuServices" />
 </template>
 
 <style scoped>

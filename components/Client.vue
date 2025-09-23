@@ -39,7 +39,12 @@ onMounted(async () => {
       <ClientVerify />
     </div>
 
-    <div v-if="authUser?.verified">
+    <div v-if="authUser?.verified || authUser?.role === 'admin'">
+      <div v-if="authUser?.role === 'admin'" class="text-4xl text-custom-brown-500 px-6 sm:px-0 mb-6">
+        <p>Good Morning,</p>
+        <p class="capitalize">{{ authUser?.full_name }}</p>
+      </div>
+
       <TabGroup @change="changeTab" :selectedIndex="selectedTab">
         <TabList class="grid grid-cols-2">
           <Tab v-slot="{ selected }">
