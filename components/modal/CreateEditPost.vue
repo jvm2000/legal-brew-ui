@@ -137,7 +137,7 @@ async function submitUpdate() {
   formData.append('_method', 'PUT')
 
   const { error } = await $useCustomFetch(`/api/posts/${selectedPost.value.id}`, { 
-    method: 'POST',
+    method: 'PUT',
     body: formData,
   })
 
