@@ -141,7 +141,8 @@ const shape = computed(() => xse.value ? 'rounded-none' : '')
             >
               <DialogPanel
                 :class="[twMerge(
-                  'pointer-events-auto w-full bg-white align-middle shadow-smtransition-all font-inter',
+                  'pointer-events-auto w-full bg-white align-middle shadow-sm transition-all font-inter',
+                  'max-h-[calc(100vh-2rem)] overflow-y-auto',
                   sizeClasses[props.size],
                   shapeClasses[shape || props.shape],
                   props.classes.dialog
