@@ -215,17 +215,15 @@ onBeforeMount(async () => {
         :key="index"
         class="flex items-center justify-between border-b border-custom-brown-500 pb-8"
       >
-        <div @click="scrollToTop" class="flex flex-col sm:flex-row items-start sm:items-center sm:space-x-8 space-y-8 sm:space-y-0 cursor-pointer">
-          <div class="w-24 h-24 bg-custom-brown-300 rounded-md grid place-items-center whitespace-nowrap">
-            <img :src="service.image" />
+        <div @click="scrollToTop" class="grid md:grid-cols-1 sm:lg:grid-cols-10 cursor-pointer gap-x-24 gap-y-6">
+          <div class="w-24 h-24 bg-custom-brown-300 rounded-md grid place-items-center overflow-hidden col-span-1">
+            <img :src="service.image"  />
           </div>
 
-          <div class="space-y-2">
-            <p class="text-xl font-bold text-custom-brown-500 landing-login">{{ service.name }}</p>
+          <div class="space-y-2 sm:lg:col-span-9">
+            <p class="text-xl font-bold text-custom-brown-500 landing-login">{{ service.description }}</p>
 
             <p class="text-sm font-bold text-custom-brown-500">Starts at P {{ formatPesos(service.price) }}</p>
-
-            <p class="text-sm text-custom-brown-500 max-w-4xl w-full">{{ service.description }}</p>
           </div>
         </div>
       </div>
