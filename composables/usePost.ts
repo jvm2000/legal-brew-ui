@@ -4,6 +4,7 @@ const state = reactive({
   post: [],
   isOpenPostModal: false,
   isViewPostModal: false,
+  isViewLandingPostModal: false,
   isPostEditing: false,
   selectedPost: {} as Post,
   pagination: {
@@ -33,6 +34,12 @@ export default function () {
     state.isViewPostModal = !state.isViewPostModal
   }
 
+  function openCloseViewLandingPostModal(post: Post) {
+    state.selectedPost = post
+    
+    state.isViewLandingPostModal = !state.isViewLandingPostModal
+  }
+
   async function getPosts(page = 1) {
     const { $useCustomFetch } = useNuxtApp()
 
@@ -49,6 +56,7 @@ export default function () {
     ...toRefs(state),
     openClosePostModal,
     openCloseViewPostModal,
+    openCloseViewLandingPostModal,
     openCloseEditPostModal,
     getPosts
   }

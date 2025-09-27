@@ -2,43 +2,51 @@
 import { HeartIcon } from '@heroicons/vue/24/outline'
 import type { Post, Services } from '~/types/general'
 
+type MenuServices = {
+  name: string,
+  price: string,
+  description: string,
+  image: string
+}
+
 const { getPosts, landingPosts: post } = useAuth()
 const config = useRuntimeConfig()
 const { container, startDrag, endDrag, handleDrag, data } = useScroll()
-// const services = ref<Services[]>([
-//   {
-//     label: 'Latte Legalizations',
-//     price: '500',
-//     description: 'Drafting of documents such as letters, special power of attorneys, promissory notes, compromise agreements, and others.',
-//     image: '/images/services/latte-legalization.svg'
-//   }, {
-//     label: 'Espresso Advise',
-//     price: '500',
-//     description: 'Online consultations with the lawyer.',
-//     image: '/images/services/espress-advise.svg'
-//   }, {
-//     label: 'Americano Agreements',
-//     price: '1,000',
-//     description: 'Drafting of contracts; review of existing contracts and drafting of revised contract.',
-//     image: '/images/services/americano-agreements.svg'
-//   }, {
-//     label: 'Barista Grind',
-//     price: '2,000',
-//     description: 'Thorough research and analysis of legal issues, study of applicable laws and statutes, and provision of legal documentation and research services.',
-//     image: '/images/services/barista-grind.svg'
-//   }, {
-//     label: 'Capuccino Case Files',
-//     price: '20,000',
-//     description: 'Assistance with litigation of cases, including court representation and preparation of pleadings in the areas of: Labor law, Marriage and family relations, Property law, Corporate law, Immigration law.',
-//     image: '/images/services/cappucino-case-files.svg'
-//   }
-// ])
+const services = ref<MenuServices[]>([
+  {
+    name: 'Latte Legalizations',
+    price: '500',
+    description: 'Drafting of documents such as letters, special power of attorneys, promissory notes, compromise agreements, and others.',
+    image: '/images/services/latte-legalization.svg'
+  }, {
+    name: 'Espresso Advise',
+    price: '500',
+    description: 'Online consultations with the lawyer.',
+    image: '/images/services/espress-advise.svg'
+  }, {
+    name: 'Americano Agreements',
+    price: '1,000',
+    description: 'Drafting of contracts; review of existing contracts and drafting of revised contract.',
+    image: '/images/services/americano-agreements.svg'
+  }, {
+    name: 'Barista Grind',
+    price: '2,000',
+    description: 'Thorough research and analysis of legal issues, study of applicable laws and statutes, and provision of legal documentation and research services.',
+    image: '/images/services/barista-grind.svg'
+  }, {
+    name: 'Capuccino Case Files',
+    price: '20,000',
+    description: 'Assistance with litigation of cases, including court representation and preparation of pleadings in the areas of: Labor law, Marriage and family relations, Property law, Corporate law, Immigration law.',
+    image: '/images/services/cappucino-case-files.svg'
+  }
+])
+
 const events = ref([
   { label: 'Webinars', image: '/images/events/webinars.svg' },
   { label: 'Seminars and Trainings', image: '/images/events/seminars.svg' },
   { label: 'Online Discussions', image: '/images/events/discussions.svg' }
 ])
-const services = ref<Services[]>([])
+// const services = ref<Services[]>([])
 const { errors, formLogin, login, loading } = useAuth()
 const loginFirstError = ref<string | null>(null)
 const { isOpenGCashModal, isOpenMayaModal } = useLanding()
@@ -50,7 +58,7 @@ const contactForm = ref({
 })
 const contactLoading = ref(false)
 const { formatDate } = useFormat()
-
+const { openCloseViewLandingPostModal } = usePost()
 const basicPosts = computed(() : Post[] => post.value.slice(0,5))
 
 function scrollToTop() {
@@ -85,14 +93,14 @@ async function submitContact() {
   contactLoading.value = false
 }
 
-async function fetchMenuServices() {
-  const data = await $fetch<Services[]>('/api/getAllMenuServices', {
-    baseURL: config.public.apiBase,
-    credentials: 'include',
-  })
+// async function fetchMenuServices() {
+//   const data = await $fetch<Services[]>('/api/getAllMenuServices', {
+//     baseURL: config.public.apiBase,
+//     credentials: 'include',
+//   })
 
-  services.value = data ?? []
-}
+//   services.value = data ?? []
+// }
 
 function formatPesos(text: string): string {
   // Replace peso amounts with a span having font-medium
@@ -119,7 +127,7 @@ definePageMeta({
 
 onBeforeMount(async () => {
   await getPosts()
-  await fetchMenuServices()
+  // await fetchMenuServices()
 })
 </script>
 
@@ -205,18 +213,19 @@ onBeforeMount(async () => {
       <div 
         v-for="(service, index) in services"
         :key="index"
-        class="w-full border-b border-custom-brown-500 py-8"
+        class="flex items-center justify-between border-b border-custom-brown-500 pb-8"
       >
-        <div class="flex flex-col">
-          <div class="mb-4">
-            <p class="text-xl font-bold text-custom-brown-500 landing-login">{{ service.description }}</p>
+        <div @click="scrollToTop" class="flex flex-col sm:flex-row items-start sm:items-center sm:space-x-8 space-y-8 sm:space-y-0 cursor-pointer">
+          <div class="w-24 h-24 bg-custom-brown-300 rounded-md grid place-items-center whitespace-nowrap">
+            <img :src="service.image" />
           </div>
 
-          <div v-for="item in service.sub_services" class="space-y-1.5 w-full">
-            <p class="text-sm text-custom-brown-500">
-              <span class="w-1.5 h-1.5 rounded-full bg-custom-brown-500 mt-1 mr-2 inline-block"></span>
-              <span v-html="formatPesos(item.details)"></span>
-            </p>
+          <div class="space-y-2">
+            <p class="text-xl font-bold text-custom-brown-500 landing-login">{{ service.name }}</p>
+
+            <p class="text-sm font-bold text-custom-brown-500">Starts at P {{ formatPesos(service.price) }}</p>
+
+            <p class="text-sm text-custom-brown-500 max-w-4xl w-full">{{ service.description }}</p>
           </div>
         </div>
       </div>
@@ -269,7 +278,7 @@ onBeforeMount(async () => {
             <div 
               v-for="material in basicPosts" 
               class="bg-white w-[356px] h-72 rounded-xl drop-shadow-xl overflow-hidden" aria-readonly="true"
-              @click="scrollToTop"
+              @click="openCloseViewLandingPostModal(material)"
             >
                 <div v-if="material.images.length" class="w-full h-36 overflow-hidden">
                   <img :src="getImage(material.images[0])" class="object-cover w-full h-full">
@@ -395,6 +404,7 @@ onBeforeMount(async () => {
     </div>
   </footer>
 
+  <ModalLandingViewPost />
   <ModalGCashDonation />
   <ModalMayaDonation />
 </template>

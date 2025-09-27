@@ -40,6 +40,7 @@ const reactionForm = ref<ReactionForm>({
 const inputRef = ref<HTMLTextAreaElement | null>(null)
 const showToast = ref(false)
 const toastMessage = ref('')
+const expanded = ref(false)
 
 function getRemainingTime(date: any) {
   return dayjs(date).fromNow() // returns "in 3 days" or "2 hours ago"
@@ -102,6 +103,14 @@ function commentOwnUser(comment: Comment) {
   return comment.user.id === authUser?.value?.id
 }
 
+function toggleExpand() {
+  expanded.value = !expanded.value
+}
+
+const needsTruncate = computed(() => {
+  return selectedPost?.value.description?.split(/\r\n|\r|\n/).length > 4 || selectedPost?.value.description?.length > 200
+})
+
 const hasImages = computed<boolean>(() => {
   if (selectedPost.value?.images && selectedPost.value?.images.length) return true
 
@@ -116,7 +125,7 @@ onMounted(() => {
 <template>
   <BaseModal
     :open="isViewPostModal"
-    title="Create Post"
+    title="View Post"
     :size="[hasImages ? '6xl' : 'xl']"
     shape="straight"
     noPadding
@@ -158,8 +167,17 @@ onMounted(() => {
 
           <p v-if="selectedPost?.title" class="font-medium w-full text-left">{{ selectedPost?.title }}</p>
 
-          <p class="text-sm text-custom-brown-500 text-left">
-            {{ selectedPost?.description }}
+          
+          <p class="text-sm text-custom-brown-500 text-left whitespace-pre-line">
+            <span :class="!expanded ? 'line-clamp-4' : ''">{{ selectedPost?.description }} &nbsp;</span>
+
+            <span
+              v-if="needsTruncate"
+              @click="toggleExpand"
+              class="text-blue-500 text-sm hover:underline cursor-pointer"
+            >
+              {{ expanded ? 'See less' : 'See more' }}
+            </span>
           </p>
 
           <div class="flex items-center space-x-8">
